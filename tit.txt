@@ -1,0 +1,1 @@
+write red in the color red to the bottom left of screen then put blue text on a window at the top right side of the screen

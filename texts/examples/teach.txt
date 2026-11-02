@@ -1,0 +1,6 @@
+# Step 10: making your own words
+to greet someone means write hi someone in green
+a turn means move left then beep
+to double a number means write number times 2
+greet Dominic
+double 21

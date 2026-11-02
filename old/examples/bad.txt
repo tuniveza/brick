@@ -1,0 +1,8 @@
+# Bad moves the world should refuse
+say "Hi [name]"
+colour pink
+dance
+ask "What is your name?" as name
+say "Hi [name]"
+stop
+say "Too late"

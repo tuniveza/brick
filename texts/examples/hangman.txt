@@ -1,0 +1,14 @@
+# Step 9: a hangman-style letter check
+set secret to "banana"
+write the word has how many letters in secret letters and starts with first letter of secret in capitals
+ask a letter as guess
+set guess to lowercase guess
+if secret contains guess, write yes! guess is in the word in green, otherwise write "no", guess is not in the word in red
+for each letter in secret if letter is guess write letter on the same line otherwise write _ on the same line
+write a blank line
+write shout secret, letter 3 of secret, last letter of secret
+if secret starts with "ban" write it starts with ban
+set code to "42" as a number
+write code plus 8
+write join secret with "!" followed by " " followed by 7 as words
+for each word in "the quick brown fox" write word in capitals

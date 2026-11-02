@@ -1,0 +1,4 @@
+# Opened again later: greet comes from mywords.txt
+greet Ada
+ask your name
+greet name

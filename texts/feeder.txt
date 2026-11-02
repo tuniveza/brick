@@ -1,0 +1,44 @@
+The dictionary feeder
+=====================
+Part of brick: `brick feeder` (or `brick feeder 60` for a bigger batch). brick does its own half first:
+a batch of the factory's learning, checked by the tests. If Claude Code is installed, Claude then follows
+this file for the words that need judgement (also in Claude Code itself: /dictionary-feeder).
+Reports: texts/feeder-report.txt.
+
+The dictionary is texts/dictionary.txt (format and rules at its top).
+
+1. Make up sentences. Write a batch of random, varied sentences someone might type to direct a
+   console program: showing text, colours, asking, waiting, timers, maths, lists, files, words,
+   loops, choices, placing text, the window, stopping. Use everyday words people actually say,
+   including ones brick may not know yet ("jot down hello", "hang on 2 seconds", "if score tops 10").
+   Default 40 sentences; use the number given after the command if there is one, and lean towards
+   any topic given. Save them, one per file, in /tmp/dictionary-feeder/ (case01.txt, case02.txt ...).
+
+   About half the batch comes from texts/sentences.txt, which the factory keeps filling with
+   made-up directions (many as loosely as people type them) and every line of the owner's .brick
+   files; include lines from texts/factory/unsure.txt too. Pick entries at random from the whole
+   file (e.g. `shuf -n 20`), not just the top, and favour ones that match any topic given. A
+   one-sentence entry is one case as written. A paragraph ("First, ... Then, ... Finally, ...")
+   becomes one case with one direction per line, with the joining words left off. If the file is
+   missing or nearly empty, fill it first: `python3 factory.py make 200`.
+   Only read from those files; never edit or empty them.
+2. Try each one: `cd /tmp/dictionary-feeder && python3 <brick folder>/brick.py build caseNN.txt`.
+   Note which are refused, and which build but would clearly show something other than what the
+   person meant (e.g. a colour word shown as plain text).
+3. Pick out the unknown words or phrases behind each failure. For each, decide its nearest meaning
+   among things brick already understands (`python3 brick.py help` and the dictionary itself).
+   Skip a word if its nearest meaning would surprise people, or it could mean two quite different
+   things; list those in the report instead.
+4. Add and check each new line. Append it to texts/dictionary.txt under the "# Learned" heading at
+   the end, in the file's format: `word = meaning`. Then check it: rebuild the sentence, and build
+   the same sentence with the meaning written out instead; both must build, and `cmp` must say the
+   two programs are byte-for-byte identical. If not, remove the line again.
+   Never change or remove existing lines; only add.
+5. Make sure nothing broke. Run every test file (`for t in tests/test_*.py; do python3 $t | tail -1;
+   done`) and rebuild every example in texts/examples/. If anything fails because of a new line,
+   remove that line and say so.
+6. Report in plain English (if you're in Claude Code, also save it as texts/feeder-report.txt): how many sentences were tried, how many failed, which words were added
+   (with their meanings), which were skipped and why, and the test results.
+
+Keep everything safe: never move real windows (only build programs with window words, don't run
+them), never delete the owner's files, and don't commit anything.

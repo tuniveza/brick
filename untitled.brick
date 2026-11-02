@@ -1,0 +1,1959 @@
+# This is a .brick file: a program written in plain English for brick, and everything brick made from it.
+# brick is a compiler that turns everyday English sentences (one direction per line) into a small 64-bit
+# Linux program (an ELF file) with no libraries: just its own machine code and a toolbox of routines.
+# Reading this? Start with SOURCE (what the person wrote) and LINES (how brick understood each line).
+# The later sections are the program itself: its memory, its machine code line by line, and every byte.
+
+file: untitled (not saved)
+made: 2026-10-23 16:13
+
+
+== SOURCE (what was written) ==
+
+   1 | # Try changing anything here; the right side keeps up as you type.
+   2 | write hello there in teal
+   3 | set x to 7
+   4 | write x plus 3
+   5 | write x divided by 2
+   6 | write 6 divided by 3
+   7 | write 3.5 times 2
+   8 | write three point five plus 1 to 3 places
+   9 | write round 2.6
+  10 | write the time
+  11 | 
+  12 | 
+  13 | 
+
+== BUILD ==
+
+built: yes  (54.1 ms)
+opens a console window of its own (window words): no
+counts: 9 lines, 9 actions, 1,203 instructions, 40 routines
+
+== LINES (how brick understood each line) ==
+
+line 1: # Try changing anything here; the right side keeps up as you type.
+    a note for people (# ...): makes no code
+line 2: write hello there in teal
+    does: write hello there in teal
+    machine code: 122 bytes
+line 3: set x to 7
+    does: set x to 7
+    machine code: 24 bytes
+line 4: write x plus 3
+    does: write x plus 3
+    machine code: 55 bytes
+line 5: write x divided by 2
+    does: write x divided by 2
+    machine code: 78 bytes
+line 6: write 6 divided by 3
+    does: write 6 divided by 3
+    machine code: 66 bytes
+line 7: write 3.5 times 2
+    does: write 3.5 times 2
+    machine code: 76 bytes
+line 8: write three point five plus 1 to 3 places
+    does: write three point five plus 1 to 3 places
+    machine code: 76 bytes
+line 9: write round 2.6
+    does: write round 2.6
+    machine code: 84 bytes
+line 10: write the time
+    does: write the time
+    machine code: 25 bytes
+
+== LAYOUT (sizes in bytes) ==
+
+whole file: 7,363
+headers: 176
+startup code: 66
+your lines' code: 606
+ending code: 12
+toolbox routines: 5,783
+stored data (texts, numbers): 720
+empty space for memory, made when it starts: 67,109,536
+loaded at 0x400000, starts running at 0x4000b0, memory space at 0x10000000
+
+== MEMORY (the empty space, and what each part is for) ==
+
+0x10000000         8 bytes  environment
+0x10000010         8 bytes  heap_next
+0x10000020         8 bytes  writing_colour_5
+0x10000030         8 bytes  background_colour_6
+0x10000040         8 bytes  x (number)  (one of yours)
+0x10000050  67,108,864 bytes  heap
+0x14000050        16 bytes  heap_end
+0x14000060        32 bytes  digits_15
+0x14000080        48 bytes  decimal_vars_16
+0x140000b0        24 bytes  contains_vars_24
+0x140000d0        48 bytes  split_vars_25
+0x14000100        24 bytes  letters_vars_26
+0x14000120        64 bytes  terminal_settings_29
+0x14000160        64 bytes  terminal_keys_now_30
+0x140001a0        16 bytes  sleep_time_31
+0x140001b0         8 bytes  random_bytes_32
+0x140001c0        16 bytes  clock_reading_33
+0x140001d0        32 bytes  has_vars_36
+0x140001f0        40 bytes  ltt_vars_37
+0x14000220         8 bytes  delete_name_40
+0x14000230         8 bytes  console_size_46
+0x14000240        16 bytes  place_vars_47
+0x14000250        64 bytes  desktop_vars_52
+0x14000290        16 bytes  desktop_pause_53
+
+== TEXTS (stored in the program file) ==
+
+0x4019f3  "\u001b[38;2;0;128;128m"
+0x401a0d  "hello there"
+0x401a21  "\u001b[0m"
+0x401a2e  "\n"
+0x401a58  "\nOut of memory: the program made too many texts.\n"
+0x401a9a  "infinity"
+0x401aab  "minus infinity"
+0x401ac2  "not a number"
+0x401ad7  "-"
+0x401ae1  "\u001b[0m\n"
+0x401aef  "Please type a number: "
+0x401b16  "(That list is full: 1,000 items is the most it can hold.)\n"
+0x401b59  ""
+0x401b62  "(Couldn't save that file.)\n"
+0x401b86  "Are you sure you want to delete "
+0x401baf  "? (yes/no) "
+0x401bc3  "Deleted.\n"
+0x401bd5  "(There was no such file.)\n"
+0x401bf8  "OK, I kept it.\n"
+0x401c10  "\u001b["
+0x401c1b  ";"
+0x401c25  "H"
+0x401c2f  "G"
+0x401c39  "BRICK_WINDOW="
+0x401c4f  "pid:"
+0x401c5c  "local P = \""
+0x401c70  "\" "
+0x401c7b  "/dev/null"
+0x401c8d  "hyprctl"
+0x401c9d  "eval"
+0x401caa  "/usr/bin/hyprctl"
+
+== MACHINE CODE (x86-64, Intel syntax; address  bytes  instruction  ; what it means) ==
+
+-- startup: note the environment, set up the heap --
+  4000b0  48 8b 84 24 00 00 00 00        mov    rax,QWORD PTR [rsp+0x0]
+  4000b8  48 c1 e0 03                    shl    rax,0x3
+  4000bc  48 01 e0                       add    rax,rsp
+  4000bf  48 81 c0 10 00 00 00           add    rax,0x10
+  4000c6  48 b9 00 00 00 10 00 00 00 00  movabs rcx,0x10000000    ; environment
+  4000d0  48 89 81 00 00 00 00           mov    QWORD PTR [rcx+0x0],rax
+  4000d7  48 b8 50 00 00 10 00 00 00 00  movabs rax,0x10000050    ; heap
+  4000e1  48 b9 10 00 00 10 00 00 00 00  movabs rcx,0x10000010    ; heap_next
+  4000eb  48 89 81 00 00 00 00           mov    QWORD PTR [rcx+0x0],rax
+-- line 2: write hello there in teal --
+  4000f2  48 b8 f3 19 40 00 00 00 00 00  movabs rax,0x4019f3    ; text "\u001b[38;2;0;128;128m"
+  4000fc  e8 cc 02 00 00                 call   write_text
+  400101  48 b8 0d 1a 40 00 00 00 00 00  movabs rax,0x401a0d    ; text "hello there"
+  40010b  e8 bd 02 00 00                 call   write_text
+  400110  48 b8 21 1a 40 00 00 00 00 00  movabs rax,0x401a21    ; text "\u001b[0m"
+  40011a  e8 ae 02 00 00                 call   write_text
+  40011f  48 b8 20 00 00 10 00 00 00 00  movabs rax,0x10000020    ; writing_colour_5
+  400129  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  400130  48 85 c0                       test   rax,rax
+  400133  0f 84 05 00 00 00              je     no_colour_4
+  400139  e8 8f 02 00 00                 call   write_text
+  40013e  48 b8 30 00 00 10 00 00 00 00  movabs rax,0x10000030    ; background_colour_6
+  400148  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  40014f  48 85 c0                       test   rax,rax
+  400152  0f 84 05 00 00 00              je     no_colour_7
+  400158  e8 70 02 00 00                 call   write_text
+  40015d  48 b8 2e 1a 40 00 00 00 00 00  movabs rax,0x401a2e    ; text "\n"
+  400167  e8 61 02 00 00                 call   write_text
+-- line 3: set x to 7 --
+  40016c  b8 07 00 00 00                 mov    eax,0x7
+  400171  50                             push   rax
+  400172  48 b9 40 00 00 10 00 00 00 00  movabs rcx,0x10000040    ; x (number)
+  40017c  48 89 81 00 00 00 00           mov    QWORD PTR [rcx+0x0],rax
+  400183  58                             pop    rax
+-- line 4: write x plus 3 --
+  400184  48 b8 40 00 00 10 00 00 00 00  movabs rax,0x10000040    ; x (number)
+  40018e  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  400195  50                             push   rax
+  400196  b8 03 00 00 00                 mov    eax,0x3
+  40019b  48 89 c1                       mov    rcx,rax
+  40019e  58                             pop    rax
+  40019f  48 01 c8                       add    rax,rcx
+  4001a2  e8 88 02 00 00                 call   number_to_text
+  4001a7  e8 21 02 00 00                 call   write_text
+  4001ac  48 b8 2e 1a 40 00 00 00 00 00  movabs rax,0x401a2e    ; text "\n"
+  4001b6  e8 12 02 00 00                 call   write_text
+-- line 5: write x divided by 2 --
+  4001bb  48 b8 40 00 00 10 00 00 00 00  movabs rax,0x10000040    ; x (number)
+  4001c5  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  4001cc  50                             push   rax
+  4001cd  b8 02 00 00 00                 mov    eax,0x2
+  4001d2  48 89 c1                       mov    rcx,rax
+  4001d5  58                             pop    rax
+  4001d6  f2 48 0f 2a c0                 cvtsi2sd xmm0,rax
+  4001db  f2 48 0f 2a c9                 cvtsi2sd xmm1,rcx
+  4001e0  f2 0f 5e c1                    divsd  xmm0,xmm1
+  4001e4  66 48 0f 7e c0                 movq   rax,xmm0
+  4001e9  48 c7 c1 ff ff ff ff           mov    rcx,0xffffffffffffffff
+  4001f0  e8 e0 02 00 00                 call   decimal_to_text
+  4001f5  e8 d3 01 00 00                 call   write_text
+  4001fa  48 b8 2e 1a 40 00 00 00 00 00  movabs rax,0x401a2e    ; text "\n"
+  400204  e8 c4 01 00 00                 call   write_text
+-- line 6: write 6 divided by 3 --
+  400209  b8 06 00 00 00                 mov    eax,0x6
+  40020e  50                             push   rax
+  40020f  b8 03 00 00 00                 mov    eax,0x3
+  400214  48 89 c1                       mov    rcx,rax
+  400217  58                             pop    rax
+  400218  f2 48 0f 2a c0                 cvtsi2sd xmm0,rax
+  40021d  f2 48 0f 2a c9                 cvtsi2sd xmm1,rcx
+  400222  f2 0f 5e c1                    divsd  xmm0,xmm1
+  400226  66 48 0f 7e c0                 movq   rax,xmm0
+  40022b  48 c7 c1 ff ff ff ff           mov    rcx,0xffffffffffffffff
+  400232  e8 9e 02 00 00                 call   decimal_to_text
+  400237  e8 91 01 00 00                 call   write_text
+  40023c  48 b8 2e 1a 40 00 00 00 00 00  movabs rax,0x401a2e    ; text "\n"
+  400246  e8 82 01 00 00                 call   write_text
+-- line 7: write 3.5 times 2 --
+  40024b  48 b8 38 1a 40 00 00 00 00 00  movabs rax,0x401a38    ; the number 3.5
+  400255  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  40025c  50                             push   rax
+  40025d  b8 02 00 00 00                 mov    eax,0x2
+  400262  48 89 c1                       mov    rcx,rax
+  400265  58                             pop    rax
+  400266  66 48 0f 6e c0                 movq   xmm0,rax
+  40026b  f2 48 0f 2a c9                 cvtsi2sd xmm1,rcx
+  400270  f2 0f 59 c1                    mulsd  xmm0,xmm1
+  400274  66 48 0f 7e c0                 movq   rax,xmm0
+  400279  b9 02 00 00 00                 mov    ecx,0x2
+  40027e  e8 52 02 00 00                 call   decimal_to_text
+  400283  e8 45 01 00 00                 call   write_text
+  400288  48 b8 2e 1a 40 00 00 00 00 00  movabs rax,0x401a2e    ; text "\n"
+  400292  e8 36 01 00 00                 call   write_text
+-- line 8: write three point five plus 1 to 3 places --
+  400297  48 b8 40 1a 40 00 00 00 00 00  movabs rax,0x401a40    ; the number 3.5
+  4002a1  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  4002a8  50                             push   rax
+  4002a9  b8 01 00 00 00                 mov    eax,0x1
+  4002ae  48 89 c1                       mov    rcx,rax
+  4002b1  58                             pop    rax
+  4002b2  66 48 0f 6e c0                 movq   xmm0,rax
+  4002b7  f2 48 0f 2a c9                 cvtsi2sd xmm1,rcx
+  4002bc  f2 0f 58 c1                    addsd  xmm0,xmm1
+  4002c0  66 48 0f 7e c0                 movq   rax,xmm0
+  4002c5  b9 03 00 00 00                 mov    ecx,0x3
+  4002ca  e8 06 02 00 00                 call   decimal_to_text
+  4002cf  e8 f9 00 00 00                 call   write_text
+  4002d4  48 b8 2e 1a 40 00 00 00 00 00  movabs rax,0x401a2e    ; text "\n"
+  4002de  e8 ea 00 00 00                 call   write_text
+-- line 9: write round 2.6 --
+  4002e3  48 b8 48 1a 40 00 00 00 00 00  movabs rax,0x401a48    ; the number 2.6
+  4002ed  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  4002f4  66 48 0f 6e c0                 movq   xmm0,rax
+  4002f9  48 b8 50 1a 40 00 00 00 00 00  movabs rax,0x401a50    ; the number 0.5
+  400303  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  40030a  66 48 0f 6e c8                 movq   xmm1,rax
+  40030f  f2 0f 58 c1                    addsd  xmm0,xmm1
+  400313  66 0f 3a 0b c0 01              roundsd xmm0,xmm0,0x1
+  400319  f2 48 0f 2c c0                 cvttsd2si rax,xmm0
+  40031e  e8 0c 01 00 00                 call   number_to_text
+  400323  e8 a5 00 00 00                 call   write_text
+  400328  48 b8 2e 1a 40 00 00 00 00 00  movabs rax,0x401a2e    ; text "\n"
+  400332  e8 96 00 00 00                 call   write_text
+-- line 10: write the time --
+  400337  e8 5e 0d 00 00                 call   time_text
+  40033c  e8 8c 00 00 00                 call   write_text
+  400341  48 b8 2e 1a 40 00 00 00 00 00  movabs rax,0x401a2e    ; text "\n"
+  40034b  e8 7d 00 00 00                 call   write_text
+-- the end: put colours back, exit --
+  400350  b8 3c 00 00 00                 mov    eax,0x3c
+  400355  bf 00 00 00 00                 mov    edi,0x0
+  40035a  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+-- toolbox routine alloc: rcx = bytes wanted -> rax = where they are. --
+  40035c  48 81 c1 07 00 00 00           add    rcx,0x7
+  400363  48 81 e1 f8 ff ff ff           and    rcx,0xfffffffffffffff8
+  40036a  48 ba 10 00 00 10 00 00 00 00  movabs rdx,0x10000010    ; heap_next
+  400374  48 8b 82 00 00 00 00           mov    rax,QWORD PTR [rdx+0x0]
+  40037b  49 89 c0                       mov    r8,rax
+  40037e  49 01 c8                       add    r8,rcx
+  400381  49 b9 50 00 00 14 00 00 00 00  movabs r9,0x14000050    ; heap_end
+  40038b  4d 39 c8                       cmp    r8,r9
+  40038e  0f 87 08 00 00 00              ja     out_of_memory
+  400394  4c 89 82 00 00 00 00           mov    QWORD PTR [rdx+0x0],r8
+  40039b  c3                             ret
+  40039c  48 b8 58 1a 40 00 00 00 00 00  movabs rax,0x401a58    ; text "\nOut of memory: the program made too ..."
+  4003a6  e8 22 00 00 00                 call   write_text
+  4003ab  b8 3c 00 00 00                 mov    eax,0x3c
+  4003b0  bf 01 00 00 00                 mov    edi,0x1
+  4003b5  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+-- toolbox routine new_text: rcx = length -> rax = a new, empty text of that length. --
+  4003b7  51                             push   rcx
+  4003b8  48 81 c1 09 00 00 00           add    rcx,0x9
+  4003bf  e8 98 ff ff ff                 call   alloc
+  4003c4  59                             pop    rcx
+  4003c5  48 89 88 00 00 00 00           mov    QWORD PTR [rax+0x0],rcx
+  4003cc  c3                             ret
+-- toolbox routine write_text: rax = text -> shown on screen. --
+  4003cd  48 8d b0 08 00 00 00           lea    rsi,[rax+0x8]
+  4003d4  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  4003db  b8 01 00 00 00                 mov    eax,0x1
+  4003e0  bf 01 00 00 00                 mov    edi,0x1
+  4003e5  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  4003e7  c3                             ret
+-- toolbox routine join: rax = first text, rcx = second text -> rax = both, one after the other. --
+  4003e8  50                             push   rax
+  4003e9  51                             push   rcx
+  4003ea  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  4003f1  4c 8b 81 00 00 00 00           mov    r8,QWORD PTR [rcx+0x0]
+  4003f8  4c 01 c2                       add    rdx,r8
+  4003fb  48 89 d1                       mov    rcx,rdx
+  4003fe  e8 b4 ff ff ff                 call   new_text
+  400403  41 59                          pop    r9
+  400405  41 58                          pop    r8
+  400407  48 8d b8 08 00 00 00           lea    rdi,[rax+0x8]
+  40040e  49 8d b0 08 00 00 00           lea    rsi,[r8+0x8]
+  400415  49 8b 88 00 00 00 00           mov    rcx,QWORD PTR [r8+0x0]
+  40041c  f3 a4                          rep movs BYTE PTR [rdi],BYTE PTR [rsi]
+  40041e  49 8d b1 08 00 00 00           lea    rsi,[r9+0x8]
+  400425  49 8b 89 00 00 00 00           mov    rcx,QWORD PTR [r9+0x0]
+  40042c  f3 a4                          rep movs BYTE PTR [rdi],BYTE PTR [rsi]
+  40042e  c3                             ret
+-- toolbox routine number_to_text: rax = whole number -> rax = it written as a text. --
+  40042f  49 89 c0                       mov    r8,rax
+  400432  49 b9 60 00 00 14 00 00 00 00  movabs r9,0x14000060    ; digits_15
+  40043c  49 81 c1 20 00 00 00           add    r9,0x20
+  400443  41 ba 00 00 00 00              mov    r10d,0x0
+  400449  4d 85 c0                       test   r8,r8
+  40044c  0f 8d 09 00 00 00              jge    ntt_digits
+  400452  49 f7 d8                       neg    r8
+  400455  41 ba 01 00 00 00              mov    r10d,0x1
+  40045b  b9 0a 00 00 00                 mov    ecx,0xa
+  400460  4c 89 c0                       mov    rax,r8
+  400463  ba 00 00 00 00                 mov    edx,0x0
+  400468  48 f7 f1                       div    rcx
+  40046b  49 89 c0                       mov    r8,rax
+  40046e  48 81 c2 30 00 00 00           add    rdx,0x30
+  400475  49 81 e9 01 00 00 00           sub    r9,0x1
+  40047c  41 88 91 00 00 00 00           mov    BYTE PTR [r9+0x0],dl
+  400483  4d 85 c0                       test   r8,r8
+  400486  0f 85 cf ff ff ff              jne    ntt_digits
+  40048c  4d 85 d2                       test   r10,r10
+  40048f  0f 84 13 00 00 00              je     ntt_copy
+  400495  49 81 e9 01 00 00 00           sub    r9,0x1
+  40049c  ba 2d 00 00 00                 mov    edx,0x2d
+  4004a1  41 88 91 00 00 00 00           mov    BYTE PTR [r9+0x0],dl
+  4004a8  48 b9 60 00 00 14 00 00 00 00  movabs rcx,0x14000060    ; digits_15
+  4004b2  48 81 c1 20 00 00 00           add    rcx,0x20
+  4004b9  4c 29 c9                       sub    rcx,r9
+  4004bc  41 51                          push   r9
+  4004be  e8 f4 fe ff ff                 call   new_text
+  4004c3  5e                             pop    rsi
+  4004c4  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  4004cb  48 8d b8 08 00 00 00           lea    rdi,[rax+0x8]
+  4004d2  f3 a4                          rep movs BYTE PTR [rdi],BYTE PTR [rsi]
+  4004d4  c3                             ret
+-- toolbox routine decimal_to_text: rax = decimal, rcx = places after the point (-1: none if it's whole, else 2) -> rax = text. --
+  4004d5  49 89 c0                       mov    r8,rax
+  4004d8  49 c1 e0 01                    shl    r8,0x1
+  4004dc  49 c1 e8 01                    shr    r8,0x1
+  4004e0  49 b9 00 00 00 00 00 00 f0 7f  movabs r9,0x7ff0000000000000
+  4004ea  4d 39 c8                       cmp    r8,r9
+  4004ed  0f 82 2f 00 00 00              jb     dtt_normal
+  4004f3  0f 87 1e 00 00 00              ja     dtt_nan
+  4004f9  48 85 c0                       test   rax,rax
+  4004fc  48 b8 9a 1a 40 00 00 00 00 00  movabs rax,0x401a9a    ; text "infinity"
+  400506  0f 89 15 00 00 00              jns    dtt_end
+  40050c  48 b8 ab 1a 40 00 00 00 00 00  movabs rax,0x401aab    ; text "minus infinity"
+  400516  c3                             ret
+  400517  48 b8 c2 1a 40 00 00 00 00 00  movabs rax,0x401ac2    ; text "not a number"
+  400521  c3                             ret
+  400522  49 bb 80 00 00 14 00 00 00 00  movabs r11,0x14000080    ; decimal_vars_16
+  40052c  49 89 c0                       mov    r8,rax
+  40052f  49 c1 e8 3f                    shr    r8,0x3f
+  400533  4d 89 83 10 00 00 00           mov    QWORD PTR [r11+0x10],r8
+  40053a  48 c1 e0 01                    shl    rax,0x1
+  40053e  48 c1 e8 01                    shr    rax,0x1
+  400542  49 89 83 00 00 00 00           mov    QWORD PTR [r11+0x0],rax
+  400549  48 81 f9 ff ff ff ff           cmp    rcx,0xffffffffffffffff
+  400550  0f 85 1f 00 00 00              jne    dtt_places
+  400556  66 48 0f 6e c0                 movq   xmm0,rax
+  40055b  66 0f 3a 0b c8 03              roundsd xmm1,xmm0,0x3
+  400561  66 0f 2e c1                    ucomisd xmm0,xmm1
+  400565  b9 00 00 00 00                 mov    ecx,0x0
+  40056a  0f 84 05 00 00 00              je     dtt_places
+  400570  b9 02 00 00 00                 mov    ecx,0x2
+  400575  49 89 8b 08 00 00 00           mov    QWORD PTR [r11+0x8],rcx
+  40057c  b8 01 00 00 00                 mov    eax,0x1
+  400581  ba 0a 00 00 00                 mov    edx,0xa
+  400586  48 85 c9                       test   rcx,rcx
+  400589  0f 84 10 00 00 00              je     dtt_scaled
+  40058f  48 0f af c2                    imul   rax,rdx
+  400593  48 81 e9 01 00 00 00           sub    rcx,0x1
+  40059a  e9 e7 ff ff ff                 jmp    dtt_scale
+  40059f  49 89 83 18 00 00 00           mov    QWORD PTR [r11+0x18],rax
+  4005a6  f2 48 0f 2a c8                 cvtsi2sd xmm1,rax
+  4005ab  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  4005b2  66 48 0f 6e c0                 movq   xmm0,rax
+  4005b7  f2 0f 59 c1                    mulsd  xmm0,xmm1
+  4005bb  48 b8 92 1a 40 00 00 00 00 00  movabs rax,0x401a92    ; the number 0.5
+  4005c5  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  4005cc  66 48 0f 6e c8                 movq   xmm1,rax
+  4005d1  f2 0f 58 c1                    addsd  xmm0,xmm1
+  4005d5  f2 48 0f 2c c0                 cvttsd2si rax,xmm0
+  4005da  49 89 83 20 00 00 00           mov    QWORD PTR [r11+0x20],rax
+  4005e1  49 8b 8b 18 00 00 00           mov    rcx,QWORD PTR [r11+0x18]
+  4005e8  ba 00 00 00 00                 mov    edx,0x0
+  4005ed  48 f7 f1                       div    rcx
+  4005f0  52                             push   rdx
+  4005f1  e8 39 fe ff ff                 call   number_to_text
+  4005f6  5a                             pop    rdx
+  4005f7  49 bb 80 00 00 14 00 00 00 00  movabs r11,0x14000080    ; decimal_vars_16
+  400601  49 89 83 28 00 00 00           mov    QWORD PTR [r11+0x28],rax
+  400608  4d 8b 83 10 00 00 00           mov    r8,QWORD PTR [r11+0x10]
+  40060f  4d 85 c0                       test   r8,r8
+  400612  0f 84 39 00 00 00              je     dtt_after_sign
+  400618  4d 8b 83 20 00 00 00           mov    r8,QWORD PTR [r11+0x20]
+  40061f  4d 85 c0                       test   r8,r8
+  400622  0f 84 29 00 00 00              je     dtt_after_sign
+  400628  52                             push   rdx
+  400629  48 b8 d7 1a 40 00 00 00 00 00  movabs rax,0x401ad7    ; text "-"
+  400633  49 8b 8b 28 00 00 00           mov    rcx,QWORD PTR [r11+0x28]
+  40063a  e8 a9 fd ff ff                 call   join
+  40063f  5a                             pop    rdx
+  400640  49 bb 80 00 00 14 00 00 00 00  movabs r11,0x14000080    ; decimal_vars_16
+  40064a  49 89 83 28 00 00 00           mov    QWORD PTR [r11+0x28],rax
+  400651  49 8b 8b 08 00 00 00           mov    rcx,QWORD PTR [r11+0x8]
+  400658  48 85 c9                       test   rcx,rcx
+  40065b  0f 84 34 00 00 00              je     dtt_done
+  400661  49 8b 83 18 00 00 00           mov    rax,QWORD PTR [r11+0x18]
+  400668  48 01 d0                       add    rax,rdx
+  40066b  e8 bf fd ff ff                 call   number_to_text
+  400670  b9 2e 00 00 00                 mov    ecx,0x2e
+  400675  40 88 88 08 00 00 00           rex mov BYTE PTR [rax+0x8],cl
+  40067c  48 89 c1                       mov    rcx,rax
+  40067f  49 bb 80 00 00 14 00 00 00 00  movabs r11,0x14000080    ; decimal_vars_16
+  400689  49 8b 83 28 00 00 00           mov    rax,QWORD PTR [r11+0x28]
+  400690  e9 53 fd ff ff                 jmp    join
+  400695  49 8b 83 28 00 00 00           mov    rax,QWORD PTR [r11+0x28]
+  40069c  c3                             ret
+-- toolbox routine text_to_number: rax = text -> rax = the whole number at its start (0 if none). --
+  40069d  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  4006a4  48 8d b0 08 00 00 00           lea    rsi,[rax+0x8]
+  4006ab  41 b8 00 00 00 00              mov    r8d,0x0
+  4006b1  41 b9 00 00 00 00              mov    r9d,0x0
+  4006b7  41 ba 0a 00 00 00              mov    r10d,0xa
+  4006bd  48 85 c9                       test   rcx,rcx
+  4006c0  0f 84 88 00 00 00              je     ttn_done
+  4006c6  48 0f b6 96 00 00 00 00        movzx  rdx,BYTE PTR [rsi+0x0]
+  4006ce  48 81 fa 20 00 00 00           cmp    rdx,0x20
+  4006d5  0f 85 13 00 00 00              jne    ttn_sign
+  4006db  48 81 c6 01 00 00 00           add    rsi,0x1
+  4006e2  48 81 e9 01 00 00 00           sub    rcx,0x1
+  4006e9  e9 cf ff ff ff                 jmp    ttn_spaces
+  4006ee  48 81 fa 2d 00 00 00           cmp    rdx,0x2d
+  4006f5  0f 85 14 00 00 00              jne    ttn_digits
+  4006fb  41 b9 01 00 00 00              mov    r9d,0x1
+  400701  48 81 c6 01 00 00 00           add    rsi,0x1
+  400708  48 81 e9 01 00 00 00           sub    rcx,0x1
+  40070f  48 85 c9                       test   rcx,rcx
+  400712  0f 84 36 00 00 00              je     ttn_done
+  400718  48 0f b6 96 00 00 00 00        movzx  rdx,BYTE PTR [rsi+0x0]
+  400720  48 81 ea 30 00 00 00           sub    rdx,0x30
+  400727  48 81 fa 09 00 00 00           cmp    rdx,0x9
+  40072e  0f 87 1a 00 00 00              ja     ttn_done
+  400734  4d 0f af c2                    imul   r8,r10
+  400738  49 01 d0                       add    r8,rdx
+  40073b  48 81 c6 01 00 00 00           add    rsi,0x1
+  400742  48 81 e9 01 00 00 00           sub    rcx,0x1
+  400749  e9 c1 ff ff ff                 jmp    ttn_digits
+  40074e  4c 89 c0                       mov    rax,r8
+  400751  4d 85 c9                       test   r9,r9
+  400754  0f 84 03 00 00 00              je     ttn_end
+  40075a  48 f7 d8                       neg    rax
+  40075d  c3                             ret
+-- toolbox routine same_letters: rsi, rdi = where two runs of letters start, rcx = how many -> rax = 1 if they match. --
+  40075e  48 85 c9                       test   rcx,rcx
+  400761  0f 84 6f 00 00 00              je     sl_yes
+  400767  48 0f b6 86 00 00 00 00        movzx  rax,BYTE PTR [rsi+0x0]
+  40076f  48 0f b6 97 00 00 00 00        movzx  rdx,BYTE PTR [rdi+0x0]
+  400777  49 89 c2                       mov    r10,rax
+  40077a  49 81 ea 41 00 00 00           sub    r10,0x41
+  400781  49 81 fa 19 00 00 00           cmp    r10,0x19
+  400788  0f 87 07 00 00 00              ja     small_22
+  40078e  48 81 c0 20 00 00 00           add    rax,0x20
+  400795  49 89 d2                       mov    r10,rdx
+  400798  49 81 ea 41 00 00 00           sub    r10,0x41
+  40079f  49 81 fa 19 00 00 00           cmp    r10,0x19
+  4007a6  0f 87 07 00 00 00              ja     small_23
+  4007ac  48 81 c2 20 00 00 00           add    rdx,0x20
+  4007b3  48 39 d0                       cmp    rax,rdx
+  4007b6  0f 85 20 00 00 00              jne    sl_no
+  4007bc  48 81 c6 01 00 00 00           add    rsi,0x1
+  4007c3  48 81 c7 01 00 00 00           add    rdi,0x1
+  4007ca  48 81 e9 01 00 00 00           sub    rcx,0x1
+  4007d1  e9 88 ff ff ff                 jmp    same_letters
+  4007d6  b8 01 00 00 00                 mov    eax,0x1
+  4007db  c3                             ret
+  4007dc  b8 00 00 00 00                 mov    eax,0x0
+  4007e1  c3                             ret
+-- toolbox routine text_equal: rax, rcx = texts -> rax = 1 if they're the same (capitals don't matter), else 0. --
+  4007e2  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  4007e9  4c 8b 81 00 00 00 00           mov    r8,QWORD PTR [rcx+0x0]
+  4007f0  4c 39 c2                       cmp    rdx,r8
+  4007f3  0f 85 16 00 00 00              jne    te_no
+  4007f9  48 8d b0 08 00 00 00           lea    rsi,[rax+0x8]
+  400800  48 8d b9 08 00 00 00           lea    rdi,[rcx+0x8]
+  400807  48 89 d1                       mov    rcx,rdx
+  40080a  e9 4f ff ff ff                 jmp    same_letters
+  40080f  b8 00 00 00 00                 mov    eax,0x0
+  400814  c3                             ret
+-- toolbox routine match_at: rax = text, rcx = smaller text, rdx = position -> rax = 1 if the smaller one is there. --
+  400815  48 85 d2                       test   rdx,rdx
+  400818  0f 8c 36 00 00 00              jl     ma_no
+  40081e  4c 8b 80 00 00 00 00           mov    r8,QWORD PTR [rax+0x0]
+  400825  4c 8b 89 00 00 00 00           mov    r9,QWORD PTR [rcx+0x0]
+  40082c  49 89 d2                       mov    r10,rdx
+  40082f  4d 01 ca                       add    r10,r9
+  400832  4d 39 c2                       cmp    r10,r8
+  400835  0f 8f 19 00 00 00              jg     ma_no
+  40083b  48 8d b0 08 00 00 00           lea    rsi,[rax+0x8]
+  400842  48 01 d6                       add    rsi,rdx
+  400845  48 8d b9 08 00 00 00           lea    rdi,[rcx+0x8]
+  40084c  4c 89 c9                       mov    rcx,r9
+  40084f  e9 0a ff ff ff                 jmp    same_letters
+  400854  b8 00 00 00 00                 mov    eax,0x0
+  400859  c3                             ret
+-- toolbox routine contains: rax = text, rcx = smaller text -> rax = 1 if it appears anywhere. --
+  40085a  49 bb b0 00 00 14 00 00 00 00  movabs r11,0x140000b0    ; contains_vars_24
+  400864  49 89 83 00 00 00 00           mov    QWORD PTR [r11+0x0],rax
+  40086b  49 89 8b 08 00 00 00           mov    QWORD PTR [r11+0x8],rcx
+  400872  ba 00 00 00 00                 mov    edx,0x0
+  400877  49 89 93 10 00 00 00           mov    QWORD PTR [r11+0x10],rdx
+  40087e  4c 8b 80 00 00 00 00           mov    r8,QWORD PTR [rax+0x0]
+  400885  4c 8b 89 00 00 00 00           mov    r9,QWORD PTR [rcx+0x0]
+  40088c  4d 29 c8                       sub    r8,r9
+  40088f  4c 39 c2                       cmp    rdx,r8
+  400892  0f 8f 39 00 00 00              jg     contains_no
+  400898  e8 78 ff ff ff                 call   match_at
+  40089d  48 85 c0                       test   rax,rax
+  4008a0  0f 85 30 00 00 00              jne    contains_yes
+  4008a6  49 bb b0 00 00 14 00 00 00 00  movabs r11,0x140000b0    ; contains_vars_24
+  4008b0  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  4008b7  49 8b 8b 08 00 00 00           mov    rcx,QWORD PTR [r11+0x8]
+  4008be  49 8b 93 10 00 00 00           mov    rdx,QWORD PTR [r11+0x10]
+  4008c5  48 81 c2 01 00 00 00           add    rdx,0x1
+  4008cc  e9 a6 ff ff ff                 jmp    contains_try
+  4008d1  b8 00 00 00 00                 mov    eax,0x0
+  4008d6  c3                             ret
+  4008d7  ba 00 00 00 00                 mov    edx,0x0
+  4008dc  e9 34 ff ff ff                 jmp    match_at
+  4008e1  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  4008e8  4c 8b 81 00 00 00 00           mov    r8,QWORD PTR [rcx+0x0]
+  4008ef  4c 29 c2                       sub    rdx,r8
+  4008f2  e9 1e ff ff ff                 jmp    match_at
+  4008f7  50                             push   rax
+  4008f8  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  4008ff  e8 b3 fa ff ff                 call   new_text
+  400904  5e                             pop    rsi
+  400905  48 8b 8e 00 00 00 00           mov    rcx,QWORD PTR [rsi+0x0]
+  40090c  4c 8d 86 08 00 00 00           lea    r8,[rsi+0x8]
+  400913  4c 8d 88 08 00 00 00           lea    r9,[rax+0x8]
+  40091a  48 85 c9                       test   rcx,rcx
+  40091d  0f 84 47 00 00 00              je     upper_done
+  400923  49 0f b6 90 00 00 00 00        movzx  rdx,BYTE PTR [r8+0x0]
+  40092b  49 89 d2                       mov    r10,rdx
+  40092e  49 81 ea 61 00 00 00           sub    r10,0x61
+  400935  49 81 fa 19 00 00 00           cmp    r10,0x19
+  40093c  0f 87 07 00 00 00              ja     upper_keep
+  400942  48 81 c2 e0 ff ff ff           add    rdx,0xffffffffffffffe0
+  400949  41 88 91 00 00 00 00           mov    BYTE PTR [r9+0x0],dl
+  400950  49 81 c0 01 00 00 00           add    r8,0x1
+  400957  49 81 c1 01 00 00 00           add    r9,0x1
+  40095e  48 81 e9 01 00 00 00           sub    rcx,0x1
+  400965  e9 b0 ff ff ff                 jmp    upper_next
+  40096a  c3                             ret
+  40096b  50                             push   rax
+  40096c  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  400973  e8 3f fa ff ff                 call   new_text
+  400978  5e                             pop    rsi
+  400979  48 8b 8e 00 00 00 00           mov    rcx,QWORD PTR [rsi+0x0]
+  400980  4c 8d 86 08 00 00 00           lea    r8,[rsi+0x8]
+  400987  4c 8d 88 08 00 00 00           lea    r9,[rax+0x8]
+  40098e  48 85 c9                       test   rcx,rcx
+  400991  0f 84 47 00 00 00              je     lower_done
+  400997  49 0f b6 90 00 00 00 00        movzx  rdx,BYTE PTR [r8+0x0]
+  40099f  49 89 d2                       mov    r10,rdx
+  4009a2  49 81 ea 41 00 00 00           sub    r10,0x41
+  4009a9  49 81 fa 19 00 00 00           cmp    r10,0x19
+  4009b0  0f 87 07 00 00 00              ja     lower_keep
+  4009b6  48 81 c2 20 00 00 00           add    rdx,0x20
+  4009bd  41 88 91 00 00 00 00           mov    BYTE PTR [r9+0x0],dl
+  4009c4  49 81 c0 01 00 00 00           add    r8,0x1
+  4009cb  49 81 c1 01 00 00 00           add    r9,0x1
+  4009d2  48 81 e9 01 00 00 00           sub    rcx,0x1
+  4009d9  e9 b0 ff ff ff                 jmp    lower_next
+  4009de  c3                             ret
+-- toolbox routine letter: rax = text, rcx = N -> rax = its Nth letter (counting from 1), or empty if there isn't one. --
+  4009df  48 81 e9 01 00 00 00           sub    rcx,0x1
+  4009e6  0f 8c 31 00 00 00              jl     letter_none
+  4009ec  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  4009f3  48 39 d1                       cmp    rcx,rdx
+  4009f6  0f 8d 21 00 00 00              jge    letter_none
+  4009fc  50                             push   rax
+  4009fd  51                             push   rcx
+  4009fe  b9 01 00 00 00                 mov    ecx,0x1
+  400a03  e8 af f9 ff ff                 call   new_text
+  400a08  59                             pop    rcx
+  400a09  5e                             pop    rsi
+  400a0a  48 01 ce                       add    rsi,rcx
+  400a0d  48 0f b6 96 08 00 00 00        movzx  rdx,BYTE PTR [rsi+0x8]
+  400a15  40 88 90 08 00 00 00           rex mov BYTE PTR [rax+0x8],dl
+  400a1c  c3                             ret
+  400a1d  b9 00 00 00 00                 mov    ecx,0x0
+  400a22  e9 90 f9 ff ff                 jmp    new_text
+-- toolbox routine split: rax = text, rcx = list, rdx = the letter to split at, r8 = 1 to turn pieces into numbers. --
+  400a27  49 bb d0 00 00 14 00 00 00 00  movabs r11,0x140000d0    ; split_vars_25
+  400a31  49 89 83 00 00 00 00           mov    QWORD PTR [r11+0x0],rax
+  400a38  49 89 8b 08 00 00 00           mov    QWORD PTR [r11+0x8],rcx
+  400a3f  49 89 93 10 00 00 00           mov    QWORD PTR [r11+0x10],rdx
+  400a46  4d 89 83 18 00 00 00           mov    QWORD PTR [r11+0x18],r8
+  400a4d  ba 00 00 00 00                 mov    edx,0x0
+  400a52  48 89 91 00 00 00 00           mov    QWORD PTR [rcx+0x0],rdx
+  400a59  49 89 93 20 00 00 00           mov    QWORD PTR [r11+0x20],rdx
+  400a60  49 89 93 28 00 00 00           mov    QWORD PTR [r11+0x28],rdx
+  400a67  49 bb d0 00 00 14 00 00 00 00  movabs r11,0x140000d0    ; split_vars_25
+  400a71  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  400a78  49 8b 93 20 00 00 00           mov    rdx,QWORD PTR [r11+0x20]
+  400a7f  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  400a86  48 39 ca                       cmp    rdx,rcx
+  400a89  0f 84 5e 00 00 00              je     split_last
+  400a8f  48 01 d0                       add    rax,rdx
+  400a92  48 0f b6 80 08 00 00 00        movzx  rax,BYTE PTR [rax+0x8]
+  400a9a  49 8b 8b 10 00 00 00           mov    rcx,QWORD PTR [r11+0x10]
+  400aa1  48 39 c8                       cmp    rax,rcx
+  400aa4  0f 84 13 00 00 00              je     split_cut
+  400aaa  48 81 c2 01 00 00 00           add    rdx,0x1
+  400ab1  49 89 93 20 00 00 00           mov    QWORD PTR [r11+0x20],rdx
+  400ab8  e9 aa ff ff ff                 jmp    split_look
+  400abd  e8 31 00 00 00                 call   split_piece
+  400ac2  49 bb d0 00 00 14 00 00 00 00  movabs r11,0x140000d0    ; split_vars_25
+  400acc  49 8b 93 20 00 00 00           mov    rdx,QWORD PTR [r11+0x20]
+  400ad3  48 81 c2 01 00 00 00           add    rdx,0x1
+  400ada  49 89 93 20 00 00 00           mov    QWORD PTR [r11+0x20],rdx
+  400ae1  49 89 93 28 00 00 00           mov    QWORD PTR [r11+0x28],rdx
+  400ae8  e9 7a ff ff ff                 jmp    split_look
+  400aed  e8 01 00 00 00                 call   split_piece
+  400af2  c3                             ret
+-- toolbox routine split_piece --
+  400af3  49 bb d0 00 00 14 00 00 00 00  movabs r11,0x140000d0    ; split_vars_25
+  400afd  49 8b 8b 20 00 00 00           mov    rcx,QWORD PTR [r11+0x20]
+  400b04  49 8b 93 28 00 00 00           mov    rdx,QWORD PTR [r11+0x28]
+  400b0b  48 29 d1                       sub    rcx,rdx
+  400b0e  0f 84 65 00 00 00              je     split_skip
+  400b14  e8 9e f8 ff ff                 call   new_text
+  400b19  49 bb d0 00 00 14 00 00 00 00  movabs r11,0x140000d0    ; split_vars_25
+  400b23  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  400b2a  48 8d b8 08 00 00 00           lea    rdi,[rax+0x8]
+  400b31  49 8b b3 00 00 00 00           mov    rsi,QWORD PTR [r11+0x0]
+  400b38  49 8b 93 28 00 00 00           mov    rdx,QWORD PTR [r11+0x28]
+  400b3f  48 01 d6                       add    rsi,rdx
+  400b42  48 81 c6 08 00 00 00           add    rsi,0x8
+  400b49  f3 a4                          rep movs BYTE PTR [rdi],BYTE PTR [rsi]
+  400b4b  4d 8b 83 18 00 00 00           mov    r8,QWORD PTR [r11+0x18]
+  400b52  4d 85 c0                       test   r8,r8
+  400b55  0f 84 05 00 00 00              je     split_keep_text
+  400b5b  e8 3d fb ff ff                 call   text_to_number
+  400b60  48 89 c1                       mov    rcx,rax
+  400b63  49 bb d0 00 00 14 00 00 00 00  movabs r11,0x140000d0    ; split_vars_25
+  400b6d  49 8b 83 08 00 00 00           mov    rax,QWORD PTR [r11+0x8]
+  400b74  e9 10 06 00 00                 jmp    push
+  400b79  c3                             ret
+-- toolbox routine letters: rax = text, rcx = list -> the list is emptied, then gets each letter as an item. --
+  400b7a  49 bb 00 01 00 14 00 00 00 00  movabs r11,0x14000100    ; letters_vars_26
+  400b84  49 89 83 00 00 00 00           mov    QWORD PTR [r11+0x0],rax
+  400b8b  49 89 8b 08 00 00 00           mov    QWORD PTR [r11+0x8],rcx
+  400b92  ba 00 00 00 00                 mov    edx,0x0
+  400b97  48 89 91 00 00 00 00           mov    QWORD PTR [rcx+0x0],rdx
+  400b9e  ba 01 00 00 00                 mov    edx,0x1
+  400ba3  49 89 93 10 00 00 00           mov    QWORD PTR [r11+0x10],rdx
+  400baa  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  400bb1  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  400bb8  48 39 ca                       cmp    rdx,rcx
+  400bbb  0f 8f 3e 00 00 00              jg     letters_done
+  400bc1  48 89 d1                       mov    rcx,rdx
+  400bc4  e8 16 fe ff ff                 call   letter
+  400bc9  48 89 c1                       mov    rcx,rax
+  400bcc  49 bb 00 01 00 14 00 00 00 00  movabs r11,0x14000100    ; letters_vars_26
+  400bd6  49 8b 83 08 00 00 00           mov    rax,QWORD PTR [r11+0x8]
+  400bdd  e8 a7 05 00 00                 call   push
+  400be2  49 bb 00 01 00 14 00 00 00 00  movabs r11,0x14000100    ; letters_vars_26
+  400bec  49 8b 93 10 00 00 00           mov    rdx,QWORD PTR [r11+0x10]
+  400bf3  48 81 c2 01 00 00 00           add    rdx,0x1
+  400bfa  e9 a4 ff ff ff                 jmp    letters_next
+  400bff  c3                             ret
+-- toolbox routine reverse_text: rax = text -> rax = a new text with its letters the other way round. --
+  400c00  50                             push   rax
+  400c01  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  400c08  e8 aa f7 ff ff                 call   new_text
+  400c0d  5e                             pop    rsi
+  400c0e  4c 8b 86 00 00 00 00           mov    r8,QWORD PTR [rsi+0x0]
+  400c15  48 81 c6 08 00 00 00           add    rsi,0x8
+  400c1c  4c 8d 88 08 00 00 00           lea    r9,[rax+0x8]
+  400c23  49 81 e8 01 00 00 00           sub    r8,0x1
+  400c2a  49 81 f8 00 00 00 00           cmp    r8,0x0
+  400c31  0f 8c 81 00 00 00              jl     revt_done
+  400c37  4d 89 c2                       mov    r10,r8
+  400c3a  49 81 fa 00 00 00 00           cmp    r10,0x0
+  400c41  0f 84 2e 00 00 00              je     revt_copy
+  400c47  49 89 f3                       mov    r11,rsi
+  400c4a  4d 01 d3                       add    r11,r10
+  400c4d  49 0f b6 93 00 00 00 00        movzx  rdx,BYTE PTR [r11+0x0]
+  400c55  48 81 e2 c0 00 00 00           and    rdx,0xc0
+  400c5c  48 81 fa 80 00 00 00           cmp    rdx,0x80
+  400c63  0f 85 0c 00 00 00              jne    revt_copy
+  400c69  49 81 ea 01 00 00 00           sub    r10,0x1
+  400c70  e9 c5 ff ff ff                 jmp    revt_start
+  400c75  4d 89 d3                       mov    r11,r10
+  400c78  4d 39 c3                       cmp    r11,r8
+  400c7b  0f 8f 28 00 00 00              jg     revt_moved
+  400c81  48 89 f1                       mov    rcx,rsi
+  400c84  4c 01 d9                       add    rcx,r11
+  400c87  48 0f b6 91 00 00 00 00        movzx  rdx,BYTE PTR [rcx+0x0]
+  400c8f  41 88 91 00 00 00 00           mov    BYTE PTR [r9+0x0],dl
+  400c96  49 81 c1 01 00 00 00           add    r9,0x1
+  400c9d  49 81 c3 01 00 00 00           add    r11,0x1
+  400ca4  e9 cf ff ff ff                 jmp    revt_byte
+  400ca9  4d 89 d0                       mov    r8,r10
+  400cac  49 81 e8 01 00 00 00           sub    r8,0x1
+  400cb3  e9 72 ff ff ff                 jmp    revt_next
+  400cb8  c3                             ret
+-- toolbox routine reverse_list: rax = list, rcx = space for a list -> rax = that space, holding the items the other way round. --
+  400cb9  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  400cc0  48 89 91 00 00 00 00           mov    QWORD PTR [rcx+0x0],rdx
+  400cc7  41 b8 00 00 00 00              mov    r8d,0x0
+  400ccd  49 39 d0                       cmp    r8,rdx
+  400cd0  0f 8d 38 00 00 00              jge    revl_done
+  400cd6  49 89 d1                       mov    r9,rdx
+  400cd9  4d 29 c1                       sub    r9,r8
+  400cdc  49 81 e9 01 00 00 00           sub    r9,0x1
+  400ce3  49 c1 e1 03                    shl    r9,0x3
+  400ce7  49 01 c1                       add    r9,rax
+  400cea  4d 8b 91 08 00 00 00           mov    r10,QWORD PTR [r9+0x8]
+  400cf1  4d 89 c3                       mov    r11,r8
+  400cf4  49 c1 e3 03                    shl    r11,0x3
+  400cf8  49 01 cb                       add    r11,rcx
+  400cfb  4d 89 93 08 00 00 00           mov    QWORD PTR [r11+0x8],r10
+  400d02  49 81 c0 01 00 00 00           add    r8,0x1
+  400d09  e9 bf ff ff ff                 jmp    revl_next
+  400d0e  48 89 c8                       mov    rax,rcx
+  400d11  c3                             ret
+-- toolbox routine read_line: -> rax = the text typed before Enter (up to TEXT_LIMIT letters, spaces at the end dropped). --
+  400d12  b9 00 01 00 00                 mov    ecx,0x100
+  400d17  e8 9b f6 ff ff                 call   new_text
+  400d1c  50                             push   rax
+  400d1d  4c 8d a0 08 00 00 00           lea    r12,[rax+0x8]
+  400d24  4d 89 e6                       mov    r14,r12
+  400d27  4c 8d a8 08 01 00 00           lea    r13,[rax+0x108]
+  400d2e  b8 00 00 00 00                 mov    eax,0x0
+  400d33  bf 00 00 00 00                 mov    edi,0x0
+  400d38  4c 89 e6                       mov    rsi,r12
+  400d3b  ba 01 00 00 00                 mov    edx,0x1
+  400d40  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  400d42  48 81 f8 01 00 00 00           cmp    rax,0x1
+  400d49  0f 85 2b 00 00 00              jne    rl_ended
+  400d4f  49 0f b6 94 24 00 00 00 00     movzx  rdx,BYTE PTR [r12+0x0]
+  400d58  48 81 fa 0a 00 00 00           cmp    rdx,0xa
+  400d5f  0f 84 1e 00 00 00              je     rl_trim
+  400d65  49 81 c4 01 00 00 00           add    r12,0x1
+  400d6c  4d 39 ec                       cmp    r12,r13
+  400d6f  0f 82 b9 ff ff ff              jb     rl_next
+  400d75  e9 09 00 00 00                 jmp    rl_trim
+  400d7a  4d 39 f4                       cmp    r12,r14
+  400d7d  0f 84 5b 00 00 00              je     input_ended
+  400d83  4d 39 f4                       cmp    r12,r14
+  400d86  0f 84 2f 00 00 00              je     rl_done
+  400d8c  49 0f b6 94 24 ff ff ff ff     movzx  rdx,BYTE PTR [r12-0x1]
+  400d95  48 81 fa 20 00 00 00           cmp    rdx,0x20
+  400d9c  0f 84 0d 00 00 00              je     rl_back
+  400da2  48 81 fa 0d 00 00 00           cmp    rdx,0xd
+  400da9  0f 85 0c 00 00 00              jne    rl_done
+  400daf  49 81 ec 01 00 00 00           sub    r12,0x1
+  400db6  e9 c8 ff ff ff                 jmp    rl_trim
+  400dbb  ba 00 00 00 00                 mov    edx,0x0
+  400dc0  41 88 94 24 00 00 00 00        mov    BYTE PTR [r12+0x0],dl
+  400dc8  58                             pop    rax
+  400dc9  4c 89 e1                       mov    rcx,r12
+  400dcc  48 29 c1                       sub    rcx,rax
+  400dcf  48 81 e9 08 00 00 00           sub    rcx,0x8
+  400dd6  48 89 88 00 00 00 00           mov    QWORD PTR [rax+0x0],rcx
+  400ddd  c3                             ret
+  400dde  48 b8 e1 1a 40 00 00 00 00 00  movabs rax,0x401ae1    ; text "\u001b[0m\n"
+  400de8  e8 e0 f5 ff ff                 call   write_text
+  400ded  b8 3c 00 00 00                 mov    eax,0x3c
+  400df2  bf 00 00 00 00                 mov    edi,0x0
+  400df7  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+-- toolbox routine read_number: -> rax = a whole number typed by the user. Asks again until it gets one. --
+  400df9  e8 14 ff ff ff                 call   read_line
+  400dfe  48 8d b0 08 00 00 00           lea    rsi,[rax+0x8]
+  400e05  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  400e0c  48 85 c9                       test   rcx,rcx
+  400e0f  0f 84 5a 00 00 00              je     rn_again
+  400e15  48 0f b6 96 00 00 00 00        movzx  rdx,BYTE PTR [rsi+0x0]
+  400e1d  48 81 c6 01 00 00 00           add    rsi,0x1
+  400e24  48 81 e9 01 00 00 00           sub    rcx,0x1
+  400e2b  48 81 fa 20 00 00 00           cmp    rdx,0x20
+  400e32  0f 84 d4 ff ff ff              je     rn_spaces
+  400e38  48 81 fa 2d 00 00 00           cmp    rdx,0x2d
+  400e3f  0f 85 11 00 00 00              jne    rn_digit
+  400e45  48 85 c9                       test   rcx,rcx
+  400e48  0f 84 21 00 00 00              je     rn_again
+  400e4e  48 0f b6 96 00 00 00 00        movzx  rdx,BYTE PTR [rsi+0x0]
+  400e56  48 81 ea 30 00 00 00           sub    rdx,0x30
+  400e5d  48 81 fa 09 00 00 00           cmp    rdx,0x9
+  400e64  0f 87 05 00 00 00              ja     rn_again
+  400e6a  e9 2e f8 ff ff                 jmp    text_to_number
+  400e6f  48 b8 ef 1a 40 00 00 00 00 00  movabs rax,0x401aef    ; text "Please type a number: "
+  400e79  e8 4f f5 ff ff                 call   write_text
+  400e7e  e9 76 ff ff ff                 jmp    read_number
+-- toolbox routine wait_key: -> rax = the one key pressed (no Enter needed when it's a real terminal). --
+  400e83  b8 10 00 00 00                 mov    eax,0x10
+  400e88  bf 00 00 00 00                 mov    edi,0x0
+  400e8d  be 01 54 00 00                 mov    esi,0x5401
+  400e92  48 ba 20 01 00 14 00 00 00 00  movabs rdx,0x14000120    ; terminal_settings_29
+  400e9c  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  400e9e  49 89 c6                       mov    r14,rax
+  400ea1  4d 85 f6                       test   r14,r14
+  400ea4  0f 85 6e 00 00 00              jne    wk_read
+  400eaa  48 be 20 01 00 14 00 00 00 00  movabs rsi,0x14000120    ; terminal_settings_29
+  400eb4  48 bf 60 01 00 14 00 00 00 00  movabs rdi,0x14000160    ; terminal_keys_now_30
+  400ebe  b9 40 00 00 00                 mov    ecx,0x40
+  400ec3  f3 a4                          rep movs BYTE PTR [rdi],BYTE PTR [rsi]
+  400ec5  48 bf 60 01 00 14 00 00 00 00  movabs rdi,0x14000160    ; terminal_keys_now_30
+  400ecf  48 0f b6 97 0c 00 00 00        movzx  rdx,BYTE PTR [rdi+0xc]
+  400ed7  48 81 e2 f4 ff ff ff           and    rdx,0xfffffffffffffff4
+  400ede  40 88 97 0c 00 00 00           rex mov BYTE PTR [rdi+0xc],dl
+  400ee5  ba 01 00 00 00                 mov    edx,0x1
+  400eea  40 88 97 17 00 00 00           rex mov BYTE PTR [rdi+0x17],dl
+  400ef1  ba 00 00 00 00                 mov    edx,0x0
+  400ef6  40 88 97 16 00 00 00           rex mov BYTE PTR [rdi+0x16],dl
+  400efd  b8 10 00 00 00                 mov    eax,0x10
+  400f02  bf 00 00 00 00                 mov    edi,0x0
+  400f07  be 02 54 00 00                 mov    esi,0x5402
+  400f0c  48 ba 60 01 00 14 00 00 00 00  movabs rdx,0x14000160    ; terminal_keys_now_30
+  400f16  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  400f18  b9 01 00 00 00                 mov    ecx,0x1
+  400f1d  e8 95 f4 ff ff                 call   new_text
+  400f22  50                             push   rax
+  400f23  48 8d b0 08 00 00 00           lea    rsi,[rax+0x8]
+  400f2a  b8 00 00 00 00                 mov    eax,0x0
+  400f2f  bf 00 00 00 00                 mov    edi,0x0
+  400f34  ba 01 00 00 00                 mov    edx,0x1
+  400f39  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  400f3b  49 89 c7                       mov    r15,rax
+  400f3e  4d 85 f6                       test   r14,r14
+  400f41  0f 85 1b 00 00 00              jne    wk_done
+  400f47  b8 10 00 00 00                 mov    eax,0x10
+  400f4c  bf 00 00 00 00                 mov    edi,0x0
+  400f51  be 02 54 00 00                 mov    esi,0x5402
+  400f56  48 ba 20 01 00 14 00 00 00 00  movabs rdx,0x14000120    ; terminal_settings_29
+  400f60  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  400f62  58                             pop    rax
+  400f63  49 81 ff 01 00 00 00           cmp    r15,0x1
+  400f6a  0f 85 6e fe ff ff              jne    input_ended
+  400f70  48 0f b6 90 08 00 00 00        movzx  rdx,BYTE PTR [rax+0x8]
+  400f78  48 81 fa 03 00 00 00           cmp    rdx,0x3
+  400f7f  0f 85 1b 00 00 00              jne    wk_end
+  400f85  48 b8 e1 1a 40 00 00 00 00 00  movabs rax,0x401ae1    ; text "\u001b[0m\n"
+  400f8f  e8 39 f4 ff ff                 call   write_text
+  400f94  b8 3c 00 00 00                 mov    eax,0x3c
+  400f99  bf 82 00 00 00                 mov    edi,0x82
+  400f9e  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  400fa0  c3                             ret
+-- toolbox routine sleep: rax = nanoseconds to wait. --
+  400fa1  48 85 c0                       test   rax,rax
+  400fa4  0f 8e 31 00 00 00              jle    sleep_done
+  400faa  ba 00 00 00 00                 mov    edx,0x0
+  400faf  b9 00 ca 9a 3b                 mov    ecx,0x3b9aca00
+  400fb4  48 f7 f1                       div    rcx
+  400fb7  48 bf a0 01 00 14 00 00 00 00  movabs rdi,0x140001a0    ; sleep_time_31
+  400fc1  48 89 87 00 00 00 00           mov    QWORD PTR [rdi+0x0],rax
+  400fc8  48 89 97 08 00 00 00           mov    QWORD PTR [rdi+0x8],rdx
+  400fcf  be 00 00 00 00                 mov    esi,0x0
+  400fd4  b8 23 00 00 00                 mov    eax,0x23
+  400fd9  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  400fdb  c3                             ret
+-- toolbox routine random: rax = lowest, rcx = highest -> rax = a random whole number from lowest to highest. --
+  400fdc  50                             push   rax
+  400fdd  51                             push   rcx
+  400fde  b8 3e 01 00 00                 mov    eax,0x13e
+  400fe3  48 bf b0 01 00 14 00 00 00 00  movabs rdi,0x140001b0    ; random_bytes_32
+  400fed  be 08 00 00 00                 mov    esi,0x8
+  400ff2  ba 00 00 00 00                 mov    edx,0x0
+  400ff7  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  400ff9  59                             pop    rcx
+  400ffa  41 58                          pop    r8
+  400ffc  4c 29 c1                       sub    rcx,r8
+  400fff  48 81 c1 01 00 00 00           add    rcx,0x1
+  401006  0f 8e 20 00 00 00              jle    random_lowest
+  40100c  48 bf b0 01 00 14 00 00 00 00  movabs rdi,0x140001b0    ; random_bytes_32
+  401016  48 8b 87 00 00 00 00           mov    rax,QWORD PTR [rdi+0x0]
+  40101d  ba 00 00 00 00                 mov    edx,0x0
+  401022  48 f7 f1                       div    rcx
+  401025  48 89 d0                       mov    rax,rdx
+  401028  4c 01 c0                       add    rax,r8
+  40102b  c3                             ret
+  40102c  4c 89 c0                       mov    rax,r8
+  40102f  c3                             ret
+-- toolbox routine now: rdi = which clock (0 time of day, 1 stopwatch) -> rax = nanoseconds. --
+  401030  b8 e4 00 00 00                 mov    eax,0xe4
+  401035  48 be c0 01 00 14 00 00 00 00  movabs rsi,0x140001c0    ; clock_reading_33
+  40103f  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  401041  48 be c0 01 00 14 00 00 00 00  movabs rsi,0x140001c0    ; clock_reading_33
+  40104b  48 8b 86 00 00 00 00           mov    rax,QWORD PTR [rsi+0x0]
+  401052  b9 00 ca 9a 3b                 mov    ecx,0x3b9aca00
+  401057  48 0f af c1                    imul   rax,rcx
+  40105b  48 8b 8e 08 00 00 00           mov    rcx,QWORD PTR [rsi+0x8]
+  401062  48 01 c8                       add    rax,rcx
+  401065  c3                             ret
+-- toolbox routine elapsed: rax = a stopwatch start -> rax = seconds since then, as a decimal. --
+  401066  50                             push   rax
+  401067  bf 01 00 00 00                 mov    edi,0x1
+  40106c  e8 bf ff ff ff                 call   now
+  401071  59                             pop    rcx
+  401072  48 29 c8                       sub    rax,rcx
+  401075  f2 48 0f 2a c0                 cvtsi2sd xmm0,rax
+  40107a  48 b8 0e 1b 40 00 00 00 00 00  movabs rax,0x401b0e    ; the number 1000000000.0
+  401084  48 8b 80 00 00 00 00           mov    rax,QWORD PTR [rax+0x0]
+  40108b  66 48 0f 6e c8                 movq   xmm1,rax
+  401090  f2 0f 5e c1                    divsd  xmm0,xmm1
+  401094  66 48 0f 7e c0                 movq   rax,xmm0
+  401099  c3                             ret
+-- toolbox routine time_text: -> rax = the time of day as HH:MM:SS (UTC). --
+  40109a  bf 00 00 00 00                 mov    edi,0x0
+  40109f  e8 8c ff ff ff                 call   now
+  4010a4  ba 00 00 00 00                 mov    edx,0x0
+  4010a9  b9 00 ca 9a 3b                 mov    ecx,0x3b9aca00
+  4010ae  48 f7 f1                       div    rcx
+  4010b1  ba 00 00 00 00                 mov    edx,0x0
+  4010b6  b9 80 51 01 00                 mov    ecx,0x15180
+  4010bb  48 f7 f1                       div    rcx
+  4010be  49 89 d4                       mov    r12,rdx
+  4010c1  b9 08 00 00 00                 mov    ecx,0x8
+  4010c6  e8 ec f2 ff ff                 call   new_text
+  4010cb  49 89 c5                       mov    r13,rax
+  4010ce  b9 3a 00 00 00                 mov    ecx,0x3a
+  4010d3  41 88 8d 0a 00 00 00           mov    BYTE PTR [r13+0xa],cl
+  4010da  41 88 8d 0d 00 00 00           mov    BYTE PTR [r13+0xd],cl
+  4010e1  4c 89 e0                       mov    rax,r12
+  4010e4  ba 00 00 00 00                 mov    edx,0x0
+  4010e9  b9 10 0e 00 00                 mov    ecx,0xe10
+  4010ee  48 f7 f1                       div    rcx
+  4010f1  49 89 d4                       mov    r12,rdx
+  4010f4  ba 00 00 00 00                 mov    edx,0x0
+  4010f9  b9 0a 00 00 00                 mov    ecx,0xa
+  4010fe  48 f7 f1                       div    rcx
+  401101  48 81 c0 30 00 00 00           add    rax,0x30
+  401108  41 88 85 08 00 00 00           mov    BYTE PTR [r13+0x8],al
+  40110f  48 81 c2 30 00 00 00           add    rdx,0x30
+  401116  41 88 95 09 00 00 00           mov    BYTE PTR [r13+0x9],dl
+  40111d  4c 89 e0                       mov    rax,r12
+  401120  ba 00 00 00 00                 mov    edx,0x0
+  401125  b9 3c 00 00 00                 mov    ecx,0x3c
+  40112a  48 f7 f1                       div    rcx
+  40112d  49 89 d4                       mov    r12,rdx
+  401130  ba 00 00 00 00                 mov    edx,0x0
+  401135  b9 0a 00 00 00                 mov    ecx,0xa
+  40113a  48 f7 f1                       div    rcx
+  40113d  48 81 c0 30 00 00 00           add    rax,0x30
+  401144  41 88 85 0b 00 00 00           mov    BYTE PTR [r13+0xb],al
+  40114b  48 81 c2 30 00 00 00           add    rdx,0x30
+  401152  41 88 95 0c 00 00 00           mov    BYTE PTR [r13+0xc],dl
+  401159  4c 89 e0                       mov    rax,r12
+  40115c  ba 00 00 00 00                 mov    edx,0x0
+  401161  b9 0a 00 00 00                 mov    ecx,0xa
+  401166  48 f7 f1                       div    rcx
+  401169  48 81 c0 30 00 00 00           add    rax,0x30
+  401170  41 88 85 0e 00 00 00           mov    BYTE PTR [r13+0xe],al
+  401177  48 81 c2 30 00 00 00           add    rdx,0x30
+  40117e  41 88 95 0f 00 00 00           mov    BYTE PTR [r13+0xf],dl
+  401185  4c 89 e8                       mov    rax,r13
+  401188  c3                             ret
+-- toolbox routine push: rax = list, rcx = item -> item added on the end. --
+  401189  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  401190  48 81 fa e8 03 00 00           cmp    rdx,0x3e8
+  401197  0f 8d 20 00 00 00              jge    list_full
+  40119d  49 89 d0                       mov    r8,rdx
+  4011a0  49 c1 e0 03                    shl    r8,0x3
+  4011a4  49 01 c0                       add    r8,rax
+  4011a7  49 89 88 08 00 00 00           mov    QWORD PTR [r8+0x8],rcx
+  4011ae  48 81 c2 01 00 00 00           add    rdx,0x1
+  4011b5  48 89 90 00 00 00 00           mov    QWORD PTR [rax+0x0],rdx
+  4011bc  c3                             ret
+  4011bd  48 b8 16 1b 40 00 00 00 00 00  movabs rax,0x401b16    ; text "(That list is full: 1,000 items is th..."
+  4011c7  e8 01 f2 ff ff                 call   write_text
+  4011cc  c3                             ret
+-- toolbox routine push_front: rax = list, rcx = item -> item added at the front. --
+  4011cd  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  4011d4  48 81 fa e8 03 00 00           cmp    rdx,0x3e8
+  4011db  0f 8d dc ff ff ff              jge    list_full
+  4011e1  49 89 d0                       mov    r8,rdx
+  4011e4  4d 85 c0                       test   r8,r8
+  4011e7  0f 84 24 00 00 00              je     pf_put
+  4011ed  4d 89 c1                       mov    r9,r8
+  4011f0  49 c1 e1 03                    shl    r9,0x3
+  4011f4  49 01 c1                       add    r9,rax
+  4011f7  4d 8b 91 00 00 00 00           mov    r10,QWORD PTR [r9+0x0]
+  4011fe  4d 89 91 08 00 00 00           mov    QWORD PTR [r9+0x8],r10
+  401205  49 81 e8 01 00 00 00           sub    r8,0x1
+  40120c  e9 d3 ff ff ff                 jmp    pf_move
+  401211  48 89 88 08 00 00 00           mov    QWORD PTR [rax+0x8],rcx
+  401218  48 81 c2 01 00 00 00           add    rdx,0x1
+  40121f  48 89 90 00 00 00 00           mov    QWORD PTR [rax+0x0],rdx
+  401226  c3                             ret
+-- toolbox routine remove_first: rax = list, rcx = what to give back if it's empty -> rax = the first item, now removed. --
+  401227  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  40122e  48 85 d2                       test   rdx,rdx
+  401231  0f 84 30 00 00 00              je     list_empty
+  401237  4c 8b 90 08 00 00 00           mov    r10,QWORD PTR [rax+0x8]
+  40123e  48 81 ea 01 00 00 00           sub    rdx,0x1
+  401245  48 89 90 00 00 00 00           mov    QWORD PTR [rax+0x0],rdx
+  40124c  48 8d b8 08 00 00 00           lea    rdi,[rax+0x8]
+  401253  48 8d b0 10 00 00 00           lea    rsi,[rax+0x10]
+  40125a  48 89 d1                       mov    rcx,rdx
+  40125d  48 c1 e1 03                    shl    rcx,0x3
+  401261  f3 a4                          rep movs BYTE PTR [rdi],BYTE PTR [rsi]
+  401263  4c 89 d0                       mov    rax,r10
+  401266  c3                             ret
+  401267  48 89 c8                       mov    rax,rcx
+  40126a  c3                             ret
+-- toolbox routine remove_last: rax = list, rcx = what to give back if it's empty -> rax = the last item, now removed. --
+  40126b  48 8b 90 00 00 00 00           mov    rdx,QWORD PTR [rax+0x0]
+  401272  48 85 d2                       test   rdx,rdx
+  401275  0f 84 ec ff ff ff              je     list_empty
+  40127b  48 81 ea 01 00 00 00           sub    rdx,0x1
+  401282  48 89 90 00 00 00 00           mov    QWORD PTR [rax+0x0],rdx
+  401289  48 c1 e2 03                    shl    rdx,0x3
+  40128d  48 01 d0                       add    rax,rdx
+  401290  48 8b 80 08 00 00 00           mov    rax,QWORD PTR [rax+0x8]
+  401297  c3                             ret
+-- toolbox routine item: rax = list, rcx = N, rdx = what to give back if there's no item N -> rax = item N. --
+  401298  48 81 e9 01 00 00 00           sub    rcx,0x1
+  40129f  0f 8c 1f 00 00 00              jl     item_none
+  4012a5  4c 8b 80 00 00 00 00           mov    r8,QWORD PTR [rax+0x0]
+  4012ac  4c 39 c1                       cmp    rcx,r8
+  4012af  0f 8d 0f 00 00 00              jge    item_none
+  4012b5  48 c1 e1 03                    shl    rcx,0x3
+  4012b9  48 01 c8                       add    rax,rcx
+  4012bc  48 8b 80 08 00 00 00           mov    rax,QWORD PTR [rax+0x8]
+  4012c3  c3                             ret
+  4012c4  48 89 d0                       mov    rax,rdx
+  4012c7  c3                             ret
+-- toolbox routine list_has: rax = list, rcx = thing, rdx = 1 if the items are texts -> rax = 1 if the thing is in the list. --
+  4012c8  49 bb d0 01 00 14 00 00 00 00  movabs r11,0x140001d0    ; has_vars_36
+  4012d2  49 89 83 00 00 00 00           mov    QWORD PTR [r11+0x0],rax
+  4012d9  49 89 8b 08 00 00 00           mov    QWORD PTR [r11+0x8],rcx
+  4012e0  49 89 93 10 00 00 00           mov    QWORD PTR [r11+0x10],rdx
+  4012e7  41 b8 00 00 00 00              mov    r8d,0x0
+  4012ed  49 bb d0 01 00 14 00 00 00 00  movabs r11,0x140001d0    ; has_vars_36
+  4012f7  4d 89 83 18 00 00 00           mov    QWORD PTR [r11+0x18],r8
+  4012fe  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  401305  4c 8b 88 00 00 00 00           mov    r9,QWORD PTR [rax+0x0]
+  40130c  4d 39 c8                       cmp    r8,r9
+  40130f  0f 8d 64 00 00 00              jge    has_no
+  401315  49 c1 e0 03                    shl    r8,0x3
+  401319  4c 01 c0                       add    rax,r8
+  40131c  48 8b 80 08 00 00 00           mov    rax,QWORD PTR [rax+0x8]
+  401323  49 8b 8b 08 00 00 00           mov    rcx,QWORD PTR [r11+0x8]
+  40132a  49 8b 93 10 00 00 00           mov    rdx,QWORD PTR [r11+0x10]
+  401331  48 85 d2                       test   rdx,rdx
+  401334  0f 84 13 00 00 00              je     has_numbers
+  40133a  e8 a3 f4 ff ff                 call   text_equal
+  40133f  48 85 c0                       test   rax,rax
+  401342  0f 85 2b 00 00 00              jne    has_yes
+  401348  e9 09 00 00 00                 jmp    has_again
+  40134d  48 39 c8                       cmp    rax,rcx
+  401350  0f 84 1d 00 00 00              je     has_yes
+  401356  49 bb d0 01 00 14 00 00 00 00  movabs r11,0x140001d0    ; has_vars_36
+  401360  4d 8b 83 18 00 00 00           mov    r8,QWORD PTR [r11+0x18]
+  401367  49 81 c0 01 00 00 00           add    r8,0x1
+  40136e  e9 7a ff ff ff                 jmp    has_next
+  401373  b8 01 00 00 00                 mov    eax,0x1
+  401378  c3                             ret
+  401379  b8 00 00 00 00                 mov    eax,0x0
+  40137e  c3                             ret
+-- toolbox routine list_to_text: rax = list, rcx = kind (0 whole numbers, 1 decimals, 2 texts), rdx = text to put between --
+  40137f  49 bb f0 01 00 14 00 00 00 00  movabs r11,0x140001f0    ; ltt_vars_37
+  401389  49 89 83 00 00 00 00           mov    QWORD PTR [r11+0x0],rax
+  401390  49 89 8b 08 00 00 00           mov    QWORD PTR [r11+0x8],rcx
+  401397  49 89 93 10 00 00 00           mov    QWORD PTR [r11+0x10],rdx
+  40139e  48 b8 59 1b 40 00 00 00 00 00  movabs rax,0x401b59    ; text ""
+  4013a8  49 89 83 20 00 00 00           mov    QWORD PTR [r11+0x20],rax
+  4013af  41 b8 00 00 00 00              mov    r8d,0x0
+  4013b5  49 bb f0 01 00 14 00 00 00 00  movabs r11,0x140001f0    ; ltt_vars_37
+  4013bf  4d 89 83 18 00 00 00           mov    QWORD PTR [r11+0x18],r8
+  4013c6  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  4013cd  4c 8b 88 00 00 00 00           mov    r9,QWORD PTR [rax+0x0]
+  4013d4  4d 39 c8                       cmp    r8,r9
+  4013d7  0f 8d b6 00 00 00              jge    ltt_done
+  4013dd  4d 85 c0                       test   r8,r8
+  4013e0  0f 84 24 00 00 00              je     ltt_item
+  4013e6  49 8b 83 20 00 00 00           mov    rax,QWORD PTR [r11+0x20]
+  4013ed  49 8b 8b 10 00 00 00           mov    rcx,QWORD PTR [r11+0x10]
+  4013f4  e8 ef ef ff ff                 call   join
+  4013f9  49 bb f0 01 00 14 00 00 00 00  movabs r11,0x140001f0    ; ltt_vars_37
+  401403  49 89 83 20 00 00 00           mov    QWORD PTR [r11+0x20],rax
+  40140a  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  401411  4d 8b 83 18 00 00 00           mov    r8,QWORD PTR [r11+0x18]
+  401418  49 c1 e0 03                    shl    r8,0x3
+  40141c  4c 01 c0                       add    rax,r8
+  40141f  48 8b 80 08 00 00 00           mov    rax,QWORD PTR [rax+0x8]
+  401426  49 8b 8b 08 00 00 00           mov    rcx,QWORD PTR [r11+0x8]
+  40142d  48 81 f9 01 00 00 00           cmp    rcx,0x1
+  401434  0f 87 1c 00 00 00              ja     ltt_join
+  40143a  0f 84 0a 00 00 00              je     ltt_decimal
+  401440  e8 ea ef ff ff                 call   number_to_text
+  401445  e9 0c 00 00 00                 jmp    ltt_join
+  40144a  48 c7 c1 ff ff ff ff           mov    rcx,0xffffffffffffffff
+  401451  e8 7f f0 ff ff                 call   decimal_to_text
+  401456  48 89 c1                       mov    rcx,rax
+  401459  49 bb f0 01 00 14 00 00 00 00  movabs r11,0x140001f0    ; ltt_vars_37
+  401463  49 8b 83 20 00 00 00           mov    rax,QWORD PTR [r11+0x20]
+  40146a  e8 79 ef ff ff                 call   join
+  40146f  49 bb f0 01 00 14 00 00 00 00  movabs r11,0x140001f0    ; ltt_vars_37
+  401479  49 89 83 20 00 00 00           mov    QWORD PTR [r11+0x20],rax
+  401480  4d 8b 83 18 00 00 00           mov    r8,QWORD PTR [r11+0x18]
+  401487  49 81 c0 01 00 00 00           add    r8,0x1
+  40148e  e9 22 ff ff ff                 jmp    ltt_next
+  401493  49 8b 83 20 00 00 00           mov    rax,QWORD PTR [r11+0x20]
+  40149a  c3                             ret
+-- toolbox routine list_copy: rax = from list, rcx = to list -> the to list becomes the same as the from list. --
+  40149b  48 89 c6                       mov    rsi,rax
+  40149e  48 89 cf                       mov    rdi,rcx
+  4014a1  b9 48 1f 00 00                 mov    ecx,0x1f48
+  4014a6  f3 a4                          rep movs BYTE PTR [rdi],BYTE PTR [rsi]
+  4014a8  c3                             ret
+-- toolbox routine file_save: rax = file name, rcx = text, rdx = how to open (replace or add to the end) -> 1 if it worked. --
+  4014a9  51                             push   rcx
+  4014aa  48 8d b8 08 00 00 00           lea    rdi,[rax+0x8]
+  4014b1  48 89 d6                       mov    rsi,rdx
+  4014b4  ba a4 01 00 00                 mov    edx,0x1a4
+  4014b9  b8 02 00 00 00                 mov    eax,0x2
+  4014be  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  4014c0  59                             pop    rcx
+  4014c1  48 85 c0                       test   rax,rax
+  4014c4  0f 8c 4b 00 00 00              jl     fs_failed
+  4014ca  49 89 c4                       mov    r12,rax
+  4014cd  48 8d b1 08 00 00 00           lea    rsi,[rcx+0x8]
+  4014d4  48 8b 91 00 00 00 00           mov    rdx,QWORD PTR [rcx+0x0]
+  4014db  b8 01 00 00 00                 mov    eax,0x1
+  4014e0  4c 89 e7                       mov    rdi,r12
+  4014e3  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  4014e5  48 be 2e 1a 40 00 00 00 00 00  movabs rsi,0x401a2e    ; text "\n"
+  4014ef  48 81 c6 08 00 00 00           add    rsi,0x8
+  4014f6  ba 01 00 00 00                 mov    edx,0x1
+  4014fb  b8 01 00 00 00                 mov    eax,0x1
+  401500  4c 89 e7                       mov    rdi,r12
+  401503  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  401505  b8 03 00 00 00                 mov    eax,0x3
+  40150a  4c 89 e7                       mov    rdi,r12
+  40150d  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  40150f  b8 01 00 00 00                 mov    eax,0x1
+  401514  c3                             ret
+  401515  48 b8 62 1b 40 00 00 00 00 00  movabs rax,0x401b62    ; text "(Couldn't save that file.)\n"
+  40151f  e8 a9 ee ff ff                 call   write_text
+  401524  b8 00 00 00 00                 mov    eax,0x0
+  401529  c3                             ret
+-- toolbox routine file_load: rax = file name -> rax = everything in it as a text (last line ending dropped), or 0 if there's no such file. --
+  40152a  48 8d b8 08 00 00 00           lea    rdi,[rax+0x8]
+  401531  be 00 00 00 00                 mov    esi,0x0
+  401536  ba 00 00 00 00                 mov    edx,0x0
+  40153b  b8 02 00 00 00                 mov    eax,0x2
+  401540  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  401542  48 85 c0                       test   rax,rax
+  401545  0f 8c 95 00 00 00              jl     fl_missing
+  40154b  49 89 c4                       mov    r12,rax
+  40154e  b9 00 00 01 00                 mov    ecx,0x10000
+  401553  e8 5f ee ff ff                 call   new_text
+  401558  49 89 c5                       mov    r13,rax
+  40155b  41 be 00 00 00 00              mov    r14d,0x0
+  401561  ba 00 00 01 00                 mov    edx,0x10000
+  401566  4c 29 f2                       sub    rdx,r14
+  401569  0f 84 25 00 00 00              je     fl_close
+  40156f  49 8d b5 08 00 00 00           lea    rsi,[r13+0x8]
+  401576  4c 01 f6                       add    rsi,r14
+  401579  4c 89 e7                       mov    rdi,r12
+  40157c  b8 00 00 00 00                 mov    eax,0x0
+  401581  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  401583  48 85 c0                       test   rax,rax
+  401586  0f 8e 08 00 00 00              jle    fl_close
+  40158c  49 01 c6                       add    r14,rax
+  40158f  e9 cd ff ff ff                 jmp    fl_read
+  401594  b8 03 00 00 00                 mov    eax,0x3
+  401599  4c 89 e7                       mov    rdi,r12
+  40159c  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  40159e  4d 85 f6                       test   r14,r14
+  4015a1  0f 84 2e 00 00 00              je     fl_size
+  4015a7  4d 89 e8                       mov    r8,r13
+  4015aa  4d 01 f0                       add    r8,r14
+  4015ad  49 0f b6 90 07 00 00 00        movzx  rdx,BYTE PTR [r8+0x7]
+  4015b5  48 81 fa 0a 00 00 00           cmp    rdx,0xa
+  4015bc  0f 85 13 00 00 00              jne    fl_size
+  4015c2  49 81 ee 01 00 00 00           sub    r14,0x1
+  4015c9  ba 00 00 00 00                 mov    edx,0x0
+  4015ce  41 88 90 07 00 00 00           mov    BYTE PTR [r8+0x7],dl
+  4015d5  4d 89 b5 00 00 00 00           mov    QWORD PTR [r13+0x0],r14
+  4015dc  4c 89 e8                       mov    rax,r13
+  4015df  c3                             ret
+  4015e0  b8 00 00 00 00                 mov    eax,0x0
+  4015e5  c3                             ret
+-- toolbox routine file_delete: rax = file name -> asks "are you sure?" first, then deletes it. --
+  4015e6  49 bb 20 02 00 14 00 00 00 00  movabs r11,0x14000220    ; delete_name_40
+  4015f0  49 89 83 00 00 00 00           mov    QWORD PTR [r11+0x0],rax
+  4015f7  48 b8 86 1b 40 00 00 00 00 00  movabs rax,0x401b86    ; text "Are you sure you want to delete "
+  401601  e8 c7 ed ff ff                 call   write_text
+  401606  49 bb 20 02 00 14 00 00 00 00  movabs r11,0x14000220    ; delete_name_40
+  401610  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  401617  e8 b1 ed ff ff                 call   write_text
+  40161c  48 b8 af 1b 40 00 00 00 00 00  movabs rax,0x401baf    ; text "? (yes/no) "
+  401626  e8 a2 ed ff ff                 call   write_text
+  40162b  e8 e2 f6 ff ff                 call   read_line
+  401630  48 0f b6 90 08 00 00 00        movzx  rdx,BYTE PTR [rax+0x8]
+  401638  48 81 ca 20 00 00 00           or     rdx,0x20
+  40163f  48 81 fa 79 00 00 00           cmp    rdx,0x79
+  401646  0f 85 48 00 00 00              jne    fd_keep
+  40164c  49 bb 20 02 00 14 00 00 00 00  movabs r11,0x14000220    ; delete_name_40
+  401656  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  40165d  48 8d b8 08 00 00 00           lea    rdi,[rax+0x8]
+  401664  b8 57 00 00 00                 mov    eax,0x57
+  401669  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  40166b  48 85 c0                       test   rax,rax
+  40166e  0f 8c 10 00 00 00              jl     fd_missing
+  401674  48 b8 c3 1b 40 00 00 00 00 00  movabs rax,0x401bc3    ; text "Deleted.\n"
+  40167e  e8 4a ed ff ff                 call   write_text
+  401683  c3                             ret
+  401684  48 b8 d5 1b 40 00 00 00 00 00  movabs rax,0x401bd5    ; text "(There was no such file.)\n"
+  40168e  e8 3a ed ff ff                 call   write_text
+  401693  c3                             ret
+  401694  48 b8 f8 1b 40 00 00 00 00 00  movabs rax,0x401bf8    ; text "OK, I kept it.\n"
+  40169e  e8 2a ed ff ff                 call   write_text
+  4016a3  c3                             ret
+-- toolbox routine console_size: -> rax = rows, rcx = columns (24 x 80 if this isn't a console). --
+  4016a4  b8 10 00 00 00                 mov    eax,0x10
+  4016a9  bf 01 00 00 00                 mov    edi,0x1
+  4016ae  be 13 54 00 00                 mov    esi,0x5413
+  4016b3  48 ba 30 02 00 14 00 00 00 00  movabs rdx,0x14000230    ; console_size_46
+  4016bd  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  4016bf  48 85 c0                       test   rax,rax
+  4016c2  0f 85 2d 00 00 00              jne    cs_guess
+  4016c8  48 ba 30 02 00 14 00 00 00 00  movabs rdx,0x14000230    ; console_size_46
+  4016d2  48 8b 82 00 00 00 00           mov    rax,QWORD PTR [rdx+0x0]
+  4016d9  48 89 c1                       mov    rcx,rax
+  4016dc  48 c1 e9 10                    shr    rcx,0x10
+  4016e0  48 81 e1 ff ff 00 00           and    rcx,0xffff
+  4016e7  48 81 e0 ff ff 00 00           and    rax,0xffff
+  4016ee  0f 84 01 00 00 00              je     cs_guess
+  4016f4  c3                             ret
+  4016f5  b8 18 00 00 00                 mov    eax,0x18
+  4016fa  b9 50 00 00 00                 mov    ecx,0x50
+  4016ff  c3                             ret
+-- toolbox routine place_cursor: rax = row (0: stay on this row), rcx = column -> the cursor goes there. --
+  401700  49 bb 40 02 00 14 00 00 00 00  movabs r11,0x14000240    ; place_vars_47
+  40170a  49 89 83 00 00 00 00           mov    QWORD PTR [r11+0x0],rax
+  401711  49 89 8b 08 00 00 00           mov    QWORD PTR [r11+0x8],rcx
+  401718  48 b8 10 1c 40 00 00 00 00 00  movabs rax,0x401c10    ; text "\u001b["
+  401722  e8 a6 ec ff ff                 call   write_text
+  401727  49 bb 40 02 00 14 00 00 00 00  movabs r11,0x14000240    ; place_vars_47
+  401731  49 8b 83 00 00 00 00           mov    rax,QWORD PTR [r11+0x0]
+  401738  48 85 c0                       test   rax,rax
+  40173b  0f 84 43 00 00 00              je     pc_column
+  401741  e8 e9 ec ff ff                 call   number_to_text
+  401746  e8 82 ec ff ff                 call   write_text
+  40174b  48 b8 1b 1c 40 00 00 00 00 00  movabs rax,0x401c1b    ; text ";"
+  401755  e8 73 ec ff ff                 call   write_text
+  40175a  49 bb 40 02 00 14 00 00 00 00  movabs r11,0x14000240    ; place_vars_47
+  401764  49 8b 83 08 00 00 00           mov    rax,QWORD PTR [r11+0x8]
+  40176b  e8 bf ec ff ff                 call   number_to_text
+  401770  e8 58 ec ff ff                 call   write_text
+  401775  48 b8 25 1c 40 00 00 00 00 00  movabs rax,0x401c25    ; text "H"
+  40177f  e9 49 ec ff ff                 jmp    write_text
+  401784  49 8b 83 08 00 00 00           mov    rax,QWORD PTR [r11+0x8]
+  40178b  e8 9f ec ff ff                 call   number_to_text
+  401790  e8 38 ec ff ff                 call   write_text
+  401795  48 b8 2f 1c 40 00 00 00 00 00  movabs rax,0x401c2f    ; text "G"
+  40179f  e9 29 ec ff ff                 jmp    write_text
+-- toolbox routine getenv: rax = a name followed by '=' (as a text) -> rax = its value as a text, or 0 if it isn't set. --
+  4017a4  49 89 c0                       mov    r8,rax
+  4017a7  49 b9 00 00 00 10 00 00 00 00  movabs r9,0x10000000    ; environment
+  4017b1  4d 8b 89 00 00 00 00           mov    r9,QWORD PTR [r9+0x0]
+  4017b8  4d 8b 91 00 00 00 00           mov    r10,QWORD PTR [r9+0x0]
+  4017bf  4d 85 d2                       test   r10,r10
+  4017c2  0f 84 69 00 00 00              je     ge_none
+  4017c8  4c 89 d6                       mov    rsi,r10
+  4017cb  49 8d b8 08 00 00 00           lea    rdi,[r8+0x8]
+  4017d2  49 8b 88 00 00 00 00           mov    rcx,QWORD PTR [r8+0x0]
+  4017d9  f3 a6                          repz cmps BYTE PTR [rsi],BYTE PTR [rdi]
+  4017db  0f 84 0c 00 00 00              je     ge_found
+  4017e1  49 81 c1 08 00 00 00           add    r9,0x8
+  4017e8  e9 cb ff ff ff                 jmp    ge_next
+  4017ed  49 89 f4                       mov    r12,rsi
+  4017f0  b9 00 00 00 00                 mov    ecx,0x0
+  4017f5  4c 89 e2                       mov    rdx,r12
+  4017f8  48 01 ca                       add    rdx,rcx
+  4017fb  48 0f b6 92 00 00 00 00        movzx  rdx,BYTE PTR [rdx+0x0]
+  401803  48 85 d2                       test   rdx,rdx
+  401806  0f 84 0c 00 00 00              je     ge_copy
+  40180c  48 81 c1 01 00 00 00           add    rcx,0x1
+  401813  e9 dd ff ff ff                 jmp    ge_length
+  401818  e8 9a eb ff ff                 call   new_text
+  40181d  48 8b 88 00 00 00 00           mov    rcx,QWORD PTR [rax+0x0]
+  401824  48 8d b8 08 00 00 00           lea    rdi,[rax+0x8]
+  40182b  4c 89 e6                       mov    rsi,r12
+  40182e  f3 a4                          rep movs BYTE PTR [rdi],BYTE PTR [rsi]
+  401830  c3                             ret
+  401831  b8 00 00 00 00                 mov    eax,0x0
+  401836  c3                             ret
+-- toolbox routine desktop: rax = Lua for Hyprland, which can use P (this program's window) -> run it, then wait a moment --
+  401837  49 bb 50 02 00 14 00 00 00 00  movabs r11,0x14000250    ; desktop_vars_52
+  401841  49 89 83 00 00 00 00           mov    QWORD PTR [r11+0x0],rax
+  401848  48 b8 39 1c 40 00 00 00 00 00  movabs rax,0x401c39    ; text "BRICK_WINDOW="
+  401852  e8 4d ff ff ff                 call   getenv
+  401857  48 85 c0                       test   rax,rax
+  40185a  0f 85 1e 00 00 00              jne    dt_named
+  401860  b8 6e 00 00 00                 mov    eax,0x6e
+  401865  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  401867  e8 c3 eb ff ff                 call   number_to_text
+  40186c  48 89 c1                       mov    rcx,rax
+  40186f  48 b8 4f 1c 40 00 00 00 00 00  movabs rax,0x401c4f    ; text "pid:"
+  401879  e8 6a eb ff ff                 call   join
+  40187e  48 89 c1                       mov    rcx,rax
+  401881  48 b8 5c 1c 40 00 00 00 00 00  movabs rax,0x401c5c    ; text "local P = \""
+  40188b  e8 58 eb ff ff                 call   join
+  401890  48 b9 70 1c 40 00 00 00 00 00  movabs rcx,0x401c70    ; text "\" "
+  40189a  e8 49 eb ff ff                 call   join
+  40189f  49 bb 50 02 00 14 00 00 00 00  movabs r11,0x14000250    ; desktop_vars_52
+  4018a9  49 8b 8b 00 00 00 00           mov    rcx,QWORD PTR [r11+0x0]
+  4018b0  e8 33 eb ff ff                 call   join
+  4018b5  49 bb 50 02 00 14 00 00 00 00  movabs r11,0x14000250    ; desktop_vars_52
+  4018bf  49 89 83 08 00 00 00           mov    QWORD PTR [r11+0x8],rax
+  4018c6  b8 39 00 00 00                 mov    eax,0x39
+  4018cb  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  4018cd  48 85 c0                       test   rax,rax
+  4018d0  0f 84 43 00 00 00              je     dt_child
+  4018d6  0f 8c 3c 00 00 00              jl     dt_done
+  4018dc  48 89 c7                       mov    rdi,rax
+  4018df  be 00 00 00 00                 mov    esi,0x0
+  4018e4  ba 00 00 00 00                 mov    edx,0x0
+  4018e9  41 ba 00 00 00 00              mov    r10d,0x0
+  4018ef  b8 3d 00 00 00                 mov    eax,0x3d
+  4018f4  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  4018f6  48 bf 90 02 00 14 00 00 00 00  movabs rdi,0x14000290    ; desktop_pause_53
+  401900  b8 80 d1 f0 08                 mov    eax,0x8f0d180
+  401905  48 89 87 08 00 00 00           mov    QWORD PTR [rdi+0x8],rax
+  40190c  be 00 00 00 00                 mov    esi,0x0
+  401911  b8 23 00 00 00                 mov    eax,0x23
+  401916  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  401918  c3                             ret
+  401919  48 bf 7b 1c 40 00 00 00 00 00  movabs rdi,0x401c7b    ; text "/dev/null"
+  401923  48 81 c7 08 00 00 00           add    rdi,0x8
+  40192a  be 01 00 00 00                 mov    esi,0x1
+  40192f  ba 00 00 00 00                 mov    edx,0x0
+  401934  b8 02 00 00 00                 mov    eax,0x2
+  401939  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  40193b  49 89 c4                       mov    r12,rax
+  40193e  b8 21 00 00 00                 mov    eax,0x21
+  401943  4c 89 e7                       mov    rdi,r12
+  401946  be 01 00 00 00                 mov    esi,0x1
+  40194b  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  40194d  b8 21 00 00 00                 mov    eax,0x21
+  401952  4c 89 e7                       mov    rdi,r12
+  401955  be 02 00 00 00                 mov    esi,0x2
+  40195a  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  40195c  49 bb 50 02 00 14 00 00 00 00  movabs r11,0x14000250    ; desktop_vars_52
+  401966  48 b8 8d 1c 40 00 00 00 00 00  movabs rax,0x401c8d    ; text "hyprctl"
+  401970  48 81 c0 08 00 00 00           add    rax,0x8
+  401977  49 89 83 10 00 00 00           mov    QWORD PTR [r11+0x10],rax
+  40197e  48 b8 9d 1c 40 00 00 00 00 00  movabs rax,0x401c9d    ; text "eval"
+  401988  48 81 c0 08 00 00 00           add    rax,0x8
+  40198f  49 89 83 18 00 00 00           mov    QWORD PTR [r11+0x18],rax
+  401996  49 8b 83 08 00 00 00           mov    rax,QWORD PTR [r11+0x8]
+  40199d  48 81 c0 08 00 00 00           add    rax,0x8
+  4019a4  49 89 83 20 00 00 00           mov    QWORD PTR [r11+0x20],rax
+  4019ab  b8 00 00 00 00                 mov    eax,0x0
+  4019b0  49 89 83 28 00 00 00           mov    QWORD PTR [r11+0x28],rax
+  4019b7  48 bf aa 1c 40 00 00 00 00 00  movabs rdi,0x401caa    ; text "/usr/bin/hyprctl"
+  4019c1  48 81 c7 08 00 00 00           add    rdi,0x8
+  4019c8  49 8d b3 10 00 00 00           lea    rsi,[r11+0x10]
+  4019cf  48 ba 00 00 00 10 00 00 00 00  movabs rdx,0x10000000    ; environment
+  4019d9  48 8b 92 00 00 00 00           mov    rdx,QWORD PTR [rdx+0x0]
+  4019e0  b8 3b 00 00 00                 mov    eax,0x3b
+  4019e5  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+  4019e7  b8 3c 00 00 00                 mov    eax,0x3c
+  4019ec  bf 7f 00 00 00                 mov    edi,0x7f
+  4019f1  0f 05                          syscall    ; ask Linux to do something (which thing: the number in rax)
+
+== FILE REGIONS (byte offsets in the program file: what made each stretch) ==
+
+      0 - 64      header   ELF header: says this is a 64-bit Linux program and where to start
+     64 - 120     header   segment header 1: load the file at 0x400000 (read + run)
+    120 - 176     header   segment header 2: an empty space at 0x10000000 (read + write)
+    176 - 242     start    startup: note the environment, set up the heap
+    242 - 364     line     line 2
+    364 - 388     line     line 3
+    388 - 443     line     line 4
+    443 - 521     line     line 5
+    521 - 587     line     line 6
+    587 - 663     line     line 7
+    663 - 739     line     line 8
+    739 - 823     line     line 9
+    823 - 848     line     line 10
+    848 - 860     end      the end: put colours back, exit
+    860 - 951     routine  toolbox routine alloc: rcx = bytes wanted -> rax = where they are.
+    951 - 973     routine  toolbox routine new_text: rcx = length -> rax = a new, empty text of that length.
+    973 - 1,000   routine  toolbox routine write_text: rax = text -> shown on screen.
+  1,000 - 1,071   routine  toolbox routine join: rax = first text, rcx = second text -> rax = both, one after the other.
+  1,071 - 1,237   routine  toolbox routine number_to_text: rax = whole number -> rax = it written as a text.
+  1,237 - 1,693   routine  toolbox routine decimal_to_text: rax = decimal, rcx = places after the point (-1: none if it's whole, else 2) -> rax = text.
+  1,693 - 1,886   routine  toolbox routine text_to_number: rax = text -> rax = the whole number at its start (0 if none).
+  1,886 - 2,018   routine  toolbox routine same_letters: rsi, rdi = where two runs of letters start, rcx = how many -> rax = 1 if they match.
+  2,018 - 2,069   routine  toolbox routine text_equal: rax, rcx = texts -> rax = 1 if they're the same (capitals don't matter), else 0.
+  2,069 - 2,138   routine  toolbox routine match_at: rax = text, rcx = smaller text, rdx = position -> rax = 1 if the smaller one is there.
+  2,138 - 2,527   routine  toolbox routine contains: rax = text, rcx = smaller text -> rax = 1 if it appears anywhere.
+  2,527 - 2,599   routine  toolbox routine letter: rax = text, rcx = N -> rax = its Nth letter (counting from 1), or empty if there isn't one.
+  2,599 - 2,803   routine  toolbox routine split: rax = text, rcx = list, rdx = the letter to split at, r8 = 1 to turn pieces into numbers.
+  2,803 - 2,938   routine  toolbox routine split_piece
+  2,938 - 3,072   routine  toolbox routine letters: rax = text, rcx = list -> the list is emptied, then gets each letter as an item.
+  3,072 - 3,257   routine  toolbox routine reverse_text: rax = text -> rax = a new text with its letters the other way round.
+  3,257 - 3,346   routine  toolbox routine reverse_list: rax = list, rcx = space for a list -> rax = that space, holding the items the other way round.
+  3,346 - 3,577   routine  toolbox routine read_line: -> rax = the text typed before Enter (up to TEXT_LIMIT letters, spaces at the end dropped).
+  3,577 - 3,715   routine  toolbox routine read_number: -> rax = a whole number typed by the user. Asks again until it gets one.
+  3,715 - 4,001   routine  toolbox routine wait_key: -> rax = the one key pressed (no Enter needed when it's a real terminal).
+  4,001 - 4,060   routine  toolbox routine sleep: rax = nanoseconds to wait.
+  4,060 - 4,144   routine  toolbox routine random: rax = lowest, rcx = highest -> rax = a random whole number from lowest to highest.
+  4,144 - 4,198   routine  toolbox routine now: rdi = which clock (0 time of day, 1 stopwatch) -> rax = nanoseconds.
+  4,198 - 4,250   routine  toolbox routine elapsed: rax = a stopwatch start -> rax = seconds since then, as a decimal.
+  4,250 - 4,489   routine  toolbox routine time_text: -> rax = the time of day as HH:MM:SS (UTC).
+  4,489 - 4,557   routine  toolbox routine push: rax = list, rcx = item -> item added on the end.
+  4,557 - 4,647   routine  toolbox routine push_front: rax = list, rcx = item -> item added at the front.
+  4,647 - 4,715   routine  toolbox routine remove_first: rax = list, rcx = what to give back if it's empty -> rax = the first item, now removed.
+  4,715 - 4,760   routine  toolbox routine remove_last: rax = list, rcx = what to give back if it's empty -> rax = the last item, now removed.
+  4,760 - 4,808   routine  toolbox routine item: rax = list, rcx = N, rdx = what to give back if there's no item N -> rax = item N.
+  4,808 - 4,991   routine  toolbox routine list_has: rax = list, rcx = thing, rdx = 1 if the items are texts -> rax = 1 if the thing is in the list.
+  4,991 - 5,275   routine  toolbox routine list_to_text: rax = list, rcx = kind (0 whole numbers, 1 decimals, 2 texts), rdx = text to put between
+  5,275 - 5,289   routine  toolbox routine list_copy: rax = from list, rcx = to list -> the to list becomes the same as the from list.
+  5,289 - 5,418   routine  toolbox routine file_save: rax = file name, rcx = text, rdx = how to open (replace or add to the end) -> 1 if it worked.
+  5,418 - 5,606   routine  toolbox routine file_load: rax = file name -> rax = everything in it as a text (last line ending dropped), or 0 if there's no such file.
+  5,606 - 5,796   routine  toolbox routine file_delete: rax = file name -> asks "are you sure?" first, then deletes it.
+  5,796 - 5,888   routine  toolbox routine console_size: -> rax = rows, rcx = columns (24 x 80 if this isn't a console).
+  5,888 - 6,052   routine  toolbox routine place_cursor: rax = row (0: stay on this row), rcx = column -> the cursor goes there.
+  6,052 - 6,199   routine  toolbox routine getenv: rax = a name followed by '=' (as a text) -> rax = its value as a text, or 0 if it isn't set.
+  6,199 - 6,643   routine  toolbox routine desktop: rax = Lua for Hyprland, which can use P (this program's window) -> run it, then wait a moment
+  6,643 - 6,669   data     text "\u001b[38;2;0;128;128m" (stored: 8-byte length, the letters, a 0)
+  6,669 - 6,689   data     text "hello there" (stored: 8-byte length, the letters, a 0)
+  6,689 - 6,702   data     text "\u001b[0m" (stored: 8-byte length, the letters, a 0)
+  6,702 - 6,712   data     text "\n" (stored: 8-byte length, the letters, a 0)
+  6,712 - 6,720   data     the number 3.5
+  6,720 - 6,728   data     the number 3.5
+  6,728 - 6,736   data     the number 2.6
+  6,736 - 6,744   data     the number 0.5
+  6,744 - 6,802   data     text "\nOut of memory: the program made too ..." (stored: 8-byte length, the letters, a 0)
+  6,802 - 6,810   data     the number 0.5
+  6,810 - 6,827   data     text "infinity" (stored: 8-byte length, the letters, a 0)
+  6,827 - 6,850   data     text "minus infinity" (stored: 8-byte length, the letters, a 0)
+  6,850 - 6,871   data     text "not a number" (stored: 8-byte length, the letters, a 0)
+  6,871 - 6,881   data     text "-" (stored: 8-byte length, the letters, a 0)
+  6,881 - 6,895   data     text "\u001b[0m\n" (stored: 8-byte length, the letters, a 0)
+  6,895 - 6,926   data     text "Please type a number: " (stored: 8-byte length, the letters, a 0)
+  6,926 - 6,934   data     the number 1000000000.0
+  6,934 - 7,001   data     text "(That list is full: 1,000 items is th..." (stored: 8-byte length, the letters, a 0)
+  7,001 - 7,010   data     text "" (stored: 8-byte length, the letters, a 0)
+  7,010 - 7,046   data     text "(Couldn't save that file.)\n" (stored: 8-byte length, the letters, a 0)
+  7,046 - 7,087   data     text "Are you sure you want to delete " (stored: 8-byte length, the letters, a 0)
+  7,087 - 7,107   data     text "? (yes/no) " (stored: 8-byte length, the letters, a 0)
+  7,107 - 7,125   data     text "Deleted.\n" (stored: 8-byte length, the letters, a 0)
+  7,125 - 7,160   data     text "(There was no such file.)\n" (stored: 8-byte length, the letters, a 0)
+  7,160 - 7,184   data     text "OK, I kept it.\n" (stored: 8-byte length, the letters, a 0)
+  7,184 - 7,195   data     text "\u001b[" (stored: 8-byte length, the letters, a 0)
+  7,195 - 7,205   data     text ";" (stored: 8-byte length, the letters, a 0)
+  7,205 - 7,215   data     text "H" (stored: 8-byte length, the letters, a 0)
+  7,215 - 7,225   data     text "G" (stored: 8-byte length, the letters, a 0)
+  7,225 - 7,247   data     text "BRICK_WINDOW=" (stored: 8-byte length, the letters, a 0)
+  7,247 - 7,260   data     text "pid:" (stored: 8-byte length, the letters, a 0)
+  7,260 - 7,280   data     text "local P = \"" (stored: 8-byte length, the letters, a 0)
+  7,280 - 7,291   data     text "\" " (stored: 8-byte length, the letters, a 0)
+  7,291 - 7,309   data     text "/dev/null" (stored: 8-byte length, the letters, a 0)
+  7,309 - 7,325   data     text "hyprctl" (stored: 8-byte length, the letters, a 0)
+  7,325 - 7,338   data     text "eval" (stored: 8-byte length, the letters, a 0)
+  7,338 - 7,363   data     text "/usr/bin/hyprctl" (stored: 8-byte length, the letters, a 0)
+
+== FILE BYTES (every byte of the program file, in hex) ==
+
+00000000  7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00  |.ELF............|
+00000010  02 00 3e 00 01 00 00 00 b0 00 40 00 00 00 00 00  |..>.......@.....|
+00000020  40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |@...............|
+00000030  00 00 00 00 40 00 38 00 02 00 00 00 00 00 00 00  |....@.8.........|
+00000040  01 00 00 00 05 00 00 00 00 00 00 00 00 00 00 00  |................|
+00000050  00 00 40 00 00 00 00 00 00 00 40 00 00 00 00 00  |..@.......@.....|
+00000060  c3 1c 00 00 00 00 00 00 c3 1c 00 00 00 00 00 00  |................|
+00000070  00 10 00 00 00 00 00 00 01 00 00 00 06 00 00 00  |................|
+00000080  00 00 00 00 00 00 00 00 00 00 00 10 00 00 00 00  |................|
+00000090  00 00 00 10 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+000000a0  a0 02 00 04 00 00 00 00 00 10 00 00 00 00 00 00  |................|
+000000b0  48 8b 84 24 00 00 00 00 48 c1 e0 03 48 01 e0 48  |H..$....H...H..H|
+000000c0  81 c0 10 00 00 00 48 b9 00 00 00 10 00 00 00 00  |......H.........|
+000000d0  48 89 81 00 00 00 00 48 b8 50 00 00 10 00 00 00  |H......H.P......|
+000000e0  00 48 b9 10 00 00 10 00 00 00 00 48 89 81 00 00  |.H.........H....|
+000000f0  00 00 48 b8 f3 19 40 00 00 00 00 00 e8 cc 02 00  |..H...@.........|
+00000100  00 48 b8 0d 1a 40 00 00 00 00 00 e8 bd 02 00 00  |.H...@..........|
+00000110  48 b8 21 1a 40 00 00 00 00 00 e8 ae 02 00 00 48  |H.!.@..........H|
+00000120  b8 20 00 00 10 00 00 00 00 48 8b 80 00 00 00 00  |. .......H......|
+00000130  48 85 c0 0f 84 05 00 00 00 e8 8f 02 00 00 48 b8  |H.............H.|
+00000140  30 00 00 10 00 00 00 00 48 8b 80 00 00 00 00 48  |0.......H......H|
+00000150  85 c0 0f 84 05 00 00 00 e8 70 02 00 00 48 b8 2e  |.........p...H..|
+00000160  1a 40 00 00 00 00 00 e8 61 02 00 00 b8 07 00 00  |.@......a.......|
+00000170  00 50 48 b9 40 00 00 10 00 00 00 00 48 89 81 00  |.PH.@.......H...|
+00000180  00 00 00 58 48 b8 40 00 00 10 00 00 00 00 48 8b  |...XH.@.......H.|
+00000190  80 00 00 00 00 50 b8 03 00 00 00 48 89 c1 58 48  |.....P.....H..XH|
+000001a0  01 c8 e8 88 02 00 00 e8 21 02 00 00 48 b8 2e 1a  |........!...H...|
+000001b0  40 00 00 00 00 00 e8 12 02 00 00 48 b8 40 00 00  |@..........H.@..|
+000001c0  10 00 00 00 00 48 8b 80 00 00 00 00 50 b8 02 00  |.....H......P...|
+000001d0  00 00 48 89 c1 58 f2 48 0f 2a c0 f2 48 0f 2a c9  |..H..X.H.*..H.*.|
+000001e0  f2 0f 5e c1 66 48 0f 7e c0 48 c7 c1 ff ff ff ff  |..^.fH.~.H......|
+000001f0  e8 e0 02 00 00 e8 d3 01 00 00 48 b8 2e 1a 40 00  |..........H...@.|
+00000200  00 00 00 00 e8 c4 01 00 00 b8 06 00 00 00 50 b8  |..............P.|
+00000210  03 00 00 00 48 89 c1 58 f2 48 0f 2a c0 f2 48 0f  |....H..X.H.*..H.|
+00000220  2a c9 f2 0f 5e c1 66 48 0f 7e c0 48 c7 c1 ff ff  |*...^.fH.~.H....|
+00000230  ff ff e8 9e 02 00 00 e8 91 01 00 00 48 b8 2e 1a  |............H...|
+00000240  40 00 00 00 00 00 e8 82 01 00 00 48 b8 38 1a 40  |@..........H.8.@|
+00000250  00 00 00 00 00 48 8b 80 00 00 00 00 50 b8 02 00  |.....H......P...|
+00000260  00 00 48 89 c1 58 66 48 0f 6e c0 f2 48 0f 2a c9  |..H..XfH.n..H.*.|
+00000270  f2 0f 59 c1 66 48 0f 7e c0 b9 02 00 00 00 e8 52  |..Y.fH.~.......R|
+00000280  02 00 00 e8 45 01 00 00 48 b8 2e 1a 40 00 00 00  |....E...H...@...|
+00000290  00 00 e8 36 01 00 00 48 b8 40 1a 40 00 00 00 00  |...6...H.@.@....|
+000002a0  00 48 8b 80 00 00 00 00 50 b8 01 00 00 00 48 89  |.H......P.....H.|
+000002b0  c1 58 66 48 0f 6e c0 f2 48 0f 2a c9 f2 0f 58 c1  |.XfH.n..H.*...X.|
+000002c0  66 48 0f 7e c0 b9 03 00 00 00 e8 06 02 00 00 e8  |fH.~............|
+000002d0  f9 00 00 00 48 b8 2e 1a 40 00 00 00 00 00 e8 ea  |....H...@.......|
+000002e0  00 00 00 48 b8 48 1a 40 00 00 00 00 00 48 8b 80  |...H.H.@.....H..|
+000002f0  00 00 00 00 66 48 0f 6e c0 48 b8 50 1a 40 00 00  |....fH.n.H.P.@..|
+00000300  00 00 00 48 8b 80 00 00 00 00 66 48 0f 6e c8 f2  |...H......fH.n..|
+00000310  0f 58 c1 66 0f 3a 0b c0 01 f2 48 0f 2c c0 e8 0c  |.X.f.:....H.,...|
+00000320  01 00 00 e8 a5 00 00 00 48 b8 2e 1a 40 00 00 00  |........H...@...|
+00000330  00 00 e8 96 00 00 00 e8 5e 0d 00 00 e8 8c 00 00  |........^.......|
+00000340  00 48 b8 2e 1a 40 00 00 00 00 00 e8 7d 00 00 00  |.H...@......}...|
+00000350  b8 3c 00 00 00 bf 00 00 00 00 0f 05 48 81 c1 07  |.<..........H...|
+00000360  00 00 00 48 81 e1 f8 ff ff ff 48 ba 10 00 00 10  |...H......H.....|
+00000370  00 00 00 00 48 8b 82 00 00 00 00 49 89 c0 49 01  |....H......I..I.|
+00000380  c8 49 b9 50 00 00 14 00 00 00 00 4d 39 c8 0f 87  |.I.P.......M9...|
+00000390  08 00 00 00 4c 89 82 00 00 00 00 c3 48 b8 58 1a  |....L.......H.X.|
+000003a0  40 00 00 00 00 00 e8 22 00 00 00 b8 3c 00 00 00  |@......"....<...|
+000003b0  bf 01 00 00 00 0f 05 51 48 81 c1 09 00 00 00 e8  |.......QH.......|
+000003c0  98 ff ff ff 59 48 89 88 00 00 00 00 c3 48 8d b0  |....YH.......H..|
+000003d0  08 00 00 00 48 8b 90 00 00 00 00 b8 01 00 00 00  |....H...........|
+000003e0  bf 01 00 00 00 0f 05 c3 50 51 48 8b 90 00 00 00  |........PQH.....|
+000003f0  00 4c 8b 81 00 00 00 00 4c 01 c2 48 89 d1 e8 b4  |.L......L..H....|
+00000400  ff ff ff 41 59 41 58 48 8d b8 08 00 00 00 49 8d  |...AYAXH......I.|
+00000410  b0 08 00 00 00 49 8b 88 00 00 00 00 f3 a4 49 8d  |.....I........I.|
+00000420  b1 08 00 00 00 49 8b 89 00 00 00 00 f3 a4 c3 49  |.....I.........I|
+00000430  89 c0 49 b9 60 00 00 14 00 00 00 00 49 81 c1 20  |..I.`.......I.. |
+00000440  00 00 00 41 ba 00 00 00 00 4d 85 c0 0f 8d 09 00  |...A.....M......|
+00000450  00 00 49 f7 d8 41 ba 01 00 00 00 b9 0a 00 00 00  |..I..A..........|
+00000460  4c 89 c0 ba 00 00 00 00 48 f7 f1 49 89 c0 48 81  |L.......H..I..H.|
+00000470  c2 30 00 00 00 49 81 e9 01 00 00 00 41 88 91 00  |.0...I......A...|
+00000480  00 00 00 4d 85 c0 0f 85 cf ff ff ff 4d 85 d2 0f  |...M........M...|
+00000490  84 13 00 00 00 49 81 e9 01 00 00 00 ba 2d 00 00  |.....I.......-..|
+000004a0  00 41 88 91 00 00 00 00 48 b9 60 00 00 14 00 00  |.A......H.`.....|
+000004b0  00 00 48 81 c1 20 00 00 00 4c 29 c9 41 51 e8 f4  |..H.. ...L).AQ..|
+000004c0  fe ff ff 5e 48 8b 88 00 00 00 00 48 8d b8 08 00  |...^H......H....|
+000004d0  00 00 f3 a4 c3 49 89 c0 49 c1 e0 01 49 c1 e8 01  |.....I..I...I...|
+000004e0  49 b9 00 00 00 00 00 00 f0 7f 4d 39 c8 0f 82 2f  |I.........M9.../|
+000004f0  00 00 00 0f 87 1e 00 00 00 48 85 c0 48 b8 9a 1a  |.........H..H...|
+00000500  40 00 00 00 00 00 0f 89 15 00 00 00 48 b8 ab 1a  |@...........H...|
+00000510  40 00 00 00 00 00 c3 48 b8 c2 1a 40 00 00 00 00  |@......H...@....|
+00000520  00 c3 49 bb 80 00 00 14 00 00 00 00 49 89 c0 49  |..I.........I..I|
+00000530  c1 e8 3f 4d 89 83 10 00 00 00 48 c1 e0 01 48 c1  |..?M......H...H.|
+00000540  e8 01 49 89 83 00 00 00 00 48 81 f9 ff ff ff ff  |..I......H......|
+00000550  0f 85 1f 00 00 00 66 48 0f 6e c0 66 0f 3a 0b c8  |......fH.n.f.:..|
+00000560  03 66 0f 2e c1 b9 00 00 00 00 0f 84 05 00 00 00  |.f..............|
+00000570  b9 02 00 00 00 49 89 8b 08 00 00 00 b8 01 00 00  |.....I..........|
+00000580  00 ba 0a 00 00 00 48 85 c9 0f 84 10 00 00 00 48  |......H........H|
+00000590  0f af c2 48 81 e9 01 00 00 00 e9 e7 ff ff ff 49  |...H...........I|
+000005a0  89 83 18 00 00 00 f2 48 0f 2a c8 49 8b 83 00 00  |.......H.*.I....|
+000005b0  00 00 66 48 0f 6e c0 f2 0f 59 c1 48 b8 92 1a 40  |..fH.n...Y.H...@|
+000005c0  00 00 00 00 00 48 8b 80 00 00 00 00 66 48 0f 6e  |.....H......fH.n|
+000005d0  c8 f2 0f 58 c1 f2 48 0f 2c c0 49 89 83 20 00 00  |...X..H.,.I.. ..|
+000005e0  00 49 8b 8b 18 00 00 00 ba 00 00 00 00 48 f7 f1  |.I...........H..|
+000005f0  52 e8 39 fe ff ff 5a 49 bb 80 00 00 14 00 00 00  |R.9...ZI........|
+00000600  00 49 89 83 28 00 00 00 4d 8b 83 10 00 00 00 4d  |.I..(...M......M|
+00000610  85 c0 0f 84 39 00 00 00 4d 8b 83 20 00 00 00 4d  |....9...M.. ...M|
+00000620  85 c0 0f 84 29 00 00 00 52 48 b8 d7 1a 40 00 00  |....)...RH...@..|
+00000630  00 00 00 49 8b 8b 28 00 00 00 e8 a9 fd ff ff 5a  |...I..(........Z|
+00000640  49 bb 80 00 00 14 00 00 00 00 49 89 83 28 00 00  |I.........I..(..|
+00000650  00 49 8b 8b 08 00 00 00 48 85 c9 0f 84 34 00 00  |.I......H....4..|
+00000660  00 49 8b 83 18 00 00 00 48 01 d0 e8 bf fd ff ff  |.I......H.......|
+00000670  b9 2e 00 00 00 40 88 88 08 00 00 00 48 89 c1 49  |.....@......H..I|
+00000680  bb 80 00 00 14 00 00 00 00 49 8b 83 28 00 00 00  |.........I..(...|
+00000690  e9 53 fd ff ff 49 8b 83 28 00 00 00 c3 48 8b 88  |.S...I..(....H..|
+000006a0  00 00 00 00 48 8d b0 08 00 00 00 41 b8 00 00 00  |....H......A....|
+000006b0  00 41 b9 00 00 00 00 41 ba 0a 00 00 00 48 85 c9  |.A.....A.....H..|
+000006c0  0f 84 88 00 00 00 48 0f b6 96 00 00 00 00 48 81  |......H.......H.|
+000006d0  fa 20 00 00 00 0f 85 13 00 00 00 48 81 c6 01 00  |. .........H....|
+000006e0  00 00 48 81 e9 01 00 00 00 e9 cf ff ff ff 48 81  |..H...........H.|
+000006f0  fa 2d 00 00 00 0f 85 14 00 00 00 41 b9 01 00 00  |.-.........A....|
+00000700  00 48 81 c6 01 00 00 00 48 81 e9 01 00 00 00 48  |.H......H......H|
+00000710  85 c9 0f 84 36 00 00 00 48 0f b6 96 00 00 00 00  |....6...H.......|
+00000720  48 81 ea 30 00 00 00 48 81 fa 09 00 00 00 0f 87  |H..0...H........|
+00000730  1a 00 00 00 4d 0f af c2 49 01 d0 48 81 c6 01 00  |....M...I..H....|
+00000740  00 00 48 81 e9 01 00 00 00 e9 c1 ff ff ff 4c 89  |..H...........L.|
+00000750  c0 4d 85 c9 0f 84 03 00 00 00 48 f7 d8 c3 48 85  |.M........H...H.|
+00000760  c9 0f 84 6f 00 00 00 48 0f b6 86 00 00 00 00 48  |...o...H.......H|
+00000770  0f b6 97 00 00 00 00 49 89 c2 49 81 ea 41 00 00  |.......I..I..A..|
+00000780  00 49 81 fa 19 00 00 00 0f 87 07 00 00 00 48 81  |.I............H.|
+00000790  c0 20 00 00 00 49 89 d2 49 81 ea 41 00 00 00 49  |. ...I..I..A...I|
+000007a0  81 fa 19 00 00 00 0f 87 07 00 00 00 48 81 c2 20  |............H.. |
+000007b0  00 00 00 48 39 d0 0f 85 20 00 00 00 48 81 c6 01  |...H9... ...H...|
+000007c0  00 00 00 48 81 c7 01 00 00 00 48 81 e9 01 00 00  |...H......H.....|
+000007d0  00 e9 88 ff ff ff b8 01 00 00 00 c3 b8 00 00 00  |................|
+000007e0  00 c3 48 8b 90 00 00 00 00 4c 8b 81 00 00 00 00  |..H......L......|
+000007f0  4c 39 c2 0f 85 16 00 00 00 48 8d b0 08 00 00 00  |L9.......H......|
+00000800  48 8d b9 08 00 00 00 48 89 d1 e9 4f ff ff ff b8  |H......H...O....|
+00000810  00 00 00 00 c3 48 85 d2 0f 8c 36 00 00 00 4c 8b  |.....H....6...L.|
+00000820  80 00 00 00 00 4c 8b 89 00 00 00 00 49 89 d2 4d  |.....L......I..M|
+00000830  01 ca 4d 39 c2 0f 8f 19 00 00 00 48 8d b0 08 00  |..M9.......H....|
+00000840  00 00 48 01 d6 48 8d b9 08 00 00 00 4c 89 c9 e9  |..H..H......L...|
+00000850  0a ff ff ff b8 00 00 00 00 c3 49 bb b0 00 00 14  |..........I.....|
+00000860  00 00 00 00 49 89 83 00 00 00 00 49 89 8b 08 00  |....I......I....|
+00000870  00 00 ba 00 00 00 00 49 89 93 10 00 00 00 4c 8b  |.......I......L.|
+00000880  80 00 00 00 00 4c 8b 89 00 00 00 00 4d 29 c8 4c  |.....L......M).L|
+00000890  39 c2 0f 8f 39 00 00 00 e8 78 ff ff ff 48 85 c0  |9...9....x...H..|
+000008a0  0f 85 30 00 00 00 49 bb b0 00 00 14 00 00 00 00  |..0...I.........|
+000008b0  49 8b 83 00 00 00 00 49 8b 8b 08 00 00 00 49 8b  |I......I......I.|
+000008c0  93 10 00 00 00 48 81 c2 01 00 00 00 e9 a6 ff ff  |.....H..........|
+000008d0  ff b8 00 00 00 00 c3 ba 00 00 00 00 e9 34 ff ff  |.............4..|
+000008e0  ff 48 8b 90 00 00 00 00 4c 8b 81 00 00 00 00 4c  |.H......L......L|
+000008f0  29 c2 e9 1e ff ff ff 50 48 8b 88 00 00 00 00 e8  |)......PH.......|
+00000900  b3 fa ff ff 5e 48 8b 8e 00 00 00 00 4c 8d 86 08  |....^H......L...|
+00000910  00 00 00 4c 8d 88 08 00 00 00 48 85 c9 0f 84 47  |...L......H....G|
+00000920  00 00 00 49 0f b6 90 00 00 00 00 49 89 d2 49 81  |...I.......I..I.|
+00000930  ea 61 00 00 00 49 81 fa 19 00 00 00 0f 87 07 00  |.a...I..........|
+00000940  00 00 48 81 c2 e0 ff ff ff 41 88 91 00 00 00 00  |..H......A......|
+00000950  49 81 c0 01 00 00 00 49 81 c1 01 00 00 00 48 81  |I......I......H.|
+00000960  e9 01 00 00 00 e9 b0 ff ff ff c3 50 48 8b 88 00  |...........PH...|
+00000970  00 00 00 e8 3f fa ff ff 5e 48 8b 8e 00 00 00 00  |....?...^H......|
+00000980  4c 8d 86 08 00 00 00 4c 8d 88 08 00 00 00 48 85  |L......L......H.|
+00000990  c9 0f 84 47 00 00 00 49 0f b6 90 00 00 00 00 49  |...G...I.......I|
+000009a0  89 d2 49 81 ea 41 00 00 00 49 81 fa 19 00 00 00  |..I..A...I......|
+000009b0  0f 87 07 00 00 00 48 81 c2 20 00 00 00 41 88 91  |......H.. ...A..|
+000009c0  00 00 00 00 49 81 c0 01 00 00 00 49 81 c1 01 00  |....I......I....|
+000009d0  00 00 48 81 e9 01 00 00 00 e9 b0 ff ff ff c3 48  |..H............H|
+000009e0  81 e9 01 00 00 00 0f 8c 31 00 00 00 48 8b 90 00  |........1...H...|
+000009f0  00 00 00 48 39 d1 0f 8d 21 00 00 00 50 51 b9 01  |...H9...!...PQ..|
+00000a00  00 00 00 e8 af f9 ff ff 59 5e 48 01 ce 48 0f b6  |........Y^H..H..|
+00000a10  96 08 00 00 00 40 88 90 08 00 00 00 c3 b9 00 00  |.....@..........|
+00000a20  00 00 e9 90 f9 ff ff 49 bb d0 00 00 14 00 00 00  |.......I........|
+00000a30  00 49 89 83 00 00 00 00 49 89 8b 08 00 00 00 49  |.I......I......I|
+00000a40  89 93 10 00 00 00 4d 89 83 18 00 00 00 ba 00 00  |......M.........|
+00000a50  00 00 48 89 91 00 00 00 00 49 89 93 20 00 00 00  |..H......I.. ...|
+00000a60  49 89 93 28 00 00 00 49 bb d0 00 00 14 00 00 00  |I..(...I........|
+00000a70  00 49 8b 83 00 00 00 00 49 8b 93 20 00 00 00 48  |.I......I.. ...H|
+00000a80  8b 88 00 00 00 00 48 39 ca 0f 84 5e 00 00 00 48  |......H9...^...H|
+00000a90  01 d0 48 0f b6 80 08 00 00 00 49 8b 8b 10 00 00  |..H.......I.....|
+00000aa0  00 48 39 c8 0f 84 13 00 00 00 48 81 c2 01 00 00  |.H9.......H.....|
+00000ab0  00 49 89 93 20 00 00 00 e9 aa ff ff ff e8 31 00  |.I.. .........1.|
+00000ac0  00 00 49 bb d0 00 00 14 00 00 00 00 49 8b 93 20  |..I.........I.. |
+00000ad0  00 00 00 48 81 c2 01 00 00 00 49 89 93 20 00 00  |...H......I.. ..|
+00000ae0  00 49 89 93 28 00 00 00 e9 7a ff ff ff e8 01 00  |.I..(....z......|
+00000af0  00 00 c3 49 bb d0 00 00 14 00 00 00 00 49 8b 8b  |...I.........I..|
+00000b00  20 00 00 00 49 8b 93 28 00 00 00 48 29 d1 0f 84  | ...I..(...H)...|
+00000b10  65 00 00 00 e8 9e f8 ff ff 49 bb d0 00 00 14 00  |e........I......|
+00000b20  00 00 00 48 8b 88 00 00 00 00 48 8d b8 08 00 00  |...H......H.....|
+00000b30  00 49 8b b3 00 00 00 00 49 8b 93 28 00 00 00 48  |.I......I..(...H|
+00000b40  01 d6 48 81 c6 08 00 00 00 f3 a4 4d 8b 83 18 00  |..H........M....|
+00000b50  00 00 4d 85 c0 0f 84 05 00 00 00 e8 3d fb ff ff  |..M.........=...|
+00000b60  48 89 c1 49 bb d0 00 00 14 00 00 00 00 49 8b 83  |H..I.........I..|
+00000b70  08 00 00 00 e9 10 06 00 00 c3 49 bb 00 01 00 14  |..........I.....|
+00000b80  00 00 00 00 49 89 83 00 00 00 00 49 89 8b 08 00  |....I......I....|
+00000b90  00 00 ba 00 00 00 00 48 89 91 00 00 00 00 ba 01  |.......H........|
+00000ba0  00 00 00 49 89 93 10 00 00 00 49 8b 83 00 00 00  |...I......I.....|
+00000bb0  00 48 8b 88 00 00 00 00 48 39 ca 0f 8f 3e 00 00  |.H......H9...>..|
+00000bc0  00 48 89 d1 e8 16 fe ff ff 48 89 c1 49 bb 00 01  |.H.......H..I...|
+00000bd0  00 14 00 00 00 00 49 8b 83 08 00 00 00 e8 a7 05  |......I.........|
+00000be0  00 00 49 bb 00 01 00 14 00 00 00 00 49 8b 93 10  |..I.........I...|
+00000bf0  00 00 00 48 81 c2 01 00 00 00 e9 a4 ff ff ff c3  |...H............|
+00000c00  50 48 8b 88 00 00 00 00 e8 aa f7 ff ff 5e 4c 8b  |PH...........^L.|
+00000c10  86 00 00 00 00 48 81 c6 08 00 00 00 4c 8d 88 08  |.....H......L...|
+00000c20  00 00 00 49 81 e8 01 00 00 00 49 81 f8 00 00 00  |...I......I.....|
+00000c30  00 0f 8c 81 00 00 00 4d 89 c2 49 81 fa 00 00 00  |.......M..I.....|
+00000c40  00 0f 84 2e 00 00 00 49 89 f3 4d 01 d3 49 0f b6  |.......I..M..I..|
+00000c50  93 00 00 00 00 48 81 e2 c0 00 00 00 48 81 fa 80  |.....H......H...|
+00000c60  00 00 00 0f 85 0c 00 00 00 49 81 ea 01 00 00 00  |.........I......|
+00000c70  e9 c5 ff ff ff 4d 89 d3 4d 39 c3 0f 8f 28 00 00  |.....M..M9...(..|
+00000c80  00 48 89 f1 4c 01 d9 48 0f b6 91 00 00 00 00 41  |.H..L..H.......A|
+00000c90  88 91 00 00 00 00 49 81 c1 01 00 00 00 49 81 c3  |......I......I..|
+00000ca0  01 00 00 00 e9 cf ff ff ff 4d 89 d0 49 81 e8 01  |.........M..I...|
+00000cb0  00 00 00 e9 72 ff ff ff c3 48 8b 90 00 00 00 00  |....r....H......|
+00000cc0  48 89 91 00 00 00 00 41 b8 00 00 00 00 49 39 d0  |H......A.....I9.|
+00000cd0  0f 8d 38 00 00 00 49 89 d1 4d 29 c1 49 81 e9 01  |..8...I..M).I...|
+00000ce0  00 00 00 49 c1 e1 03 49 01 c1 4d 8b 91 08 00 00  |...I...I..M.....|
+00000cf0  00 4d 89 c3 49 c1 e3 03 49 01 cb 4d 89 93 08 00  |.M..I...I..M....|
+00000d00  00 00 49 81 c0 01 00 00 00 e9 bf ff ff ff 48 89  |..I...........H.|
+00000d10  c8 c3 b9 00 01 00 00 e8 9b f6 ff ff 50 4c 8d a0  |............PL..|
+00000d20  08 00 00 00 4d 89 e6 4c 8d a8 08 01 00 00 b8 00  |....M..L........|
+00000d30  00 00 00 bf 00 00 00 00 4c 89 e6 ba 01 00 00 00  |........L.......|
+00000d40  0f 05 48 81 f8 01 00 00 00 0f 85 2b 00 00 00 49  |..H........+...I|
+00000d50  0f b6 94 24 00 00 00 00 48 81 fa 0a 00 00 00 0f  |...$....H.......|
+00000d60  84 1e 00 00 00 49 81 c4 01 00 00 00 4d 39 ec 0f  |.....I......M9..|
+00000d70  82 b9 ff ff ff e9 09 00 00 00 4d 39 f4 0f 84 5b  |..........M9...[|
+00000d80  00 00 00 4d 39 f4 0f 84 2f 00 00 00 49 0f b6 94  |...M9.../...I...|
+00000d90  24 ff ff ff ff 48 81 fa 20 00 00 00 0f 84 0d 00  |$....H.. .......|
+00000da0  00 00 48 81 fa 0d 00 00 00 0f 85 0c 00 00 00 49  |..H............I|
+00000db0  81 ec 01 00 00 00 e9 c8 ff ff ff ba 00 00 00 00  |................|
+00000dc0  41 88 94 24 00 00 00 00 58 4c 89 e1 48 29 c1 48  |A..$....XL..H).H|
+00000dd0  81 e9 08 00 00 00 48 89 88 00 00 00 00 c3 48 b8  |......H.......H.|
+00000de0  e1 1a 40 00 00 00 00 00 e8 e0 f5 ff ff b8 3c 00  |..@...........<.|
+00000df0  00 00 bf 00 00 00 00 0f 05 e8 14 ff ff ff 48 8d  |..............H.|
+00000e00  b0 08 00 00 00 48 8b 88 00 00 00 00 48 85 c9 0f  |.....H......H...|
+00000e10  84 5a 00 00 00 48 0f b6 96 00 00 00 00 48 81 c6  |.Z...H.......H..|
+00000e20  01 00 00 00 48 81 e9 01 00 00 00 48 81 fa 20 00  |....H......H.. .|
+00000e30  00 00 0f 84 d4 ff ff ff 48 81 fa 2d 00 00 00 0f  |........H..-....|
+00000e40  85 11 00 00 00 48 85 c9 0f 84 21 00 00 00 48 0f  |.....H....!...H.|
+00000e50  b6 96 00 00 00 00 48 81 ea 30 00 00 00 48 81 fa  |......H..0...H..|
+00000e60  09 00 00 00 0f 87 05 00 00 00 e9 2e f8 ff ff 48  |...............H|
+00000e70  b8 ef 1a 40 00 00 00 00 00 e8 4f f5 ff ff e9 76  |...@......O....v|
+00000e80  ff ff ff b8 10 00 00 00 bf 00 00 00 00 be 01 54  |...............T|
+00000e90  00 00 48 ba 20 01 00 14 00 00 00 00 0f 05 49 89  |..H. .........I.|
+00000ea0  c6 4d 85 f6 0f 85 6e 00 00 00 48 be 20 01 00 14  |.M....n...H. ...|
+00000eb0  00 00 00 00 48 bf 60 01 00 14 00 00 00 00 b9 40  |....H.`........@|
+00000ec0  00 00 00 f3 a4 48 bf 60 01 00 14 00 00 00 00 48  |.....H.`.......H|
+00000ed0  0f b6 97 0c 00 00 00 48 81 e2 f4 ff ff ff 40 88  |.......H......@.|
+00000ee0  97 0c 00 00 00 ba 01 00 00 00 40 88 97 17 00 00  |..........@.....|
+00000ef0  00 ba 00 00 00 00 40 88 97 16 00 00 00 b8 10 00  |......@.........|
+00000f00  00 00 bf 00 00 00 00 be 02 54 00 00 48 ba 60 01  |.........T..H.`.|
+00000f10  00 14 00 00 00 00 0f 05 b9 01 00 00 00 e8 95 f4  |................|
+00000f20  ff ff 50 48 8d b0 08 00 00 00 b8 00 00 00 00 bf  |..PH............|
+00000f30  00 00 00 00 ba 01 00 00 00 0f 05 49 89 c7 4d 85  |...........I..M.|
+00000f40  f6 0f 85 1b 00 00 00 b8 10 00 00 00 bf 00 00 00  |................|
+00000f50  00 be 02 54 00 00 48 ba 20 01 00 14 00 00 00 00  |...T..H. .......|
+00000f60  0f 05 58 49 81 ff 01 00 00 00 0f 85 6e fe ff ff  |..XI........n...|
+00000f70  48 0f b6 90 08 00 00 00 48 81 fa 03 00 00 00 0f  |H.......H.......|
+00000f80  85 1b 00 00 00 48 b8 e1 1a 40 00 00 00 00 00 e8  |.....H...@......|
+00000f90  39 f4 ff ff b8 3c 00 00 00 bf 82 00 00 00 0f 05  |9....<..........|
+00000fa0  c3 48 85 c0 0f 8e 31 00 00 00 ba 00 00 00 00 b9  |.H....1.........|
+00000fb0  00 ca 9a 3b 48 f7 f1 48 bf a0 01 00 14 00 00 00  |...;H..H........|
+00000fc0  00 48 89 87 00 00 00 00 48 89 97 08 00 00 00 be  |.H......H.......|
+00000fd0  00 00 00 00 b8 23 00 00 00 0f 05 c3 50 51 b8 3e  |.....#......PQ.>|
+00000fe0  01 00 00 48 bf b0 01 00 14 00 00 00 00 be 08 00  |...H............|
+00000ff0  00 00 ba 00 00 00 00 0f 05 59 41 58 4c 29 c1 48  |.........YAXL).H|
+00001000  81 c1 01 00 00 00 0f 8e 20 00 00 00 48 bf b0 01  |........ ...H...|
+00001010  00 14 00 00 00 00 48 8b 87 00 00 00 00 ba 00 00  |......H.........|
+00001020  00 00 48 f7 f1 48 89 d0 4c 01 c0 c3 4c 89 c0 c3  |..H..H..L...L...|
+00001030  b8 e4 00 00 00 48 be c0 01 00 14 00 00 00 00 0f  |.....H..........|
+00001040  05 48 be c0 01 00 14 00 00 00 00 48 8b 86 00 00  |.H.........H....|
+00001050  00 00 b9 00 ca 9a 3b 48 0f af c1 48 8b 8e 08 00  |......;H...H....|
+00001060  00 00 48 01 c8 c3 50 bf 01 00 00 00 e8 bf ff ff  |..H...P.........|
+00001070  ff 59 48 29 c8 f2 48 0f 2a c0 48 b8 0e 1b 40 00  |.YH)..H.*.H...@.|
+00001080  00 00 00 00 48 8b 80 00 00 00 00 66 48 0f 6e c8  |....H......fH.n.|
+00001090  f2 0f 5e c1 66 48 0f 7e c0 c3 bf 00 00 00 00 e8  |..^.fH.~........|
+000010a0  8c ff ff ff ba 00 00 00 00 b9 00 ca 9a 3b 48 f7  |.............;H.|
+000010b0  f1 ba 00 00 00 00 b9 80 51 01 00 48 f7 f1 49 89  |........Q..H..I.|
+000010c0  d4 b9 08 00 00 00 e8 ec f2 ff ff 49 89 c5 b9 3a  |...........I...:|
+000010d0  00 00 00 41 88 8d 0a 00 00 00 41 88 8d 0d 00 00  |...A......A.....|
+000010e0  00 4c 89 e0 ba 00 00 00 00 b9 10 0e 00 00 48 f7  |.L............H.|
+000010f0  f1 49 89 d4 ba 00 00 00 00 b9 0a 00 00 00 48 f7  |.I............H.|
+00001100  f1 48 81 c0 30 00 00 00 41 88 85 08 00 00 00 48  |.H..0...A......H|
+00001110  81 c2 30 00 00 00 41 88 95 09 00 00 00 4c 89 e0  |..0...A......L..|
+00001120  ba 00 00 00 00 b9 3c 00 00 00 48 f7 f1 49 89 d4  |......<...H..I..|
+00001130  ba 00 00 00 00 b9 0a 00 00 00 48 f7 f1 48 81 c0  |..........H..H..|
+00001140  30 00 00 00 41 88 85 0b 00 00 00 48 81 c2 30 00  |0...A......H..0.|
+00001150  00 00 41 88 95 0c 00 00 00 4c 89 e0 ba 00 00 00  |..A......L......|
+00001160  00 b9 0a 00 00 00 48 f7 f1 48 81 c0 30 00 00 00  |......H..H..0...|
+00001170  41 88 85 0e 00 00 00 48 81 c2 30 00 00 00 41 88  |A......H..0...A.|
+00001180  95 0f 00 00 00 4c 89 e8 c3 48 8b 90 00 00 00 00  |.....L...H......|
+00001190  48 81 fa e8 03 00 00 0f 8d 20 00 00 00 49 89 d0  |H........ ...I..|
+000011a0  49 c1 e0 03 49 01 c0 49 89 88 08 00 00 00 48 81  |I...I..I......H.|
+000011b0  c2 01 00 00 00 48 89 90 00 00 00 00 c3 48 b8 16  |.....H.......H..|
+000011c0  1b 40 00 00 00 00 00 e8 01 f2 ff ff c3 48 8b 90  |.@...........H..|
+000011d0  00 00 00 00 48 81 fa e8 03 00 00 0f 8d dc ff ff  |....H...........|
+000011e0  ff 49 89 d0 4d 85 c0 0f 84 24 00 00 00 4d 89 c1  |.I..M....$...M..|
+000011f0  49 c1 e1 03 49 01 c1 4d 8b 91 00 00 00 00 4d 89  |I...I..M......M.|
+00001200  91 08 00 00 00 49 81 e8 01 00 00 00 e9 d3 ff ff  |.....I..........|
+00001210  ff 48 89 88 08 00 00 00 48 81 c2 01 00 00 00 48  |.H......H......H|
+00001220  89 90 00 00 00 00 c3 48 8b 90 00 00 00 00 48 85  |.......H......H.|
+00001230  d2 0f 84 30 00 00 00 4c 8b 90 08 00 00 00 48 81  |...0...L......H.|
+00001240  ea 01 00 00 00 48 89 90 00 00 00 00 48 8d b8 08  |.....H......H...|
+00001250  00 00 00 48 8d b0 10 00 00 00 48 89 d1 48 c1 e1  |...H......H..H..|
+00001260  03 f3 a4 4c 89 d0 c3 48 89 c8 c3 48 8b 90 00 00  |...L...H...H....|
+00001270  00 00 48 85 d2 0f 84 ec ff ff ff 48 81 ea 01 00  |..H........H....|
+00001280  00 00 48 89 90 00 00 00 00 48 c1 e2 03 48 01 d0  |..H......H...H..|
+00001290  48 8b 80 08 00 00 00 c3 48 81 e9 01 00 00 00 0f  |H.......H.......|
+000012a0  8c 1f 00 00 00 4c 8b 80 00 00 00 00 4c 39 c1 0f  |.....L......L9..|
+000012b0  8d 0f 00 00 00 48 c1 e1 03 48 01 c8 48 8b 80 08  |.....H...H..H...|
+000012c0  00 00 00 c3 48 89 d0 c3 49 bb d0 01 00 14 00 00  |....H...I.......|
+000012d0  00 00 49 89 83 00 00 00 00 49 89 8b 08 00 00 00  |..I......I......|
+000012e0  49 89 93 10 00 00 00 41 b8 00 00 00 00 49 bb d0  |I......A.....I..|
+000012f0  01 00 14 00 00 00 00 4d 89 83 18 00 00 00 49 8b  |.......M......I.|
+00001300  83 00 00 00 00 4c 8b 88 00 00 00 00 4d 39 c8 0f  |.....L......M9..|
+00001310  8d 64 00 00 00 49 c1 e0 03 4c 01 c0 48 8b 80 08  |.d...I...L..H...|
+00001320  00 00 00 49 8b 8b 08 00 00 00 49 8b 93 10 00 00  |...I......I.....|
+00001330  00 48 85 d2 0f 84 13 00 00 00 e8 a3 f4 ff ff 48  |.H.............H|
+00001340  85 c0 0f 85 2b 00 00 00 e9 09 00 00 00 48 39 c8  |....+........H9.|
+00001350  0f 84 1d 00 00 00 49 bb d0 01 00 14 00 00 00 00  |......I.........|
+00001360  4d 8b 83 18 00 00 00 49 81 c0 01 00 00 00 e9 7a  |M......I.......z|
+00001370  ff ff ff b8 01 00 00 00 c3 b8 00 00 00 00 c3 49  |...............I|
+00001380  bb f0 01 00 14 00 00 00 00 49 89 83 00 00 00 00  |.........I......|
+00001390  49 89 8b 08 00 00 00 49 89 93 10 00 00 00 48 b8  |I......I......H.|
+000013a0  59 1b 40 00 00 00 00 00 49 89 83 20 00 00 00 41  |Y.@.....I.. ...A|
+000013b0  b8 00 00 00 00 49 bb f0 01 00 14 00 00 00 00 4d  |.....I.........M|
+000013c0  89 83 18 00 00 00 49 8b 83 00 00 00 00 4c 8b 88  |......I......L..|
+000013d0  00 00 00 00 4d 39 c8 0f 8d b6 00 00 00 4d 85 c0  |....M9.......M..|
+000013e0  0f 84 24 00 00 00 49 8b 83 20 00 00 00 49 8b 8b  |..$...I.. ...I..|
+000013f0  10 00 00 00 e8 ef ef ff ff 49 bb f0 01 00 14 00  |.........I......|
+00001400  00 00 00 49 89 83 20 00 00 00 49 8b 83 00 00 00  |...I.. ...I.....|
+00001410  00 4d 8b 83 18 00 00 00 49 c1 e0 03 4c 01 c0 48  |.M......I...L..H|
+00001420  8b 80 08 00 00 00 49 8b 8b 08 00 00 00 48 81 f9  |......I......H..|
+00001430  01 00 00 00 0f 87 1c 00 00 00 0f 84 0a 00 00 00  |................|
+00001440  e8 ea ef ff ff e9 0c 00 00 00 48 c7 c1 ff ff ff  |..........H.....|
+00001450  ff e8 7f f0 ff ff 48 89 c1 49 bb f0 01 00 14 00  |......H..I......|
+00001460  00 00 00 49 8b 83 20 00 00 00 e8 79 ef ff ff 49  |...I.. ....y...I|
+00001470  bb f0 01 00 14 00 00 00 00 49 89 83 20 00 00 00  |.........I.. ...|
+00001480  4d 8b 83 18 00 00 00 49 81 c0 01 00 00 00 e9 22  |M......I......."|
+00001490  ff ff ff 49 8b 83 20 00 00 00 c3 48 89 c6 48 89  |...I.. ....H..H.|
+000014a0  cf b9 48 1f 00 00 f3 a4 c3 51 48 8d b8 08 00 00  |..H......QH.....|
+000014b0  00 48 89 d6 ba a4 01 00 00 b8 02 00 00 00 0f 05  |.H..............|
+000014c0  59 48 85 c0 0f 8c 4b 00 00 00 49 89 c4 48 8d b1  |YH....K...I..H..|
+000014d0  08 00 00 00 48 8b 91 00 00 00 00 b8 01 00 00 00  |....H...........|
+000014e0  4c 89 e7 0f 05 48 be 2e 1a 40 00 00 00 00 00 48  |L....H...@.....H|
+000014f0  81 c6 08 00 00 00 ba 01 00 00 00 b8 01 00 00 00  |................|
+00001500  4c 89 e7 0f 05 b8 03 00 00 00 4c 89 e7 0f 05 b8  |L.........L.....|
+00001510  01 00 00 00 c3 48 b8 62 1b 40 00 00 00 00 00 e8  |.....H.b.@......|
+00001520  a9 ee ff ff b8 00 00 00 00 c3 48 8d b8 08 00 00  |..........H.....|
+00001530  00 be 00 00 00 00 ba 00 00 00 00 b8 02 00 00 00  |................|
+00001540  0f 05 48 85 c0 0f 8c 95 00 00 00 49 89 c4 b9 00  |..H........I....|
+00001550  00 01 00 e8 5f ee ff ff 49 89 c5 41 be 00 00 00  |...._...I..A....|
+00001560  00 ba 00 00 01 00 4c 29 f2 0f 84 25 00 00 00 49  |......L)...%...I|
+00001570  8d b5 08 00 00 00 4c 01 f6 4c 89 e7 b8 00 00 00  |......L..L......|
+00001580  00 0f 05 48 85 c0 0f 8e 08 00 00 00 49 01 c6 e9  |...H........I...|
+00001590  cd ff ff ff b8 03 00 00 00 4c 89 e7 0f 05 4d 85  |.........L....M.|
+000015a0  f6 0f 84 2e 00 00 00 4d 89 e8 4d 01 f0 49 0f b6  |.......M..M..I..|
+000015b0  90 07 00 00 00 48 81 fa 0a 00 00 00 0f 85 13 00  |.....H..........|
+000015c0  00 00 49 81 ee 01 00 00 00 ba 00 00 00 00 41 88  |..I...........A.|
+000015d0  90 07 00 00 00 4d 89 b5 00 00 00 00 4c 89 e8 c3  |.....M......L...|
+000015e0  b8 00 00 00 00 c3 49 bb 20 02 00 14 00 00 00 00  |......I. .......|
+000015f0  49 89 83 00 00 00 00 48 b8 86 1b 40 00 00 00 00  |I......H...@....|
+00001600  00 e8 c7 ed ff ff 49 bb 20 02 00 14 00 00 00 00  |......I. .......|
+00001610  49 8b 83 00 00 00 00 e8 b1 ed ff ff 48 b8 af 1b  |I...........H...|
+00001620  40 00 00 00 00 00 e8 a2 ed ff ff e8 e2 f6 ff ff  |@...............|
+00001630  48 0f b6 90 08 00 00 00 48 81 ca 20 00 00 00 48  |H.......H.. ...H|
+00001640  81 fa 79 00 00 00 0f 85 48 00 00 00 49 bb 20 02  |..y.....H...I. .|
+00001650  00 14 00 00 00 00 49 8b 83 00 00 00 00 48 8d b8  |......I......H..|
+00001660  08 00 00 00 b8 57 00 00 00 0f 05 48 85 c0 0f 8c  |.....W.....H....|
+00001670  10 00 00 00 48 b8 c3 1b 40 00 00 00 00 00 e8 4a  |....H...@......J|
+00001680  ed ff ff c3 48 b8 d5 1b 40 00 00 00 00 00 e8 3a  |....H...@......:|
+00001690  ed ff ff c3 48 b8 f8 1b 40 00 00 00 00 00 e8 2a  |....H...@......*|
+000016a0  ed ff ff c3 b8 10 00 00 00 bf 01 00 00 00 be 13  |................|
+000016b0  54 00 00 48 ba 30 02 00 14 00 00 00 00 0f 05 48  |T..H.0.........H|
+000016c0  85 c0 0f 85 2d 00 00 00 48 ba 30 02 00 14 00 00  |....-...H.0.....|
+000016d0  00 00 48 8b 82 00 00 00 00 48 89 c1 48 c1 e9 10  |..H......H..H...|
+000016e0  48 81 e1 ff ff 00 00 48 81 e0 ff ff 00 00 0f 84  |H......H........|
+000016f0  01 00 00 00 c3 b8 18 00 00 00 b9 50 00 00 00 c3  |...........P....|
+00001700  49 bb 40 02 00 14 00 00 00 00 49 89 83 00 00 00  |I.@.......I.....|
+00001710  00 49 89 8b 08 00 00 00 48 b8 10 1c 40 00 00 00  |.I......H...@...|
+00001720  00 00 e8 a6 ec ff ff 49 bb 40 02 00 14 00 00 00  |.......I.@......|
+00001730  00 49 8b 83 00 00 00 00 48 85 c0 0f 84 43 00 00  |.I......H....C..|
+00001740  00 e8 e9 ec ff ff e8 82 ec ff ff 48 b8 1b 1c 40  |...........H...@|
+00001750  00 00 00 00 00 e8 73 ec ff ff 49 bb 40 02 00 14  |......s...I.@...|
+00001760  00 00 00 00 49 8b 83 08 00 00 00 e8 bf ec ff ff  |....I...........|
+00001770  e8 58 ec ff ff 48 b8 25 1c 40 00 00 00 00 00 e9  |.X...H.%.@......|
+00001780  49 ec ff ff 49 8b 83 08 00 00 00 e8 9f ec ff ff  |I...I...........|
+00001790  e8 38 ec ff ff 48 b8 2f 1c 40 00 00 00 00 00 e9  |.8...H./.@......|
+000017a0  29 ec ff ff 49 89 c0 49 b9 00 00 00 10 00 00 00  |)...I..I........|
+000017b0  00 4d 8b 89 00 00 00 00 4d 8b 91 00 00 00 00 4d  |.M......M......M|
+000017c0  85 d2 0f 84 69 00 00 00 4c 89 d6 49 8d b8 08 00  |....i...L..I....|
+000017d0  00 00 49 8b 88 00 00 00 00 f3 a6 0f 84 0c 00 00  |..I.............|
+000017e0  00 49 81 c1 08 00 00 00 e9 cb ff ff ff 49 89 f4  |.I...........I..|
+000017f0  b9 00 00 00 00 4c 89 e2 48 01 ca 48 0f b6 92 00  |.....L..H..H....|
+00001800  00 00 00 48 85 d2 0f 84 0c 00 00 00 48 81 c1 01  |...H........H...|
+00001810  00 00 00 e9 dd ff ff ff e8 9a eb ff ff 48 8b 88  |.............H..|
+00001820  00 00 00 00 48 8d b8 08 00 00 00 4c 89 e6 f3 a4  |....H......L....|
+00001830  c3 b8 00 00 00 00 c3 49 bb 50 02 00 14 00 00 00  |.......I.P......|
+00001840  00 49 89 83 00 00 00 00 48 b8 39 1c 40 00 00 00  |.I......H.9.@...|
+00001850  00 00 e8 4d ff ff ff 48 85 c0 0f 85 1e 00 00 00  |...M...H........|
+00001860  b8 6e 00 00 00 0f 05 e8 c3 eb ff ff 48 89 c1 48  |.n..........H..H|
+00001870  b8 4f 1c 40 00 00 00 00 00 e8 6a eb ff ff 48 89  |.O.@......j...H.|
+00001880  c1 48 b8 5c 1c 40 00 00 00 00 00 e8 58 eb ff ff  |.H.\.@......X...|
+00001890  48 b9 70 1c 40 00 00 00 00 00 e8 49 eb ff ff 49  |H.p.@......I...I|
+000018a0  bb 50 02 00 14 00 00 00 00 49 8b 8b 00 00 00 00  |.P.......I......|
+000018b0  e8 33 eb ff ff 49 bb 50 02 00 14 00 00 00 00 49  |.3...I.P.......I|
+000018c0  89 83 08 00 00 00 b8 39 00 00 00 0f 05 48 85 c0  |.......9.....H..|
+000018d0  0f 84 43 00 00 00 0f 8c 3c 00 00 00 48 89 c7 be  |..C.....<...H...|
+000018e0  00 00 00 00 ba 00 00 00 00 41 ba 00 00 00 00 b8  |.........A......|
+000018f0  3d 00 00 00 0f 05 48 bf 90 02 00 14 00 00 00 00  |=.....H.........|
+00001900  b8 80 d1 f0 08 48 89 87 08 00 00 00 be 00 00 00  |.....H..........|
+00001910  00 b8 23 00 00 00 0f 05 c3 48 bf 7b 1c 40 00 00  |..#......H.{.@..|
+00001920  00 00 00 48 81 c7 08 00 00 00 be 01 00 00 00 ba  |...H............|
+00001930  00 00 00 00 b8 02 00 00 00 0f 05 49 89 c4 b8 21  |...........I...!|
+00001940  00 00 00 4c 89 e7 be 01 00 00 00 0f 05 b8 21 00  |...L..........!.|
+00001950  00 00 4c 89 e7 be 02 00 00 00 0f 05 49 bb 50 02  |..L.........I.P.|
+00001960  00 14 00 00 00 00 48 b8 8d 1c 40 00 00 00 00 00  |......H...@.....|
+00001970  48 81 c0 08 00 00 00 49 89 83 10 00 00 00 48 b8  |H......I......H.|
+00001980  9d 1c 40 00 00 00 00 00 48 81 c0 08 00 00 00 49  |..@.....H......I|
+00001990  89 83 18 00 00 00 49 8b 83 08 00 00 00 48 81 c0  |......I......H..|
+000019a0  08 00 00 00 49 89 83 20 00 00 00 b8 00 00 00 00  |....I.. ........|
+000019b0  49 89 83 28 00 00 00 48 bf aa 1c 40 00 00 00 00  |I..(...H...@....|
+000019c0  00 48 81 c7 08 00 00 00 49 8d b3 10 00 00 00 48  |.H......I......H|
+000019d0  ba 00 00 00 10 00 00 00 00 48 8b 92 00 00 00 00  |.........H......|
+000019e0  b8 3b 00 00 00 0f 05 b8 3c 00 00 00 bf 7f 00 00  |.;......<.......|
+000019f0  00 0f 05 11 00 00 00 00 00 00 00 1b 5b 33 38 3b  |............[38;|
+00001a00  32 3b 30 3b 31 32 38 3b 31 32 38 6d 00 0b 00 00  |2;0;128;128m....|
+00001a10  00 00 00 00 00 68 65 6c 6c 6f 20 74 68 65 72 65  |.....hello there|
+00001a20  00 04 00 00 00 00 00 00 00 1b 5b 30 6d 00 01 00  |..........[0m...|
+00001a30  00 00 00 00 00 00 0a 00 00 00 00 00 00 00 0c 40  |...............@|
+00001a40  00 00 00 00 00 00 0c 40 cd cc cc cc cc cc 04 40  |.......@.......@|
+00001a50  00 00 00 00 00 00 e0 3f 31 00 00 00 00 00 00 00  |.......?1.......|
+00001a60  0a 4f 75 74 20 6f 66 20 6d 65 6d 6f 72 79 3a 20  |.Out of memory: |
+00001a70  74 68 65 20 70 72 6f 67 72 61 6d 20 6d 61 64 65  |the program made|
+00001a80  20 74 6f 6f 20 6d 61 6e 79 20 74 65 78 74 73 2e  | too many texts.|
+00001a90  0a 00 00 00 00 00 00 00 e0 3f 08 00 00 00 00 00  |.........?......|
+00001aa0  00 00 69 6e 66 69 6e 69 74 79 00 0e 00 00 00 00  |..infinity......|
+00001ab0  00 00 00 6d 69 6e 75 73 20 69 6e 66 69 6e 69 74  |...minus infinit|
+00001ac0  79 00 0c 00 00 00 00 00 00 00 6e 6f 74 20 61 20  |y.........not a |
+00001ad0  6e 75 6d 62 65 72 00 01 00 00 00 00 00 00 00 2d  |number.........-|
+00001ae0  00 05 00 00 00 00 00 00 00 1b 5b 30 6d 0a 00 16  |..........[0m...|
+00001af0  00 00 00 00 00 00 00 50 6c 65 61 73 65 20 74 79  |.......Please ty|
+00001b00  70 65 20 61 20 6e 75 6d 62 65 72 3a 20 00 00 00  |pe a number: ...|
+00001b10  00 00 65 cd cd 41 3a 00 00 00 00 00 00 00 28 54  |..e..A:.......(T|
+00001b20  68 61 74 20 6c 69 73 74 20 69 73 20 66 75 6c 6c  |hat list is full|
+00001b30  3a 20 31 2c 30 30 30 20 69 74 65 6d 73 20 69 73  |: 1,000 items is|
+00001b40  20 74 68 65 20 6d 6f 73 74 20 69 74 20 63 61 6e  | the most it can|
+00001b50  20 68 6f 6c 64 2e 29 0a 00 00 00 00 00 00 00 00  | hold.).........|
+00001b60  00 00 1b 00 00 00 00 00 00 00 28 43 6f 75 6c 64  |..........(Could|
+00001b70  6e 27 74 20 73 61 76 65 20 74 68 61 74 20 66 69  |n't save that fi|
+00001b80  6c 65 2e 29 0a 00 20 00 00 00 00 00 00 00 41 72  |le.).. .......Ar|
+00001b90  65 20 79 6f 75 20 73 75 72 65 20 79 6f 75 20 77  |e you sure you w|
+00001ba0  61 6e 74 20 74 6f 20 64 65 6c 65 74 65 20 00 0b  |ant to delete ..|
+00001bb0  00 00 00 00 00 00 00 3f 20 28 79 65 73 2f 6e 6f  |.......? (yes/no|
+00001bc0  29 20 00 09 00 00 00 00 00 00 00 44 65 6c 65 74  |) .........Delet|
+00001bd0  65 64 2e 0a 00 1a 00 00 00 00 00 00 00 28 54 68  |ed...........(Th|
+00001be0  65 72 65 20 77 61 73 20 6e 6f 20 73 75 63 68 20  |ere was no such |
+00001bf0  66 69 6c 65 2e 29 0a 00 0f 00 00 00 00 00 00 00  |file.)..........|
+00001c00  4f 4b 2c 20 49 20 6b 65 70 74 20 69 74 2e 0a 00  |OK, I kept it...|
+00001c10  02 00 00 00 00 00 00 00 1b 5b 00 01 00 00 00 00  |.........[......|
+00001c20  00 00 00 3b 00 01 00 00 00 00 00 00 00 48 00 01  |...;.........H..|
+00001c30  00 00 00 00 00 00 00 47 00 0d 00 00 00 00 00 00  |.......G........|
+00001c40  00 42 52 49 43 4b 5f 57 49 4e 44 4f 57 3d 00 04  |.BRICK_WINDOW=..|
+00001c50  00 00 00 00 00 00 00 70 69 64 3a 00 0b 00 00 00  |.......pid:.....|
+00001c60  00 00 00 00 6c 6f 63 61 6c 20 50 20 3d 20 22 00  |....local P = ".|
+00001c70  02 00 00 00 00 00 00 00 22 20 00 09 00 00 00 00  |........" ......|
+00001c80  00 00 00 2f 64 65 76 2f 6e 75 6c 6c 00 07 00 00  |.../dev/null....|
+00001c90  00 00 00 00 00 68 79 70 72 63 74 6c 00 04 00 00  |.....hyprctl....|
+00001ca0  00 00 00 00 00 65 76 61 6c 00 10 00 00 00 00 00  |.....eval.......|
+00001cb0  00 00 2f 75 73 72 2f 62 69 6e 2f 68 79 70 72 63  |../usr/bin/hyprc|
+00001cc0  74 6c 00                                         |tl.|
+
+== CONSOLE (what the console in the window showed last) ==
+
+
+It's running in a console window of its own; it asks there about any lines brick guessed.
+
+Saved everything about this program in /home/tuniveza/an/co/eg/untitled.brick
+Give that file to Claude and ask what the program is about.

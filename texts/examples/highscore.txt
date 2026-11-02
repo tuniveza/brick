@@ -1,0 +1,7 @@
+# Step 8: a high score that survives closing the program
+load best.txt as best
+ask "What did you score?" as score
+if score is more than best, write "New high score!" in green and save score to best.txt, otherwise write "The high score is still" best
+add score to the end of scores.txt
+load scores.txt as history
+write "All your scores so far:" and write history

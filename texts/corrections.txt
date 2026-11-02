@@ -1,0 +1,15 @@
+# Your corrections: lines brick had to guess, and what you said they mean (from the review after a run).
+# your line = what you meant, in brick's own words. brick reads these first, so they're never guessed again.
+# You can change or remove any line here.
+at the left side of the screen put text in red with the words hello and hi = write hello and hi in red at the left side of the screen
+at the right side of the screen put text in red with the words hello and hi = write hello and hi in red at the right side of the screen
+write green in the color green to the bottom right of screen = write green then write screen in green at the bottom right
+write red in the color red to the bottom left of screen = write red then write screen in red at the bottom left
+put red text at the left side of the screen with words like strawberry = write with like strawberry in red at the left side of the screen
+put purple text at the left side of the screen with words like strawberry = write with in purple at the left side of the screen then set the colour to lime then write strawberry
+write at left side of screen the text pinhole in pink = write pinhole in pink on the left
+write at the right side of the in red the word apple = write apple in red on the right
+write on the top center side of the screen the word pink in pink = write pink in pink at the top center
+write on the top side of the screen the word pink in pink = write pink in pink at the top
+write on the bottom side of the screen the word pink in pink = write pink in pink at the bottom
+write hello at the bottom red = write hello in red at the bottom

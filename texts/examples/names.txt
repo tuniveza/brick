@@ -1,0 +1,9 @@
+# Step 7: lists
+make a list called names, ask a name 3 times and add it to names, then for each name in names write hello name
+write there are how many in names people
+write the first is first in names and the last is last in names
+put "Zed" at the front of names
+write item 2 of names
+if names contains "Bob" write Bob is here, otherwise write no Bob
+remove the last from names
+write I removed it, now we have names

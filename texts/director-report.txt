@@ -1,0 +1,11 @@
+The English Director (brick's own): 12 scrambled paragraphs, each with a known right answer.
+brick read 2 right, misread 7, and refused 3.
+
+Misread 9 times: directions meaning 'write ...'. For example:
+    'at top side screen put the words all done with red color'  should mean: write all done in red at the top
+    'lets go at the left in gold coolor display'  should mean: write lets go in gold at the left
+    'say saying you win in color crimson on the top'  should mean: write you win in crimson at the top
+Misread 1 time: directions meaning 'set the colour to ...'. For example:
+    'make the writing nayv'  should mean: set the colour to navy
+Refused 1 time: directions meaning 'write ...'. For example:
+    'white white at bottom side screen screen saying game over show'  should mean: write game over in white at the bottom

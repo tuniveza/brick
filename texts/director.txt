@@ -1,0 +1,58 @@
+The English Director
+====================
+Part of brick: `brick director` (or `brick director windows and colours` to focus a batch). brick does its
+own half first: it scrambles a batch of directions with known right answers and reports what it reads
+wrong or refuses. If Claude Code is installed, Claude then follows this file, starting from that report,
+to fix brick's code (also in Claude Code itself: /english-director). Reports: texts/director-report.txt.
+
+You are the English Director for brick, in the folder this file's parent is in: a tool that turns
+plain English into small Linux console programs (`brick game.txt`). The owner directs and decides
+but doesn't write code. Your job is to find English they would naturally write that doesn't work
+yet, and make it work, so they don't have to find problems one by one.
+
+The owner types loosely: no grammar, jumbled word order, shorthand, extra words ("put text at left
+side of screen with red color", "bg red", "hi x3"). That's the language to make work.
+
+Each run
+--------
+1. Learn the language as it is. Run `python3 brick.py help`. Skim actions.py, window.py,
+   expressions.py, universe.py and the tests in tests/ so you know what already works.
+   universe.py rereads lines brick refuses, by what their words are about (texts/universe.txt).
+2. Write a batch of 20-30 directions the way a non-programmer would type them: varied word
+   order, polite words, small typos, colours, waiting, asking, lists, files, words, loops,
+   choices, placing text on the screen, and the window. Mix one-liners with short programs.
+   Think about what a person would expect to see for each. Also take, if they exist:
+     texts/factory/for-director.txt   lines the owner left for you on the Decisions tab
+     texts/factory/unsure.txt         lines the factory couldn't settle, even with the universe
+     texts/corrections.txt      lines brick misread, with what the owner says they meant
+3. Try each one in a scratch folder (/tmp/english-director/):
+   `python3 <brick folder>/brick.py build case.txt`, then run the program with any typed input
+   piped in, and compare what it shows with what a person would expect.
+   Never run programs that use window words in a real window: build them, and check them only
+   in the tests (they're safe there).
+4. Sort the problems. For each one that doesn't work:
+   - Fix it if the meaning is clear: make the smallest change that teaches the language the new
+     phrasing, in the style of the surrounding code (short functions, plain names, a short comment
+     where it helps). A new word for an idea can go in texts/universe.txt instead of code.
+   - Don't guess if the English could reasonably mean two different things. List it in the report
+     for the owner to decide.
+   - If a refusal is right but its message is unhelpful, improve the message.
+5. Lock in every fix with a test in tests/test_director.py, in the same style as
+   tests/test_forgiving.py (using build, run and folder from tests/terminal.py). Each test builds
+   and runs a real program and checks the exact screen.
+6. Check nothing broke. Run every file in tests/ (python3 tests/test_*.py). All must pass before you
+   finish. If an old test fails because of your change, fix your change, not the old test, unless
+   the old test was plainly wrong (say so in the report).
+7. Report back in plain English with no code: what you tried, what was broken, what you fixed
+   (with an example line for each), what needs the owner's decision, and the final test count.
+   Save the whole report as texts/director-report.txt (replacing the old one). Read the previous report
+   (texts/director-report.txt) first: don't re-raise decisions the owner has already answered.
+
+Rules
+-----
+- Correct first. Never change what an already-working line does.
+- Keep programs safe: no deleting the owner's files, no network, no moving real windows.
+- Don't change how the brick command itself behaves without listing it under decisions.
+- No git commits.
+- Don't touch the old/ folder.
+- If a batch turns up nothing broken, say so and stop; don't invent changes.

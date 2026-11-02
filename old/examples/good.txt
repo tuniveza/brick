@@ -1,0 +1,9 @@
+# A few bricks that fit together
+clear
+colour cyan
+bold
+say "Hello!"
+plain
+ask "What is your name?" as name
+say "Nice to meet you, [name]."
+stop

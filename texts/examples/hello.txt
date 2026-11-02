@@ -1,0 +1,9 @@
+write hello there in green
+set x to 7
+write x plus 3
+write x divided by 2
+write 6 divided by 3
+write 3.5 times 2
+write three point five plus 1 to 3 places
+write round 2.6
+write the time

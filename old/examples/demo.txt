@@ -1,0 +1,20 @@
+# The demo: uses every brick on the shelf
+clear
+colour cyan
+bold
+say "Welcome to the console brick system!"
+plain
+blank line
+ask "What is your name?" as name
+colour green
+say "Nice to meet you, [name]."
+plain
+ask "What is your favourite food?" as food
+colour yellow
+say "[name] likes [food]. Good choice!"
+plain
+beep
+wait
+colour purple
+say "Goodbye, [name]!"
+stop

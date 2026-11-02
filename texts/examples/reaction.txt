@@ -1,0 +1,2 @@
+# Step 6: the reaction game
+write get ready, wait a random number from 1 to 5 seconds, write GO in green, start a timer as t, wait for a key, write you took t seconds

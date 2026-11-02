@@ -1,0 +1,1895 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>brick kiln</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.css">
+<script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.min.js"></script>
+<style>
+:root {
+  --bg: #120c0a;
+  --bg2: #1b1210;
+  --panel: #211613;
+  --panel2: #2a1c17;
+  --line: #3a2620;
+  --text: #f3e2d6;
+  --dim: #b39383;
+  --faint: #7a5d50;
+  --ember: #ff6a1f;
+  --flame: #ff9a2e;
+  --gold: #ffd166;
+  --white-hot: #fff3d6;
+  --crimson: #d7263d;
+  --deep: #8f1d21;
+  --ash: #5b4038;
+  --ok: #ffb347;
+  --bad: #ff4d4d;
+  --note: #ffd166;
+  --bit1: #ffb02e;
+  --bit1-glow: rgba(255, 140, 30, .55);
+  --bit0: #5a2a24;
+  --glow: 0 0 18px rgba(255, 106, 31, .35);
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  --sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --heat: linear-gradient(90deg, #3b0d0c, #8f1d21 20%, #d7263d 40%, #ff6a1f 60%, #ff9a2e 75%, #ffd166 90%, #fff3d6);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #fbf1e8; --bg2: #f6e6d8; --panel: #fff8f1; --panel2: #f8e9dc; --line: #ead0bd;
+    --text: #2a140d; --dim: #7b4f3c; --faint: #a7826f;
+    --ember: #e2520c; --flame: #e9790f; --gold: #b7791f; --white-hot: #5a2a10;
+    --crimson: #b81d33; --deep: #8f1d21; --ash: #c9ab9b; --ok: #c26a0a; --bad: #c81e1e; --note: #9a6a00;
+    --bit1: #e2520c; --bit1-glow: rgba(226, 82, 12, .25); --bit0: #e3c6b6;
+    --glow: 0 0 14px rgba(226, 82, 12, .18);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #fbf1e8; --bg2: #f6e6d8; --panel: #fff8f1; --panel2: #f8e9dc; --line: #ead0bd;
+  --text: #2a140d; --dim: #7b4f3c; --faint: #a7826f;
+  --ember: #e2520c; --flame: #e9790f; --gold: #b7791f; --white-hot: #5a2a10;
+  --crimson: #b81d33; --deep: #8f1d21; --ash: #c9ab9b; --ok: #c26a0a; --bad: #c81e1e; --note: #9a6a00;
+  --bit1: #e2520c; --bit1-glow: rgba(226, 82, 12, .25); --bit0: #e3c6b6;
+  --glow: 0 0 14px rgba(226, 82, 12, .18);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: radial-gradient(1200px 500px at 15% -10%, rgba(255, 106, 31, .10), transparent 60%),
+              radial-gradient(900px 500px at 110% 110%, rgba(215, 38, 61, .10), transparent 60%), var(--bg);
+  color: var(--text); font: 14px/1.5 var(--sans); overflow: hidden;
+}
+button, select, input { font: inherit; color: inherit; }
+button { white-space: nowrap; }
+button {
+  background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+button:hover { border-color: var(--ember); box-shadow: var(--glow); }
+button:disabled { opacity: .4; cursor: default; border-color: var(--line); box-shadow: none; }
+button.hot {
+  background: linear-gradient(135deg, var(--crimson), var(--ember) 60%, var(--flame)); border-color: transparent;
+  color: #fff; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,.35);
+}
+button.hot:hover { box-shadow: 0 0 22px rgba(255, 106, 31, .6); }
+button.quiet { background: transparent; border-color: transparent; color: var(--dim); }
+button.quiet:hover { color: var(--text); border-color: var(--line); box-shadow: none; }
+kbd { font: 11px var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; color: var(--dim); }
+code { font-family: var(--mono); font-size: .92em; background: var(--panel2); padding: 1px 5px; border-radius: 4px; }
+
+/* ---- the top bar ---- */
+header {
+  height: 54px; display: flex; align-items: center; gap: 10px; padding: 0 14px;
+  border-bottom: 1px solid var(--line); background: linear-gradient(180deg, var(--bg2), transparent);
+}
+.logo { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 18px; letter-spacing: .5px; margin-right: 8px; }
+.logo .brick {
+  width: 26px; height: 18px; border-radius: 3px; position: relative;
+  background: linear-gradient(135deg, #ffd166, #ff6a1f 45%, #d7263d 80%, #8f1d21);
+  box-shadow: 0 0 16px rgba(255, 106, 31, .7), inset 0 -3px 0 rgba(0,0,0,.25);
+  animation: smoulder 3.5s ease-in-out infinite;
+}
+.logo .brick::after { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 1px; background: rgba(0,0,0,.3); }
+.logo small { font-weight: 400; color: var(--dim); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+@keyframes smoulder { 50% { box-shadow: 0 0 26px rgba(255, 140, 30, .95), inset 0 -3px 0 rgba(0,0,0,.25); filter: brightness(1.12); } }
+.file { display: flex; align-items: center; gap: 6px; color: var(--dim); font-family: var(--mono); font-size: 13px; min-width: 0; }
+.file b { color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30vw; }
+.dirty { width: 8px; height: 8px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 8px var(--ember); display: none; }
+.dirty.on { display: inline-block; }
+.spacer { flex: 1; }
+.temp { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--dim); white-space: nowrap; }
+.temp .bulb { width: 10px; height: 10px; border-radius: 50%; background: var(--ash); }
+.temp.ok .bulb { background: var(--flame); box-shadow: 0 0 10px var(--flame); }
+.temp.bad .bulb { background: var(--bad); box-shadow: 0 0 10px var(--bad); }
+.temp.busy .bulb { background: var(--gold); animation: flicker .6s infinite alternate; }
+@keyframes flicker { to { opacity: .4; } }
+
+/* ---- the two halves ---- */
+main { display: grid; grid-template-columns: minmax(320px, 44%) 6px 1fr; height: calc(100% - 54px); }
+.divider { cursor: col-resize; background: linear-gradient(180deg, transparent, var(--line), transparent); }
+.divider:hover { background: linear-gradient(180deg, transparent, var(--ember), transparent); }
+section.pane { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+
+/* ---- the editor ---- */
+.editor { position: relative; flex: 1; min-height: 140px; display: flex; background: var(--bg2); border-right: 1px solid var(--line); }
+.gutter {
+  width: 52px; flex: none; overflow: hidden; position: relative; background: var(--bg);
+  border-right: 1px solid var(--line); font: 13.5px/22px var(--mono); color: var(--faint); user-select: none;
+}
+.gutter .nums { position: absolute; left: 0; right: 0; top: 0; padding: 12px 0; }
+.gutter .n { height: 22px; padding-right: 10px; text-align: right; position: relative; cursor: pointer; }
+.gutter .n.cur { color: var(--flame); }
+.gutter .n.bad { color: var(--bad); font-weight: 700; }
+.gutter .n.bad::before, .gutter .n.warn::before {
+  content: ""; position: absolute; left: 7px; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--bad); box-shadow: 0 0 8px var(--bad);
+}
+.gutter .n.warn::before { background: var(--note); box-shadow: 0 0 8px var(--note); }
+.code-area { position: relative; flex: 1; min-width: 0; overflow: hidden; }
+.code-area textarea, .code-area pre {
+  position: absolute; inset: 0; margin: 0; padding: 12px 14px; border: 0; outline: 0;
+  font: 13.5px/22px var(--mono); white-space: pre; tab-size: 4; overflow: auto; letter-spacing: 0;
+}
+.code-area pre { pointer-events: none; color: var(--text); overflow: hidden; }
+.code-area textarea { background: transparent; color: transparent; caret-color: var(--flame); resize: none; z-index: 2; }
+.code-area textarea::selection { background: rgba(255, 106, 31, .30); color: transparent; }
+.curline { position: absolute; left: 0; right: 0; height: 22px; background: rgba(255, 106, 31, .07); border-left: 2px solid var(--ember); pointer-events: none; z-index: 0; }
+.badline { position: absolute; left: 0; right: 0; height: 22px; background: rgba(255, 77, 77, .10); pointer-events: none; }
+.hl .v { color: var(--flame); font-weight: 700; }
+.hl .k { color: var(--crimson); font-weight: 600; }
+:root[data-theme="dark"] .hl .k { color: #ff5a6e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hl .k { color: #ff5a6e; } }
+.hl .q { color: var(--gold); }
+.hl .num { color: #ff8fa0; }
+.hl .c { color: var(--faint); font-style: italic; }
+.hl .col { text-decoration: underline 3px; text-underline-offset: 4px; }
+.placeholder { position: absolute; left: 14px; top: 12px; color: var(--faint); font: 13.5px/22px var(--mono); pointer-events: none; white-space: pre; }
+
+.under {
+  flex: none; max-height: 34%; overflow: auto; border-top: 1px solid var(--line); background: var(--bg);
+  border-right: 1px solid var(--line); font-size: 13px;
+}
+.under .bar { display: flex; align-items: center; gap: 10px; padding: 6px 12px; color: var(--dim); font-size: 12px; position: sticky; top: 0; background: var(--bg); }
+.problem, .notice { display: block; width: 100%; text-align: left; border: 0; border-radius: 0; padding: 7px 12px 7px 14px; background: transparent; border-left: 3px solid var(--bad); }
+.notice { border-left-color: var(--note); }
+.problem:hover, .notice:hover { background: var(--panel); box-shadow: none; }
+.problem b, .notice b { font-family: var(--mono); font-size: 12px; color: var(--bad); margin-right: 6px; }
+.notice b { color: var(--note); }
+.problem .msg { color: var(--dim); white-space: pre-wrap; font-size: 12.5px; display: block; margin-top: 2px; }
+
+/* ---- tabs ---- */
+.tabs { display: flex; gap: 2px; padding: 8px 10px 0; border-bottom: 1px solid var(--line); background: var(--bg2); flex: none; overflow-x: auto; }
+.tab {
+  border: 1px solid transparent; border-bottom: 0; border-radius: 9px 9px 0 0; background: transparent; color: var(--dim);
+  padding: 7px 14px; white-space: nowrap; position: relative; top: 1px;
+}
+.tab:hover { color: var(--text); box-shadow: none; border-color: transparent; }
+.tab.on { background: var(--panel); color: var(--text); border-color: var(--line); }
+.tab.on::after { content: ""; position: absolute; left: 12px; right: 12px; top: -1px; height: 2px; background: var(--heat); border-radius: 2px; }
+.subtabs { display: flex; gap: 6px; padding: 10px 14px; flex: none; flex-wrap: wrap; border-bottom: 1px solid var(--line); background: var(--panel); }
+.subtab { padding: 4px 11px; border-radius: 999px; font-size: 13px; background: transparent; color: var(--dim); }
+.subtab.on { color: #fff; background: linear-gradient(135deg, var(--crimson), var(--ember)); border-color: transparent; }
+.view { flex: 1; min-height: 0; overflow: auto; background: var(--panel); display: none; }
+.view.on { display: block; }
+.pad { padding: 16px 18px 40px; }
+.empty { color: var(--faint); padding: 40px 20px; text-align: center; }
+
+/* ---- console ---- */
+#consoleView.on { display: flex; flex-direction: column; }
+.console-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--line); flex: none; }
+.console-bar .state { font-size: 12px; color: var(--dim); }
+.console-bar .state.live { color: var(--flame); }
+#term { flex: 1; min-height: 0; padding: 8px 4px 8px 10px; background: #0c0706; }
+#term .xterm-viewport { background: #0c0706 !important; }
+.fallback-term { height: 100%; overflow: auto; margin: 0; font: 13px/1.4 var(--mono); color: #f3e2d6; white-space: pre-wrap; outline: none; }
+
+/* ---- overview ---- */
+.forge { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 4px 0 20px; }
+.stage {
+  position: relative; padding: 12px 12px 12px 14px; border: 1px solid var(--line); background: var(--panel2);
+  cursor: pointer; min-width: 0;
+}
+.stage:first-child { border-radius: 10px 0 0 10px; }
+.stage:last-child { border-radius: 0 10px 10px 0; }
+.stage + .stage { border-left: 0; }
+.stage::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--c); box-shadow: 0 0 12px var(--c); }
+.stage:hover { background: var(--panel); }
+.stage .big { font: 700 20px var(--mono); color: var(--c); }
+.stage .what { font-size: 12px; color: var(--dim); }
+.stage .step { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--faint); }
+.cards { display: flex; flex-direction: column; gap: 8px; }
+.card { border: 1px solid var(--line); border-radius: 10px; background: var(--bg2); padding: 10px 12px; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.card:hover { border-color: var(--ash); }
+.card.sel { border-color: var(--ember); box-shadow: var(--glow); }
+.card.bad { border-color: var(--bad); }
+.card.quiet { padding: 4px 12px; background: transparent; border-style: dashed; color: var(--faint); font-family: var(--mono); font-size: 12.5px; }
+.card .top { display: flex; gap: 10px; align-items: baseline; }
+.card .no { font: 600 12px var(--mono); color: var(--faint); min-width: 26px; }
+.card .src { font: 13px var(--mono); white-space: pre-wrap; word-break: break-word; flex: 1; }
+.card .size { font: 12px var(--mono); color: var(--dim); white-space: nowrap; }
+.heatbar { height: 4px; border-radius: 4px; margin: 8px 0 2px 36px; background: var(--heat); background-size: 100% 100%; }
+.heatbar-track { margin: 8px 0 2px 36px; height: 4px; border-radius: 4px; background: var(--panel2); overflow: hidden; }
+.heatbar-track div { height: 100%; background: var(--heat); background-size: var(--w-full) 100%; border-radius: 4px; }
+.pieces { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 8px 0 0 36px; }
+.join { font: 11px var(--mono); padding: 1px 7px; border-radius: 999px; color: var(--dim); border: 1px dashed var(--ash); text-transform: lowercase; }
+.join.otherwise { color: var(--crimson); border-color: var(--crimson); }
+.chip { font: 12.5px var(--mono); padding: 3px 9px; border-radius: 7px; background: var(--panel2); border: 1px solid var(--line); }
+.chip .verb { color: var(--flame); font-weight: 700; }
+.respell { margin: 6px 0 0 36px; font: 12px var(--mono); color: var(--dim); }
+.respell s { color: var(--faint); }
+.respell b { color: var(--gold); font-weight: 600; }
+.whyline { margin: 6px 0 0 36px; color: var(--bad); font-size: 12.5px; white-space: pre-wrap; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--dim); margin: 0 0 12px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+h2 { font-size: 15px; margin: 22px 0 10px; letter-spacing: .3px; }
+h2:first-child { margin-top: 0; }
+h2 small { font-weight: 400; color: var(--dim); font-size: 12.5px; margin-left: 6px; }
+.lead { color: var(--dim); margin: -4px 0 14px; max-width: 70ch; }
+
+/* ---- machine code ---- */
+.run { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; overflow: hidden; background: var(--bg2); }
+.run.sel { border-color: var(--ember); box-shadow: var(--glow); }
+.run > .head, details.routine > summary {
+  display: flex; gap: 10px; align-items: baseline; padding: 8px 12px; background: var(--panel2); cursor: pointer; list-style: none;
+}
+details > summary::-webkit-details-marker { display: none; }
+.run .head .tag, details.routine .tag { font: 700 11px var(--mono); padding: 1px 7px; border-radius: 5px; color: #fff; background: var(--ember); white-space: nowrap; }
+.run .head .tag.start { background: var(--deep); }
+.run .head .tag.end, .run .head .tag.glue { background: var(--ash); }
+details.routine .tag { background: #b8621b; }
+.run .head .src { font: 13px var(--mono); flex: 1; white-space: pre-wrap; word-break: break-word; }
+.run .head .size, details.routine .size { font: 12px var(--mono); color: var(--dim); white-space: nowrap; }
+.ins { display: grid; grid-template-columns: 74px minmax(110px, 260px) minmax(160px, 1fr) minmax(0, 1fr); gap: 12px; padding: 1px 12px; font: 12.5px/20px var(--mono); }
+.ins:hover { background: rgba(255, 106, 31, .06); }
+.ins .a { color: var(--faint); }
+.ins .b { color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ins .o { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ins .o .m { color: var(--flame); font-weight: 600; cursor: help; }
+.ins .t { color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--sans); font-size: 12px; }
+.ins.lab { padding-top: 6px; color: var(--crimson); }
+.ins.lab span { grid-column: 1 / -1; }
+details.toolbox { border: 1px solid var(--line); border-radius: 10px; background: var(--bg2); margin-top: 14px; }
+details.toolbox > summary { padding: 10px 12px; cursor: pointer; list-style: none; display: flex; gap: 10px; align-items: baseline; }
+details.toolbox > summary b { color: var(--gold); }
+details.routine { border-top: 1px solid var(--line); }
+details.routine > summary { background: transparent; }
+details.routine > summary .note { color: var(--dim); font-size: 12px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+details.routine > summary .name { font: 600 13px var(--mono); color: var(--gold); }
+.toggle-row { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; color: var(--dim); font-size: 13px; flex-wrap: wrap; }
+.toggle-row label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--ember); }
+
+/* ---- program file ---- */
+.filebar { display: flex; height: 46px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); margin-bottom: 8px; }
+.filebar div { min-width: 6px; position: relative; display: flex; align-items: flex-end; padding: 4px 6px; font: 11px var(--mono); color: rgba(255,255,255,.9); overflow: hidden; white-space: nowrap; cursor: default; }
+.filebar div + div { border-left: 1px solid rgba(0,0,0,.35); }
+.filekey { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px 16px; font-size: 12.5px; color: var(--dim); margin-bottom: 18px; }
+.filekey span { display: flex; gap: 8px; align-items: center; }
+.filekey i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.filekey b { color: var(--text); font-family: var(--mono); font-weight: 600; margin-left: auto; }
+.memmap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+.mem { border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: var(--bg2); }
+.mem h3 { margin: 0 0 4px; font-size: 13px; }
+.mem .addr { font: 700 16px var(--mono); color: var(--flame); }
+.mem p { margin: 6px 0 0; color: var(--dim); font-size: 12.5px; }
+table.t { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+table.t th { text-align: left; color: var(--faint); font-weight: 500; padding: 5px 8px; border-bottom: 1px solid var(--line); }
+table.t td { padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.t td.m { font-family: var(--mono); }
+table.t td.hx { font-family: var(--mono); color: var(--gold); }
+table.t tr.mine td:first-child { color: var(--flame); font-weight: 600; }
+
+/* ---- bytes: hex and bits ---- */
+.bytes-tools { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--panel); z-index: 3; }
+.bytes-tools select { background: var(--panel2); border: 1px solid var(--line); border-radius: 7px; padding: 4px 8px; max-width: 320px; }
+.peek { padding: 8px 16px; font: 12px/1.6 var(--mono); color: var(--dim); border-bottom: 1px solid var(--line); min-height: 38px; position: sticky; top: 49px; background: var(--panel); z-index: 3; }
+.peek b { color: var(--text); font-weight: 600; }
+.peek .hot { color: var(--bit1); }
+.peek .cold { color: var(--faint); }
+.dump { padding: 10px 16px 40px; font: 12.5px/19px var(--mono); }
+.row { display: flex; gap: 14px; white-space: nowrap; }
+.row .off { color: var(--faint); width: 64px; flex: none; user-select: none; }
+.row .cells { display: flex; gap: 0; }
+.row .asc { color: var(--dim); letter-spacing: 1px; }
+.row .asc span { padding: 0 0; }
+.hx { padding: 0 3px; cursor: pointer; border-radius: 2px; }
+.hx.g8 { margin-left: 8px; }
+.bt { padding: 0 3px; margin-right: 4px; cursor: pointer; border-radius: 3px; border-bottom: 2px solid transparent; }
+.bt b { color: var(--bit1); font-weight: 700; text-shadow: 0 0 6px var(--bit1-glow); }
+.bt i { color: var(--bit0); font-style: normal; }
+.dump .hover { outline: 1px solid var(--white-hot); }
+.dump .near { box-shadow: inset 0 -2px 0 var(--white-hot); }
+.bytetip { position: fixed; z-index: 50; display: none; pointer-events: none; max-width: min(520px, calc(100vw - 16px));
+  padding: 8px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text);
+  box-shadow: 0 8px 28px rgba(0,0,0,.35); font: 12px/1.6 var(--mono); }
+.bytetip .tip-head { color: var(--dim); margin-bottom: 3px; padding-bottom: 3px; border-bottom: 1px solid var(--line); }
+.bytetip .tip-head b, .bytetip b { color: var(--text); }
+.bytetip .tip-k { display: inline-block; min-width: 88px; color: var(--gold); }
+.bytetip .tip-dim { color: var(--dim); }
+.bytetip mark { background: color-mix(in srgb, var(--ember) 35%, transparent); color: var(--text); border-radius: 3px; padding: 0 2px; }
+.bytetip code { color: var(--flame); }
+.dump .sel { outline: 1px solid var(--ember); background: rgba(255, 106, 31, .28) !important; }
+.dump.heat .hx { color: #1a0a06; }
+/* where each byte came from: kiln colours, coolest to hottest */
+.k-header { --kc: #8f1d21; }
+.k-start { --kc: #b02a4a; }
+.k-line0 { --kc: #ff5a1f; }
+.k-line1 { --kc: #ffb43a; }
+.k-glue, .k-end { --kc: #6b4a40; }
+.k-routine0 { --kc: #c47a1a; }
+.k-routine1 { --kc: #a8641a; }
+.k-data { --kc: #ffd166; }
+.dump.where .hx { background: color-mix(in srgb, var(--kc) 30%, transparent); color: var(--text); }
+.dump.where .hx.k-data { color: var(--text); }
+.dump .bt { border-bottom-color: var(--kc); }
+.swatch-k { background: var(--kc); }
+
+/* ---- help ---- */
+.help { display: grid; grid-template-columns: 200px 1fr; min-height: 100%; }
+.help nav { border-right: 1px solid var(--line); padding: 14px 10px; display: flex; flex-direction: column; gap: 2px; position: sticky; top: 0; align-self: start; }
+.help nav button { text-align: left; border: 0; background: transparent; color: var(--dim); border-radius: 7px; padding: 6px 10px; }
+.help nav button:hover { color: var(--text); box-shadow: none; background: var(--panel2); }
+.help nav button.on { color: var(--text); background: var(--panel2); box-shadow: inset 3px 0 0 var(--ember); }
+.help article { padding: 18px 24px 60px; max-width: 860px; min-width: 0; }
+.help article h1 { font-size: 22px; margin: 0 0 6px; }
+.help article h1 + .lead { margin: 0 0 18px; }
+.help article h3 { font-size: 15px; margin: 22px 0 6px; color: var(--flame); }
+.help article p, .help article li { color: var(--text); max-width: 72ch; }
+.help article .dim { color: var(--dim); }
+.journey { display: flex; flex-direction: column; gap: 0; margin: 18px 0; }
+.leg { display: grid; grid-template-columns: 46px 1fr; gap: 14px; position: relative; }
+.leg .dot { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 700 13px var(--mono); color: #fff; background: var(--c); box-shadow: 0 0 16px var(--c); margin: 4px 0 0 6px; z-index: 1; }
+.leg:not(:last-child)::before { content: ""; position: absolute; left: 22px; top: 38px; bottom: -4px; width: 2px; background: linear-gradient(var(--c), var(--c2)); opacity: .6; }
+.leg .body { padding-bottom: 18px; min-width: 0; }
+.leg h4 { margin: 8px 0 4px; font-size: 15px; }
+.leg p { margin: 0 0 8px; color: var(--dim) !important; }
+.leg .ex { font: 12.5px/1.6 var(--mono); background: var(--bg2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; overflow-x: auto; white-space: pre; color: var(--text); }
+.leg .ex .v { color: var(--flame); font-weight: 700; }
+.leg .ex .y { color: var(--gold); }
+.leg .ex .f { color: var(--faint); }
+.leg .ex .j { color: var(--crimson); }
+.phrases { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.phrase { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--bg2); }
+.phrase h4 { margin: 0 0 6px; font: 700 14px var(--mono); color: var(--flame); }
+.phrase h4 small { font: 400 11.5px var(--sans); color: var(--faint); margin-left: 4px; }
+.phrase button { display: block; width: 100%; text-align: left; border: 0; background: transparent; padding: 3px 6px; border-radius: 5px; font: 12.5px var(--mono); color: var(--text); }
+.phrase button:hover { background: var(--panel2); box-shadow: none; color: var(--gold); }
+.notes-block { white-space: pre-wrap; font: 12.5px/1.7 var(--mono); color: var(--dim); background: var(--bg2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 14px; }
+.search { width: 100%; max-width: 420px; background: var(--bg2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin: 4px 0 14px; outline: none; }
+.search:focus { border-color: var(--ember); box-shadow: var(--glow); }
+.group h3 { margin-top: 18px !important; }
+.entry { font-size: 13px; padding: 4px 0; border-bottom: 1px dashed var(--line); }
+.entry b { font-family: var(--mono); color: var(--gold); font-weight: 600; }
+.entry span { color: var(--dim); }
+.swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+.sw { display: inline-flex; align-items: center; gap: 6px; font: 12px var(--mono); padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg2); }
+.sw i { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); }
+mark { background: rgba(255, 106, 31, .35); color: inherit; border-radius: 2px; }
+.glossary { display: grid; grid-template-columns: 110px 1fr; gap: 4px 14px; font-size: 13px; }
+.glossary b { font-family: var(--mono); color: var(--flame); }
+.kbds { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; align-items: center; }
+.byte-demo { display: inline-flex; gap: 10px; align-items: center; font: 14px var(--mono); background: var(--bg2); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; margin: 4px 0; }
+.byte-demo b { color: var(--bit1); text-shadow: 0 0 6px var(--bit1-glow); }
+.byte-demo i { color: var(--bit0); font-style: normal; }
+:root[data-theme="light"] .byte-demo i, :root[data-theme="light"] .bt i { color: #c79a87; }
+
+/* ---- dialogs ---- */
+/* ---- bricks ---- */
+.lineview { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 6px 10px; min-height: 34px;
+  border-top: 1px solid var(--line); background: var(--bg2); font-size: 12px; color: var(--dim); }
+.lineview .readas { margin-left: 6px; font-family: var(--mono); color: var(--gold); }
+.lineview .cut { color: var(--ember); font-weight: 700; padding: 0 2px; }
+.tray { flex: 0 1 auto; min-height: 0; display: none; flex-direction: column; border-top: 1px solid var(--line); background: var(--panel); max-height: 34vh; }
+.tray.on { display: flex; }
+.tray-head { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+.tray-head input { flex: 1 1 140px; min-width: 0; background: var(--bg2); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-family: var(--mono); font-size: 12.5px; color: var(--text); }
+.tray-head .chip { padding: 3px 9px; font-size: 12px; border-radius: 999px; }
+.tray-head .chip.on { border-color: var(--ember); color: var(--gold); }
+.tiles { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 10px; overflow: auto; }
+.tiles .hint { color: var(--dim); font-size: 12px; padding: 2px 0; width: 100%; }
+.brick { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 6px; font: 12.5px var(--mono);
+  cursor: grab; user-select: none; border: 1px solid rgba(0,0,0,.25); border-bottom-width: 3px; color: #1b0d07;
+  background: var(--k); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); white-space: nowrap; }
+.brick:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.brick:active { cursor: grabbing; }
+.brick .sw { width: 11px; height: 11px; border-radius: 3px; border: 1px solid rgba(0,0,0,.35); }
+.k-do { --k: #ff9a5a; } .k-thing { --k: #7db8ff; } .k-colour { --k: #f3e2d6; } .k-place { --k: #6fd39b; }
+.k-time { --k: #c3a3ff; } .k-count { --k: #ff8cc0; } .k-saying { --k: #ffd166; } .k-glue { --k: #b9aaa0; }
+.k-words { --k: #fff3e6; } .k-ready { --k: #ffc28a; } .k-dictionary { --k: #e6c9a8; }
+.lineview .brick { cursor: pointer; font-size: 12px; padding: 2px 7px; }
+.wall-key { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+.wall-key .brick { cursor: default; font-size: 11.5px; padding: 2px 8px; }
+.wall-key .brick:hover { transform: none; filter: none; }
+.card.wallrow { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 5px; padding: 6px 10px; font-size: 12px; color: var(--dim); }
+.wallrow .skip { margin-left: auto; }
+.wallrow .no { font: 600 12px var(--mono); color: var(--faint); margin-right: 4px; }
+.wallrow .brick { cursor: pointer; }
+.wallrow .cut { color: var(--ember); font-weight: 700; padding: 0 2px; }
+.wallrow .readas { margin-left: 6px; font-family: var(--mono); color: var(--gold); }
+.minitray { border: 1px dashed var(--line); border-radius: 10px; margin-top: 10px; }
+.minitray .tiles { max-height: 130px; }
+.badge { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 4px; border-radius: 9px; background: var(--ember); color: #1b0d07; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center; }
+.badge:empty { display: none; }
+.decide { padding: 14px 16px 24px; max-width: 860px; }
+.decide .intro { color: var(--dim); font-size: 13px; margin: 0 0 12px; }
+.decide .status { font-size: 13px; margin-bottom: 14px; }
+.decide .status b { color: var(--gold); }
+.card { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; background: var(--bg2); }
+.card .line { font-family: var(--mono); font-size: 13.5px; word-break: break-word; }
+.card .said { color: var(--dim); font-size: 12.5px; margin: 4px 0 8px; }
+.card .meant { font-family: var(--mono); font-size: 12.5px; margin: 0 0 8px; }
+.card .meant b { font-family: var(--sans, inherit); font-weight: normal; color: var(--dim); margin-right: 6px; }
+.card .acts { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.card .acts input[type="text"] { flex: 1 1 220px; min-width: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-family: var(--mono); font-size: 12.5px; }
+.card .msg { font-size: 12.5px; margin-top: 6px; }
+.card .msg.bad { color: #ff7a6b; }
+.card .msg.good { color: #7bd389; }
+.activity { margin-top: 20px; font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.activity div { padding: 2px 0; border-bottom: 1px dashed var(--line); word-break: break-word; }
+.review-bar { display: none; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--panel2); font-size: 13px; }
+.review-bar.on { display: flex; }
+.review-bar b { color: var(--gold); }
+.guess { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 10px 0; }
+.guess .typed { font-family: var(--mono); font-size: 13px; }
+.guess .typed b { color: var(--dim); font-weight: normal; margin-right: 6px; }
+.guess label { display: flex; gap: 8px; align-items: baseline; font-family: var(--mono); font-size: 13px; padding: 3px 0; cursor: pointer; }
+.guess label input[type="text"] { flex: 1; }
+.guess .msg { color: #ff7a6b; font-size: 12.5px; margin-top: 4px; }
+.overlay { position: fixed; inset: 0; background: rgba(10, 4, 2, .6); display: none; align-items: flex-start; justify-content: center; padding-top: 10vh; z-index: 20; }
+.overlay.on { display: flex; }
+.dialog { width: min(560px, calc(100% - 32px)); max-height: 76vh; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.5), var(--glow); padding: 18px; }
+.dialog h3 { margin: 0 0 10px; }
+.dialog input[type="text"] { width: 100%; background: var(--bg2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-family: var(--mono); outline: none; }
+.dialog input[type="text"]:focus { border-color: var(--ember); }
+.dialog .list { display: flex; flex-direction: column; gap: 2px; margin: 8px 0 14px; }
+.dialog .list button { text-align: left; border: 0; background: transparent; font-family: var(--mono); font-size: 13px; padding: 6px 10px; }
+.dialog .list button:hover { background: var(--panel2); box-shadow: none; color: var(--gold); }
+.dialog .row-btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.dialog .label { color: var(--faint); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 10px; }
+.dialog .err { color: var(--bad); font-size: 13px; margin-top: 8px; }
+
+@media (max-width: 860px) {
+  body { overflow: auto; }
+  main { grid-template-columns: 1fr; grid-template-rows: 55vh 0 auto; height: auto; }
+  .divider { display: none; }
+  section.pane.right { height: 90vh; }
+  .forge { grid-template-columns: repeat(2, 1fr); }
+  .stage, .stage + .stage { border: 1px solid var(--line); border-radius: 10px !important; }
+  .help { grid-template-columns: 1fr; }
+  .help nav { position: static; flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); }
+  .memmap { grid-template-columns: 1fr; }
+  header .label-long, #tempText, .logo small { display: none; }
+  header { gap: 6px; padding: 0 8px; }
+  header button { padding: 6px 9px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span class="brick"></span>brick <small>kiln</small></div>
+  <div class="file"><span class="dirty" id="dirty"></span><b id="fileName">untitled</b></div>
+  <button class="quiet" id="newBtn" title="Start a new program">New</button>
+  <button class="quiet" id="openBtn" title="Open a .txt program or an example">Open</button>
+  <button class="quiet" id="saveBtn" title="Save (Ctrl+S)">Save</button>
+  <button class="quiet" id="trayBtn" title="brick's words as bricks: click one to add it where you're typing, or drag it into place">Bricks</button>
+  <button class="quiet" id="exportBtn" title="Write everything this window shows about the program into one .brick file, next to your .txt — plain text, to give to Claude to read">Save .brick</button>
+  <button class="quiet" id="bitsBtn" title="Write the program as brick materials next to your .txt: .sand (bare 1s and 0s), .clay (1s and 0s labelled), .shale (hex labelled), .cement (the actual program file)">Save bits</button>
+  <div class="spacer"></div>
+  <div class="temp" id="temp"><span class="bulb"></span><span id="tempText">cold</span></div>
+  <button id="buildBtn" title="Fire it into a program file, next to your .txt">Build</button>
+  <button id="windowBtn" title="Build and run in a console window of its own"><span class="label-long">Run in </span>window</button>
+  <button class="hot" id="runBtn" title="Build and run inside this page (Ctrl+Enter)">▶ Run</button>
+  <button class="quiet" id="themeBtn" title="Light or dark">◐</button>
+</header>
+<main>
+  <section class="pane left">
+    <div class="editor">
+      <div class="gutter" id="gutter"><div class="nums" id="nums"></div></div>
+      <div class="code-area">
+        <div id="bands"></div>
+        <pre id="paint" class="hl" aria-hidden="true"></pre>
+        <textarea id="src" spellcheck="false" wrap="off" autocomplete="off" autocapitalize="off" aria-label="Your program, in plain English"></textarea>
+        <div class="placeholder" id="placeholder">write hello there in orange
+ask your name as name
+write hi name</div>
+      </div>
+    </div>
+    <div class="lineview" id="lineView" title="How brick reads the line your cursor is on"></div>
+    <div class="tray" id="tray"></div>
+    <div class="under" id="under"></div>
+  </section>
+  <div class="divider" id="divider"></div>
+  <section class="pane right">
+    <div class="tabs">
+      <button class="tab on" data-tab="consoleView">Console</button>
+      <button class="tab" data-tab="vizView">How it's made</button>
+      <button class="tab" data-tab="decideView" title="What brick couldn't settle by itself: decide, if you like">Decisions<span class="badge" id="decideBadge"></span></button>
+      <button class="tab" data-tab="helpView">Help</button>
+    </div>
+
+    <div class="view on" id="consoleView">
+      <div class="console-bar">
+        <span class="state" id="runState">Nothing running. Press ▶ Run, or Ctrl+Enter.</span>
+        <div class="spacer"></div>
+        <button class="quiet" id="clearBtn">Clear</button>
+        <button id="stopBtn" disabled>■ Stop</button>
+      </div>
+      <div class="review-bar" id="reviewBar"></div>
+      <div id="term"></div>
+    </div>
+
+    <div class="view" id="vizView">
+      <div class="subtabs" id="vizTabs">
+        <button class="subtab on" data-viz="overview">Overview</button>
+        <button class="subtab" data-viz="wall" title="Every line of the program as bricks, coloured by what brick reads each word as">Brick wall</button>
+        <button class="subtab" data-viz="code">Machine code</button>
+        <button class="subtab" data-viz="file">Program file</button>
+        <button class="subtab" data-viz="hex">Hex</button>
+        <button class="subtab" data-viz="bits">Bits</button>
+      </div>
+      <div id="vizBody"></div>
+    </div>
+
+    <div class="view" id="decideView"><div class="decide" id="decide"></div></div>
+
+    <div class="view" id="helpView"><div class="help">
+      <nav id="helpNav">
+        <button class="on" data-help="how">How brick works</button>
+        <button data-help="window">Using this window</button>
+        <button data-help="reading">Reading “How it's made”</button>
+        <button data-help="bytes">Bytes, hex and bits</button>
+        <button data-help="phrases">Things you can say</button>
+        <button data-help="dictionary">The dictionary</button>
+      </nav>
+      <article id="helpBody"></article>
+    </div></div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay"><div class="dialog" id="dialog"></div></div>
+
+<script>
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const fmt = n => n.toLocaleString("en");
+const LINE_H = 22;
+
+const state = {
+  path: null, folder: "", dirty: false, result: null, sel: 1, starters: new Set(), colours: {},
+  examples: [], files: [], viz: "overview", tab: "consoleView", help: "how", helpData: null,
+  session: null, stale: new Set(), hexMode: "where",
+};
+const src = $("#src"), paint = $("#paint"), nums = $("#nums"), bands = $("#bands");
+
+async function api(path, body) {
+  const r = await fetch(path, body === undefined ? {} : {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  return r.json();
+}
+
+// ---------------- the editor ----------------
+
+const KEYWORDS = new Set(["then", "and", "otherwise", "else", "if", "while", "until", "times", "for", "each", "in", "to", "as", "is", "not", "or", "means", "forever", "from", "with"]);
+function paintLine(line) {
+  if (/^\s*#/.test(line)) return `<span class="c">${esc(line)}</span>`;
+  let out = "", i = 0;
+  const re = /"[^"]*"?|\d+(?:\.\d+)?|[A-Za-z][A-Za-z'-]*|\s+|./g;
+  const tokens = line.match(re) || [];
+  for (let t = 0; t < tokens.length; t++) {
+    const tok = tokens[t], low = tok.toLowerCase();
+    if (tok[0] === '"') { out += `<span class="q">${esc(tok)}</span>`; continue; }
+    if (/^\d/.test(tok)) { out += `<span class="num">${esc(tok)}</span>`; continue; }
+    if (/^[A-Za-z]/.test(tok)) {
+      // two-word colours first: "sea green", "light blue"
+      if (t + 2 < tokens.length && /^\s+$/.test(tokens[t + 1]) && /^[A-Za-z]/.test(tokens[t + 2])) {
+        const two = low + " " + tokens[t + 2].toLowerCase();
+        if (state.colours[two]) {
+          out += `<span class="col" style="text-decoration-color: rgb(${state.colours[two]})">${esc(tok + tokens[t + 1] + tokens[t + 2])}</span>`;
+          t += 2; continue;
+        }
+      }
+      if (state.colours[low] && !state.starters.has(low)) out += `<span class="col" style="text-decoration-color: rgb(${state.colours[low]})">${esc(tok)}</span>`;
+      else if (state.starters.has(low) && !KEYWORDS.has(low)) out += `<span class="v">${esc(tok)}</span>`;
+      else if (KEYWORDS.has(low)) out += `<span class="k">${esc(tok)}</span>`;
+      else out += esc(tok);
+      continue;
+    }
+    out += esc(tok);
+  }
+  return out;
+}
+function repaint() {
+  const lines = src.value.split("\n");
+  paint.innerHTML = lines.map(paintLine).join("\n") + "\n ";
+  $("#placeholder").style.display = src.value ? "none" : "block";
+  drawGutter();
+  syncScroll();
+}
+function problemLines() {
+  const bad = new Set(), warn = new Set();
+  const r = state.result;
+  if (r) {
+    r.lines.forEach(l => l.problems && bad.add(l.number));
+    r.notes.forEach(n => { const m = n.match(/line (\d+)/i); if (m) warn.add(+m[1]); });
+  }
+  return {bad, warn};
+}
+function drawGutter() {
+  const count = src.value.split("\n").length;
+  const {bad, warn} = problemLines();
+  let html = "";
+  for (let n = 1; n <= count; n++) {
+    const cls = ["n", n === state.sel ? "cur" : "", bad.has(n) ? "bad" : warn.has(n) ? "warn" : ""].join(" ");
+    html += `<div class="${cls}" data-n="${n}">${n}</div>`;
+  }
+  nums.innerHTML = html;
+  bands.innerHTML = [...bad].map(n => `<div class="badline" style="top:${12 + (n - 1) * LINE_H}px"></div>`).join("") +
+    `<div class="curline" style="top:${12 + (state.sel - 1) * LINE_H}px"></div>`;
+}
+function syncScroll() {
+  paint.scrollTop = src.scrollTop; paint.scrollLeft = src.scrollLeft;
+  nums.style.transform = `translateY(${-src.scrollTop}px)`;
+  bands.style.transform = `translateY(${-src.scrollTop}px)`;
+}
+function caretLine() { return src.value.slice(0, src.selectionStart).split("\n").length; }
+function selectLine(n, {moveCaret = false, from = ""} = {}) {
+  if (!n) return;
+  if (moveCaret) {
+    const lines = src.value.split("\n");
+    let at = 0;
+    for (let i = 0; i < n - 1 && i < lines.length; i++) at += lines[i].length + 1;
+    src.focus({preventScroll: true});
+    src.setSelectionRange(at, at);
+    const top = (n - 1) * LINE_H;
+    if (top < src.scrollTop || top > src.scrollTop + src.clientHeight - 3 * LINE_H) src.scrollTop = Math.max(0, top - src.clientHeight / 3);
+  }
+  if (n === state.sel && !moveCaret) return;
+  state.sel = n;
+  drawGutter();
+  markSelection(from);
+}
+src.addEventListener("input", () => { setDirty(true); repaint(); scheduleWatch(); });
+src.addEventListener("scroll", syncScroll);
+["keyup", "click", "select"].forEach(e => src.addEventListener(e, () => selectLine(caretLine())));
+src.addEventListener("keydown", e => {
+  if (e.key === "Tab") {           // tabs indent, as blocks need
+    e.preventDefault();
+    const s = src.selectionStart, end = src.selectionEnd;
+    if (e.shiftKey) {
+      const lineStart = src.value.lastIndexOf("\n", s - 1) + 1;
+      if (src.value.slice(lineStart, lineStart + 4) === "    ") {
+        src.setRangeText("", lineStart, lineStart + 4, "preserve");
+      }
+    } else {
+      src.setRangeText("    ", s, end, "end");
+    }
+    src.dispatchEvent(new Event("input"));
+  } else if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {   // keep the indent; add one after a ':'
+    const s = src.selectionStart;
+    const lineStart = src.value.lastIndexOf("\n", s - 1) + 1;
+    const line = src.value.slice(lineStart, s);
+    let indent = line.match(/^\s*/)[0];
+    if (/:\s*$/.test(line)) indent += "    ";
+    if (indent) { e.preventDefault(); src.setRangeText("\n" + indent, s, src.selectionEnd, "end"); src.dispatchEvent(new Event("input")); }
+  }
+});
+nums.addEventListener("click", e => { const n = e.target.closest("[data-n]"); if (n) selectLine(+n.dataset.n, {moveCaret: true}); });
+
+function setDirty(on) { state.dirty = on; $("#dirty").classList.toggle("on", on); }
+function setFile(path, text) {
+  state.path = path;
+  $("#fileName").textContent = path ? path.split("/").pop() : "untitled";
+  $("#fileName").title = path || "Not saved yet";
+  if (text !== undefined) { src.value = text; src.scrollTop = 0; state.sel = 1; }
+  setDirty(false);
+  repaint();
+  watchNow();
+}
+
+// ---------------- watching the build ----------------
+
+let watchTimer = null, watchSeq = 0;
+function scheduleWatch() { clearTimeout(watchTimer); setTemp("busy", "heating…"); watchTimer = setTimeout(watchNow, 350); }
+async function watchNow() {
+  const seq = ++watchSeq;
+  setTemp("busy", "heating…");
+  const r = await api("/api/watch", {text: src.value, path: state.path});
+  if (seq !== watchSeq) return;
+  state.result = r;
+  if (!src.value.trim()) setTemp("", "cold");
+  else if (r.ok) setTemp("ok", `fires clean · ${fmt(r.layout.file)} bytes · ${r.took} ms`);
+  else setTemp("bad", `${r.lines.filter(l => l.problems).length || 1} line(s) cracked`);
+  drawGutter();
+  drawUnder();
+  state.stale = new Set(["overview", "wall", "code", "file", "hex", "bits"]);
+  if (state.tab === "vizView") drawViz();
+}
+function setTemp(cls, text) { $("#temp").className = "temp " + cls; $("#tempText").textContent = text; }
+function drawUnder() {
+  const r = state.result, under = $("#under");
+  if (!r || (!r.problems.length && !r.notes.length)) { under.innerHTML = ""; under.style.display = "none"; return; }
+  under.style.display = "block";
+  let html = `<div class="bar">${r.problems.length ? "Fix these and it will fire:" : "It builds, but have a look:"}</div>`;
+  for (const l of r.lines) if (l.problems) {
+    html += `<button class="problem" data-n="${l.number}"><b>line ${l.number}</b>${esc(l.text.trim())}<span class="msg">${esc(l.problems.join("\n"))}</span></button>`;
+  }
+  if (!r.lines.some(l => l.problems) && r.problems.length) html += `<div class="problem"><span class="msg">${esc(r.problems.join("\n"))}</span></div>`;
+  for (const n of r.notes) {
+    const m = n.match(/line (\d+)/i);
+    html += `<button class="notice" data-n="${m ? m[1] : ""}"><b>note</b>${esc(n.replace(/^Note: /, ""))}</button>`;
+  }
+  under.innerHTML = html;
+}
+$("#under").addEventListener("click", e => { const b = e.target.closest("[data-n]"); if (b && b.dataset.n) selectLine(+b.dataset.n, {moveCaret: true}); });
+
+// ---------------- tabs ----------------
+
+$$(".tab").forEach(t => t.addEventListener("click", () => showTab(t.dataset.tab)));
+function showTab(id) {
+  state.tab = id;
+  $$(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === id));
+  $$(".view").forEach(v => v.classList.toggle("on", v.id === id));
+  if (id === "vizView") drawViz();
+  if (id === "helpView") drawHelp();
+  if (id === "decideView") drawDecisions();
+  if (id === "consoleView") fitTerm();
+}
+$$("#vizTabs .subtab").forEach(t => t.addEventListener("click", () => showViz(t.dataset.viz)));
+function showViz(which) {
+  state.viz = which;
+  $$("#vizTabs .subtab").forEach(t => t.classList.toggle("on", t.dataset.viz === which));
+  state.stale.add(which);
+  drawViz();
+}
+
+// ---------------- how it's made ----------------
+
+const vizBody = $("#vizBody");
+function drawViz() {
+  const r = state.result;
+  if (!r) { vizBody.innerHTML = `<div class="empty">Write something on the left and this fills in as you type.</div>`; return; }
+  if (!state.stale.has(state.viz) && vizBody.dataset.viz === state.viz) return;
+  state.stale.delete(state.viz);
+  vizBody.dataset.viz = state.viz;
+  vizBody.parentElement.scrollTop = 0;
+  ({overview: drawOverview, wall: drawWall, code: drawCode, file: drawFile, hex: () => drawBytes("hex"), bits: () => drawBytes("bits")})[state.viz](r);
+  markSelection();
+}
+function sizeOfRun(run) { return run.code.reduce((s, i) => s + i.bytes.split(" ").length, 0); }
+
+function drawOverview(r) {
+  const c = r.counts, L = r.layout;
+  const stages = [
+    ["1 · read", fmt(c.lines), "lines with something to do", "#8f1d21", "overview"],
+    ["2 · split", fmt(c.actions), "actions found in them", "#d7263d", "overview"],
+    ["3 · understand", fmt(L.program), "bytes of code for your lines", "#ff6a1f", "code"],
+    ["4 · add the toolbox", fmt(c.routines), `routines, ${fmt(L.runtime)} bytes`, "#ff9a2e", "code"],
+    ["5 · wrap", fmt(L.file), "bytes in the program file", "#ffd166", "file"],
+  ];
+  const most = Math.max(1, ...r.lines.map(l => l.bytes));
+  let html = `<div class="pad"><div class="forge">` + stages.map(s =>
+    `<div class="stage" style="--c:${s[3]}" data-go="${s[4]}"><div class="step">${s[0]}</div><div class="big">${s[1]}</div><div class="what">${s[2]}</div></div>`).join("") + `</div>`;
+  html += `<h2>Line by line <small>click a line to follow it; hotter bars made more machine code</small></h2><div class="cards">`;
+  for (const l of r.lines) {
+    if (l.kind !== "line") {
+      if (l.kind === "note") html += `<div class="card quiet" data-line="${l.number}">${l.number}&nbsp;&nbsp;${esc(l.text.trim())} <span style="float:right">a note: skipped</span></div>`;
+      continue;
+    }
+    const pct = Math.round(100 * l.bytes / most);
+    html += `<div class="card${l.problems ? " bad" : ""}" data-line="${l.number}" style="margin-left:${Math.min(l.indent, 24) * 6}px">
+      <div class="top"><span class="no">${l.number}</span><span class="src hl">${paintLine(l.text.trim())}</span>
+      <span class="size">${l.problems ? "cracked" : fmt(l.bytes) + " bytes"}</span></div>`;
+    if (l.pieces.length) {
+      html += `<div class="pieces">` + l.pieces.map((p, i) => {
+        const join = i === 0 ? "" : `<span class="join ${p.joined === "otherwise" ? "otherwise" : ""}">${p.joined}</span>`;
+        const w = esc(p.words), first = w.split(" ")[0];
+        return join + (p.words ? `<span class="chip"><span class="verb">${first}</span>${w.slice(first.length)}</span>` : "");
+      }).join("") + `</div>`;
+    }
+    const changed = l.tidied.filter(t => t.typed !== t.meant);
+    if (changed.length) html += changed.map(t => `<div class="respell">tidied: <s>${esc(t.typed)}</s> → <b>${esc(t.meant)}</b></div>`).join("");
+    if (l.problems) html += `<div class="whyline">${esc(l.problems.join("\n"))}</div>`;
+    else html += `<div class="heatbar-track"><div style="width:${Math.max(pct, 1)}%;--w-full:${pct ? 10000 / pct : 100}%"></div></div>`;
+    html += `</div>`;
+  }
+  html += `</div></div>`;
+  vizBody.innerHTML = html;
+}
+// every line as bricks, like the line bar under the editor shows for one line
+const WALL_KINDS = [["do", "what to do"], ["thing", "a thing"], ["colour", "how it looks"], ["place", "where it goes"],
+  ["time", "when, or how long"], ["count", "how many times"], ["saying", "the words to show come next"],
+  ["words", "words to show"], ["glue", "a joining word"]];
+async function drawWall(r) {
+  const text = src.value, ticket = state.wallTicket = (state.wallTicket || 0) + 1;
+  if (!vizBody.querySelector(".wall")) vizBody.innerHTML = `<div class="empty">Laying the bricks…</div>`;
+  const got = await api("/api/read_lines", {text});
+  if (ticket !== state.wallTicket || state.viz !== "wall") return;          // typed again, or moved to another view
+  const counts = {}, lines = got.lines.filter(l => l.kind !== "blank");
+  for (const l of lines) for (const d of l.directions) for (const b of d) counts[b.kind] = (counts[b.kind] || 0) + 1;
+  const total = Object.values(counts).reduce((s, n) => s + n, 0);
+  let html = `<div class="pad wall"><h2>Brick wall <small>${fmt(total)} bricks in ${fmt(lines.filter(l => l.kind === "line").length)} lines; click a brick to find it in your text</small></h2>
+    <div class="wall-key">` + WALL_KINDS.filter(([k]) => counts[k]).map(([k, what]) =>
+      `<span class="brick k-${k}" title="${what}">${what} <b>${fmt(counts[k])}</b></span>`).join("") + `</div>`;
+  if (!lines.length) html += `<div class="empty">Write something on the left and the wall builds as you type.</div>`;
+  for (const l of lines) {
+    const indent = `style="margin-left:${Math.min(l.indent, 24) * 6}px"`;
+    if (l.kind === "note") { html += `<div class="card quiet wallrow" data-line="${l.number}" ${indent}>line ${l.number}: ${esc(l.text.trim())}<span class="skip">a note: skipped</span></div>`; continue; }
+    const note = (r.notes || []).find(x => new RegExp(`line ${l.number} read as: `).test(x));
+    const problem = r.lines.find(x => x.number === l.number && x.problems);
+    html += `<div class="card wallrow${problem ? " bad" : ""}" data-line="${l.number}" ${indent}><span class="no">line ${l.number}:</span>` +
+      l.directions.map(d => d.map(b => brickHtml(b, b.kind)).join("")).join(`<span class="cut" title="brick reads a new direction from here">|</span>`) +
+      (note ? `<span class="readas">→ ${esc(note.split(" read as: ")[1])}</span>` : "") +
+      (problem ? `<span class="readas" style="color:var(--bad)">cracked: ${esc(problem.problems[0])}</span>` : "") + `</div>`;
+  }
+  vizBody.innerHTML = html + `</div>`;
+  markSelection();                     // keeps the line you're on in view
+}
+vizBody.addEventListener("click", e => {
+  const brick = e.target.closest(".wallrow .brick");
+  if (brick) {                         // pick out that word in the editor
+    const n = +brick.closest(".wallrow").dataset.line, line = src.value.split("\n")[n - 1] || "";
+    const start = src.value.split("\n").slice(0, n - 1).join("\n").length + (n > 1 ? 1 : 0);
+    const before = [...brick.parentElement.querySelectorAll(".brick")].slice(0, [...brick.parentElement.querySelectorAll(".brick")].indexOf(brick));
+    let from = 0;                      // the same word may come twice: skip past the bricks before this one
+    for (const b of before) { const i = line.indexOf(b.dataset.text, from); if (i >= 0) from = i + b.dataset.text.length; }
+    const at = line.indexOf(brick.dataset.text, from);
+    selectLine(n, {from: "viz"});
+    if (at >= 0) { src.focus({preventScroll: true}); src.setSelectionRange(start + at, start + at + brick.dataset.text.length); }
+    return;
+  }
+  const go = e.target.closest("[data-go]");
+  if (go) return showViz(go.dataset.go);
+  const line = e.target.closest("[data-line]");
+  if (line) return selectLine(+line.dataset.line, {moveCaret: true, from: "viz"});
+  const b = e.target.closest("[data-i]");
+  if (b && state.byteLine) { const n = state.byteLine[+b.dataset.i]; if (n) selectLine(n, {moveCaret: true, from: "viz"}); }
+});
+
+const GLOSS = {
+  mov: "copy a value from one place to another", movabs: "put a big number in a register (often the address of a text or a name)",
+  push: "save a value on the stack, to get back later", pop: "take the last saved value back off the stack",
+  call: "go and run a routine, then come back here", ret: "go back to whoever called this routine",
+  jmp: "jump: carry on from somewhere else", cmp: "compare two values (the next jump looks at the answer)",
+  test: "check a value against itself or a mask (is it zero?)", add: "add", sub: "subtract", imul: "multiply", idiv: "divide (signed)",
+  div: "divide", neg: "flip the sign", xor: "exclusive-or (xor a reg with itself makes 0)", and: "bitwise and", or: "bitwise or",
+  shl: "shift left (times 2 for each step)", shr: "shift right (divide by 2 for each step)", sar: "shift right, keeping the sign",
+  lea: "work out an address without touching memory", syscall: "ask Linux to do something: write, read, sleep, exit…",
+  cqo: "stretch rax into rdx:rax, ready to divide", movzx: "copy a small value, filling with zeros", movsx: "copy a small value, keeping its sign",
+  movq: "move between a normal register and a decimal (xmm) register", cvtsi2sd: "whole number → decimal", cvttsd2si: "decimal → whole number (cut off)",
+  addsd: "add decimals", subsd: "subtract decimals", mulsd: "multiply decimals", divsd: "divide decimals", ucomisd: "compare decimals", comisd: "compare decimals",
+  roundsd: "round a decimal", rep: "repeat the next instruction rcx times", repz: "repeat while equal", nop: "do nothing", inc: "add 1", dec: "take 1",
+  sete: "set to 1 if equal", setne: "set to 1 if not equal", setl: "set to 1 if less", setg: "set to 1 if greater", setle: "set to 1 if not greater", setge: "set to 1 if not less",
+  movsb: "copy one byte (with rep: copy many)", cmpsb: "compare one byte (with repz: compare many)", rdtsc: "read the CPU's clock counter",
+};
+function gloss(op) {
+  const m = op.split(/\s+/)[0];
+  if (GLOSS[m]) return GLOSS[m];
+  if (/^j/.test(m)) return "jump, but only if the last compare came out a certain way";
+  if (/^set/.test(m)) return "set a byte to 1 or 0 from the last compare";
+  if (/^cmov/.test(m)) return "copy only if the last compare came out a certain way";
+  return "";
+}
+function insRows(code) {
+  return code.map(i => {
+    const parts = i.op.split(/\s+/), m = parts[0];
+    return `<div class="ins" data-at="${i.at}"><span class="a">${i.address}</span><span class="b" title="${i.bytes}">${i.bytes}</span>` +
+      `<span class="o" title="${esc(i.op)}"><span class="m" title="${esc(gloss(i.op))}">${esc(m)}</span> ${esc(i.op.slice(m.length).trim())}</span>` +
+      `<span class="t">${esc(i.note || "")}</span></div>`;
+  }).join("");
+}
+function drawCode(r) {
+  const lineText = Object.fromEntries(r.lines.map(l => [l.number, l.text.trim()]));
+  let html = `<div class="pad"><h2>The machine code <small>what the processor actually runs, top to bottom</small></h2>
+    <p class="lead">Each block is one of your lines and the x86-64 instructions brick made for it. The gold column is the
+    literal bytes; hover an orange instruction name to see what it does. After your lines comes the toolbox: ready-made routines every brick program carries.</p>`;
+  if (!r.runs.length) html += `<div class="empty">No code yet.</div>`;
+  const toolbox = r.runs.filter(x => x.kind === "routine");
+  for (const run of r.runs.filter(x => x.kind !== "routine")) {
+    const size = sizeOfRun(run);
+    let tag, title;
+    if (run.kind === "line") { tag = `line ${run.key}`; title = paintLine(lineText[run.key] || ""); }
+    else if (run.kind === "start") { tag = "start"; title = "Startup: remember where the environment is, point the heap at its start"; }
+    else if (run.kind === "end") { tag = "end"; title = "The end: put the colours back if they changed, then ask Linux to exit"; }
+    else { tag = "glue"; title = "Between lines"; }
+    html += `<div class="run" ${run.kind === "line" ? `data-run-line="${run.key}"` : ""}>
+      <div class="head" ${run.kind === "line" ? `data-line="${run.key}"` : ""}><span class="tag ${run.kind}">${tag}</span><span class="src hl">${title}</span><span class="size">${fmt(size)} bytes · ${run.code.length} instr.</span></div>
+      ${insRows(run.code)}</div>`;
+  }
+  if (toolbox.length) {
+    const total = toolbox.reduce((s, x) => s + sizeOfRun(x), 0);
+    html += `<details class="toolbox"><summary><b>▸ The toolbox</b><span>${toolbox.length} routines · ${fmt(total)} bytes · written by brick in machine code, so programs need no other library</span></summary>` +
+      toolbox.map(run => `<details class="routine"><summary><span class="tag">routine</span><span class="name">${esc(run.name)}</span><span class="note">${esc(run.note)}</span><span class="size">${fmt(sizeOfRun(run))} bytes</span></summary>${insRows(run.code)}</details>`).join("") +
+      `</details>`;
+  }
+  vizBody.innerHTML = html + `</div>`;
+}
+
+const KIND_COLOURS = {header: "#8f1d21", start: "#b02a4a", line: "#ff6a1f", end: "#6b4a40", glue: "#6b4a40", routine: "#c47a1a", data: "#ffd166"};
+function drawFile(r) {
+  const L = r.layout;
+  const parts = [
+    ["headers", L.headers, KIND_COLOURS.header, "Headers (ELF + 2 segments)"],
+    ["startup", L.start, KIND_COLOURS.start, "Startup code"],
+    ["your lines", L.program, KIND_COLOURS.line, "Your lines' code"],
+    ["end", L.end, KIND_COLOURS.end, "The end (exit)"],
+    ["toolbox", L.runtime, KIND_COLOURS.routine, "Toolbox routines"],
+    ["texts", L.data, KIND_COLOURS.data, "Fixed texts and numbers"],
+  ];
+  const total = parts.reduce((s, p) => s + p[1], 0) || 1;
+  let html = `<div class="pad"><h2>The program file <small>${fmt(L.file)} bytes, nothing else needed to run it</small></h2>
+    <p class="lead">This is the whole file brick writes. There's no C library and no interpreter: Linux reads the headers, copies the
+    file into memory and starts at the first instruction.</p>
+    <div class="filebar">` + parts.filter(p => p[1]).map(p =>
+      `<div style="flex:${Math.max(p[1] / total, .012)};background:${p[2]};${p[2] === "#ffd166" ? "color:#3b1a05" : ""}" title="${p[3]}: ${fmt(p[1])} bytes">${p[1] / total > .08 ? p[0] : ""}</div>`).join("") +
+    `</div><div class="filekey">` + parts.map(p => `<span><i style="background:${p[2]}"></i>${p[3]}<b>${fmt(p[1])}</b></span>`).join("") + `</div>`;
+  html += `<h2>In memory, once it runs</h2><div class="memmap">
+    <div class="mem"><h3>The file</h3><div class="addr">0x${L.file_address}</div><p>Read + run. Linux maps the file here. The first instruction is at <code>0x${L.entry}</code>, right after the ${L.headers} bytes of headers.</p></div>
+    <div class="mem"><h3>The space</h3><div class="addr">0x${L.space_address}</div><p>Read + write, starts as all zeros, ${fmt(Math.round(L.space / 1048576))} MB. Your names, lists, and the heap for new texts live here. It takes no room in the file.</p></div></div>`;
+  html += elfHeaderTable(r);
+  const mine = r.space.filter(s => s.yours), theirs = r.space.filter(s => !s.yours);
+  html += `<h2>Your names <small>each one is a box in the space</small></h2>`;
+  html += mine.length ? `<table class="t"><tr><th>name</th><th>address</th><th>size</th></tr>` +
+    mine.map(s => `<tr class="mine"><td>${esc(s.name)}</td><td class="hx">0x${s.address}</td><td class="m">${fmt(s.size)} bytes</td></tr>`).join("") + `</table>` : `<p class="dim">None yet. <code>set score to 0</code> makes one.</p>`;
+  html += `<h2>Fixed texts <small>stored once each, as an 8-byte length, the letters, then a 0</small></h2>`;
+  html += r.texts.length ? `<table class="t"><tr><th>text</th><th>address</th><th>bytes</th></tr>` +
+    r.texts.map(t => `<tr><td class="m">${esc(JSON.stringify(t.text))}</td><td class="hx">0x${t.address}</td><td class="m">${t.size}</td></tr>`).join("") + `</table>` : "";
+  html += `<h2>brick's own boxes <small>used by the toolbox</small></h2><table class="t"><tr><th>box</th><th>address</th><th>size</th></tr>` +
+    theirs.map(s => `<tr><td class="m">${esc(s.name)}</td><td class="hx">0x${s.address}</td><td class="m">${fmt(s.size)} bytes</td></tr>`).join("") + `</table>`;
+  vizBody.innerHTML = html + `</div>`;
+}
+function fileBytes(r) {
+  if (!r.file_bytes) return null;
+  if (r._bytes) return r._bytes;
+  const bin = atob(r.file_bytes), b = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i);
+  return (r._bytes = b);
+}
+function elfHeaderTable(r) {
+  const b = fileBytes(r);
+  if (!b) return "";
+  const hex = (s, n) => [...b.slice(s, s + n)].map(x => x.toString(16).padStart(2, "0")).join(" ");
+  const u = (s, n) => { let v = 0n; for (let i = n - 1; i >= 0; i--) v = (v << 8n) | BigInt(b[s + i]); return v; };
+  const rows = [
+    [0, 4, "magic: 0x7F then the letters E L F"], [4, 1, "2 = 64-bit"], [5, 1, "1 = little-endian (smallest byte first)"],
+    [16, 2, "2 = a program you can run"], [18, 2, "0x3E = x86-64 processor"],
+    [24, 8, `entry point: start running at 0x${u(24, 8).toString(16)}`], [32, 8, `segment headers start at byte ${u(32, 8)}`],
+    [56, 2, `${u(56, 2)} segment headers`],
+    [64, 4, "segment 1: 1 = load this"], [68, 4, "flags 5 = read + run"], [80, 8, `put it at 0x${u(80, 8).toString(16)}`],
+    [120, 4, "segment 2: 1 = load this"], [124, 4, "flags 6 = read + write"], [136, 8, `put it at 0x${u(136, 8).toString(16)}`],
+    [160, 8, `${fmt(Number(u(160, 8)))} bytes of memory, none of it in the file`],
+  ];
+  return `<h2>The first 176 bytes: headers <small>what Linux reads first</small></h2><table class="t"><tr><th>byte</th><th>bytes</th><th>means</th></tr>` +
+    rows.map(([s, n, m]) => `<tr><td class="m">${s}</td><td class="hx">${hex(s, n)}</td><td>${m}</td></tr>`).join("") + `</table>`;
+}
+
+// ---- bytes: hex and bits ----
+let heatStyle = false;
+function ironbow(v) {                 // a thermal camera's palette: black → crimson → orange → yellow → white
+  const stops = [[0, [12, 4, 4]], [40, [70, 10, 40]], [90, [150, 20, 50]], [140, [215, 50, 30]], [185, [255, 120, 20]], [225, [255, 200, 60]], [255, [255, 248, 220]]];
+  for (let i = 1; i < stops.length; i++) if (v <= stops[i][0]) {
+    const [a, ca] = stops[i - 1], [z, cz] = stops[i], t = (v - a) / (z - a);
+    return ca.map((c, k) => Math.round(c + (cz[k] - c) * t));
+  }
+}
+function ensureHeatStyle() {
+  if (heatStyle) return;
+  heatStyle = true;
+  let css = "";
+  for (let v = 0; v < 256; v++) { const [r, g, b] = ironbow(v); css += `.heat .v${v}{background:rgb(${r},${g},${b});color:${v > 150 ? "#2a0e04" : "#f3d9c9"}}`; }
+  const s = document.createElement("style"); s.textContent = css; document.head.appendChild(s);
+}
+function regionClasses(r) {
+  // per region: a kiln colour class; lines and routines alternate two shades so neighbours stand apart
+  let lineFlip = 0, routineFlip = 0;
+  return r.regions.map(([s, e, kind]) => {
+    if (kind === "line") return "k-line" + (lineFlip++ % 2);
+    if (kind === "routine") return "k-routine" + (routineFlip++ % 2);
+    return "k-" + kind;
+  });
+}
+function drawBytes(mode) {
+  const r = state.result, b = fileBytes(r);
+  if (!b) { vizBody.innerHTML = `<div class="empty">No program file yet: fix the cracked lines on the left and the bytes appear here.</div>`; return; }
+  ensureHeatStyle();
+  const owner = new Int32Array(b.length).fill(-1);
+  r.regions.forEach(([s, e], k) => { for (let i = s; i < e && i < b.length; i++) owner[i] = k; });
+  state.byteOwner = owner;
+  state.byteLine = Array.from(owner, k => k >= 0 ? r.regions[k][4] : null);
+  const cls = regionClasses(r);
+  const perRow = mode === "hex" ? 16 : 8;
+  const out = [];
+  for (let row = 0; row < b.length; row += perRow) {
+    let cells = "", asc = "";
+    for (let i = row; i < Math.min(row + perRow, b.length); i++) {
+      const v = b[i], k = owner[i], c = k >= 0 ? cls[k] : "";
+      if (mode === "hex") {
+        cells += `<span class="hx v${v} ${c}${(i - row) === 8 ? " g8" : ""}" data-i="${i}">${v.toString(16).padStart(2, "0")}</span>`;
+      } else {
+        const bits = v.toString(2).padStart(8, "0").replace(/1+|0+/g, run => run[0] === "1" ? `<b>${run}</b>` : `<i>${run}</i>`);
+        cells += `<span class="bt ${c}" data-i="${i}">${bits}</span>`;
+      }
+      asc += v >= 32 && v < 127 ? esc(String.fromCharCode(v)) : "·";
+    }
+    out.push(`<div class="row" data-row="${row}"><span class="off">${row.toString(16).padStart(6, "0")}</span><span class="cells">${cells}</span><span class="asc">${asc}</span></div>`);
+  }
+  const options = r.regions.map(([s, e, kind, said], k) => (kind === "line" || kind === "routine" || kind === "header" || kind === "start" || kind === "end") ?
+    `<option value="${s}">${esc(said.split(":")[0])} · byte ${fmt(s)}</option>` : "").join("");
+  const legend = [["header", "headers"], ["start", "startup"], ["line0", "your lines"], ["routine0", "toolbox"], ["end", "end"], ["data", "texts"]]
+    .map(([k, n]) => `<span><i class="swatch-k k-${k}"></i>${n}</span>`).join("");
+  vizBody.innerHTML = `
+    <div class="bytes-tools">
+      <b style="font-size:13px">${mode === "hex" ? "Hex" : "Bits"}</b>
+      <span class="dim" style="font-size:12.5px;color:var(--dim)">${fmt(b.length)} bytes${mode === "bits" ? ` · ${fmt(b.length * 8)} ones and zeros` : ""}</span>
+      ${mode === "hex" ? `<label><input type="radio" name="hexmode" value="where" ${state.hexMode === "where" ? "checked" : ""}> colour by where it came from</label>
+      <label><input type="radio" name="hexmode" value="heat" ${state.hexMode === "heat" ? "checked" : ""}> colour by heat (value)</label>` :
+      `<span class="byte-demo" style="margin:0;padding:2px 10px;font-size:12.5px"><b>1</b> hot · <i>0</i> cold · underline: where it came from</span>`}
+      <div class="spacer" style="flex:1"></div>
+      <select id="jump"><option value="">Jump to…</option>${options}</select>
+    </div>
+    <div class="peek" id="peek">Hover a byte (or a single bit) to see what made it: its line, direction, instruction or letter. Click one to find its line.</div>
+    <div class="legend" style="padding:10px 16px 0">${legend}</div>
+    <div class="dump ${mode === "hex" ? state.hexMode : "where"}" id="dump">${out.join("")}</div>`;
+  $$('input[name="hexmode"]').forEach(x => x.addEventListener("change", () => { state.hexMode = x.value; $("#dump").className = "dump " + x.value; markSelection(); }));
+  $("#jump").addEventListener("change", e => {
+    const at = +e.target.value; if (!e.target.value) return;
+    const row = $(`.row[data-row="${at - at % perRow}"]`);
+    if (row) row.scrollIntoView({block: "center"});
+    flashBytes(at);
+  });
+}
+function flashBytes(at) {
+  const k = state.byteOwner[at];
+  $$("#dump .hover").forEach(x => x.classList.remove("hover"));
+  $$("#dump [data-i]").forEach(x => { if (state.byteOwner[+x.dataset.i] === k) x.classList.add("hover"); });
+}
+vizBody.addEventListener("mouseover", e => {
+  const el = e.target.closest("#dump [data-i]");
+  if (!el) return;
+  const r = state.result, b = fileBytes(r), i = +el.dataset.i, v = b[i], k = state.byteOwner[i];
+  const region = k >= 0 ? r.regions[k] : null;
+  const bits = v.toString(2).padStart(8, "0").replace(/1/g, '<span class="hot">1</span>').replace(/0(?![^<]*>)/g, '<span class="cold">0</span>');
+  const ch = v >= 32 && v < 127 ? ` = '${esc(String.fromCharCode(v))}'` : "";
+  let what = region ? esc(region[3]) : "";
+  if (region && region[4]) {
+    const l = r.lines.find(x => x.number === region[4]);
+    if (l) what = `line ${l.number}: <b>${esc(l.text.trim())}</b>`;
+  }
+  $("#peek").innerHTML = `byte <b>${fmt(i)}</b> · address <b>0x${(0x400000 + i).toString(16)}</b> · value <b>${v}</b> = <b>0x${v.toString(16).padStart(2, "0")}</b> = <b>${bits}</b>${ch}<br>${what}`;
+});
+
+// hovering a byte (or a bit): which line, which direction in it, which instruction, which letter of which text
+function byteIndex(r) {
+  if (r._index) return r._index;
+  const H = r.layout.headers, instrs = [], users = {};
+  for (const run of r.runs) for (const c of run.code) {
+    instrs.push({start: H + c.at, end: H + c.at + c.bytes.split(" ").length, c, run});
+    if (run.kind !== "line") continue;          // who uses each routine and each text
+    const call = c.op.match(/^call\s+(\S+)/);
+    for (const key of [call && call[1], ...(c.op.match(/0x[0-9a-f]+/g) || [])]) if (key) (users[key] = users[key] || new Set()).add(run.key);
+  }
+  instrs.sort((a, b) => a.start - b.start);
+  return r._index = {instrs, users};
+}
+function instrAt(r, i) {
+  const list = byteIndex(r).instrs;
+  let lo = 0, hi = list.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1, x = list[mid];
+    if (i < x.start) hi = mid - 1; else if (i >= x.end) lo = mid + 1; else return x;
+  }
+  return null;
+}
+function shownText(t) {
+  if (/^\x1b\[38;2;/.test(t)) return "a colour code for the terminal";
+  if (/^\x1b\[0m/.test(t)) return "the code that puts the terminal's colours back";
+  return `"${esc(t.replace(/\x1b/g, "ESC").replace(/\n/g, "↵"))}"`;
+}
+function usedBy(lines) {
+  const list = lines ? [...lines].sort((a, b) => a - b) : [];
+  return list.length ? `used by line${list.length > 1 ? "s" : ""} ${list.join(", ")}` : "used by brick's own toolbox";
+}
+function byteStory(r, i, bit) {
+  const b = fileBytes(r), v = b[i], k = state.byteOwner[i], region = k >= 0 ? r.regions[k] : null;
+  const out = [];
+  let head = `byte <b>${fmt(i)}</b> · <b>0x${(0x400000 + i).toString(16)}</b> · <b>${v.toString(2).padStart(8, "0")}</b> = ${v}`;
+  if (bit !== null) head += ` · this bit: <b>${(v >> (7 - bit)) & 1}</b> (${["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"][bit]} from the left, worth ${1 << (7 - bit)})`;
+  out.push(`<div class="tip-head">${head}</div>`);
+  if (!region) return out.join("");
+  const [, , kind, said, line] = region;
+  if (kind === "line") {
+    const l = r.lines.find(x => x.number === line), text = l ? l.text.trim() : "";
+    const here = (r.actions || []).filter(a => a[1] === line && a[3] <= i && i < a[4]).sort((a, b) => a[0] - b[0]);
+    const top = here[0], inner = here[here.length - 1];
+    let shown = esc(text);
+    if (top) {                                  // the direction's words, picked out in the line
+      const at = text.toLowerCase().indexOf(top[2].toLowerCase());
+      if (at >= 0) shown = esc(text.slice(0, at)) + `<mark>${esc(text.slice(at, at + top[2].length))}</mark>` + esc(text.slice(at + top[2].length));
+    }
+    out.push(`<div><span class="tip-k">line ${line}</span>${shown}</div>`);
+    if (top) {
+      const mine = (r.actions || []).filter(a => a[1] === line && a[0] === 0).sort((a, b) => a[3] - b[3]);
+      const nth = mine.indexOf(top) + 1;
+      out.push(`<div><span class="tip-k">direction</span><b>${esc(top[2])}</b>${mine.length > 1 ? ` <span class="tip-dim">(${nth} of ${mine.length} on this line)</span>` : ""}</div>`);
+      if (inner !== top) out.push(`<div><span class="tip-k">inside it</span><b>${esc(inner[2])}</b> <span class="tip-dim">(what '${esc(top[2])}' means)</span></div>`);
+    } else {
+      out.push(`<div><span class="tip-k">direction</span><span class="tip-dim">the line itself: its loop, check or joining</span></div>`);
+    }
+  } else if (kind === "routine") {
+    out.push(`<div><span class="tip-k">toolbox</span>${esc(said.replace(/^toolbox routine /, ""))}</div>`);
+    out.push(`<div><span class="tip-k"></span><span class="tip-dim">${usedBy(byteIndex(r).users[region[3].split(" ")[2].replace(/:$/, "")])}</span></div>`);
+  } else if (kind === "data") {
+    const s = (r.stored || []).find(x => x[0] <= i && i < x[1]);
+    if (s) {
+      const [start, end, t] = s, off = i - start, letters = end - start - 9;
+      const part = off < 8 ? `its length (these 8 bytes say ${letters})` : i === end - 1 ? "the 0 that marks its end"
+        : `letter ${off - 7} of ${letters}` + (v >= 32 && v < 127 ? `: '${esc(String.fromCharCode(v))}'` : "");
+      out.push(`<div><span class="tip-k">text</span>${shownText(t)}</div>`);
+      out.push(`<div><span class="tip-k">this byte</span>${part}</div>`);
+      out.push(`<div><span class="tip-k"></span><span class="tip-dim">${usedBy(byteIndex(r).users["0x" + (0x400000 + start).toString(16)])}</span></div>`);
+    } else out.push(`<div><span class="tip-k">data</span>${esc(said)}</div>`);
+  } else {
+    out.push(`<div><span class="tip-k">${esc(kind)}</span>${esc(said)}</div>`);
+  }
+  const ins = instrAt(r, i);
+  if (ins) {
+    const g = gloss(ins.c.op);
+    out.push(`<div><span class="tip-k">instruction</span><code>${esc(ins.c.op.replace(/\s+/, " "))}</code> <span class="tip-dim">byte ${i - ins.start + 1} of ${ins.end - ins.start}</span></div>`);
+    let note = ins.c.note ? esc(ins.c.note) : "";
+    const quoted = ins.c.note && ins.c.note.match(/^text (".*")$/);
+    if (quoted) try { note = "the text " + shownText(JSON.parse(quoted[1])); } catch (e) {}
+    if (g || note) out.push(`<div><span class="tip-k"></span><span class="tip-dim">${[esc(g), note].filter(Boolean).join(" · ")}</span></div>`);
+  }
+  return out.join("");
+}
+const tip = document.createElement("div");
+tip.className = "bytetip";
+document.body.appendChild(tip);
+let tipAt = null;
+vizBody.addEventListener("mousemove", e => {
+  const el = e.target.closest("#dump [data-i]");
+  if (!el) { tip.style.display = "none"; return; }
+  const r = state.result, i = +el.dataset.i;
+  let bit = null;
+  if (el.classList.contains("bt")) {           // which of the eight 1s and 0s is under the pointer
+    const box = el.getBoundingClientRect(), inner = box.width - 6;
+    bit = Math.max(0, Math.min(7, Math.floor((e.clientX - box.left - 3) / inner * 8)));
+  }
+  if (tipAt !== `${i}:${bit}`) {
+    tipAt = `${i}:${bit}`;
+    tip.innerHTML = byteStory(r, i, bit);
+    const cells = $("#dump").querySelectorAll("[data-i]");   // light up its instruction, and its direction more softly
+    $$("#dump .hover, #dump .near").forEach(x => x.classList.remove("hover", "near"));
+    const ins = instrAt(r, i), act = (r.actions || []).filter(a => a[3] <= i && i < a[4]).sort((a, b) => a[0] - b[0])[0];
+    if (act) for (let j = act[3]; j < act[4] && j < cells.length; j++) cells[j].classList.add("near");
+    if (ins) for (let j = ins.start; j < ins.end && j < cells.length; j++) cells[j].classList.add("hover");
+    else el.classList.add("hover");
+  }
+  tip.style.display = "block";
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  tip.style.left = Math.min(e.clientX + 16, innerWidth - w - 8) + "px";
+  tip.style.top = (e.clientY + 20 + h > innerHeight ? e.clientY - h - 12 : e.clientY + 20) + "px";
+});
+vizBody.addEventListener("mouseleave", () => { tip.style.display = "none"; tipAt = null; });
+vizBody.parentElement.addEventListener("scroll", () => { tip.style.display = "none"; tipAt = null; });
+
+function markSelection(from) {
+  const n = state.sel;
+  $$("#vizBody .card").forEach(c => c.classList.toggle("sel", +c.dataset.line === n));
+  $$("#vizBody .run").forEach(c => c.classList.toggle("sel", +c.dataset.runLine === n));
+  const dump = $("#dump");
+  if (dump && state.byteLine) {
+    $$("#dump .sel").forEach(x => x.classList.remove("sel"));
+    let first = null;
+    $$("#dump [data-i]").forEach(x => { if (state.byteLine[+x.dataset.i] === n) { x.classList.add("sel"); first = first || x; } });
+    if (first && from !== "viz") first.scrollIntoView({block: "center"});
+  }
+  if (from !== "viz" && state.tab === "vizView") {
+    const target = $(`#vizBody .card[data-line="${n}"]`) || $(`#vizBody .run[data-run-line="${n}"]`);
+    if (target) target.scrollIntoView({block: "nearest"});
+  }
+}
+
+// ---------------- the console ----------------
+
+let term = null, fit = null, fallback = null;
+function setupTerm() {
+  const box = $("#term");
+  if (window.Terminal) {
+    term = new Terminal({
+      fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontSize: 13.5, cursorBlink: true, convertEol: false,
+      theme: {background: "#0c0706", foreground: "#f3e2d6", cursor: "#ff9a2e", cursorAccent: "#0c0706", selectionBackground: "rgba(255,106,31,.35)",
+              black: "#1b1210", red: "#ff4d4d", green: "#7bd389", yellow: "#ffd166", blue: "#6aa7ff", magenta: "#e66bd0", cyan: "#5fd7d7", white: "#f3e2d6",
+              brightBlack: "#7a5d50", brightRed: "#ff7a6b", brightGreen: "#a1f0ac", brightYellow: "#ffe39a", brightBlue: "#9cc4ff", brightMagenta: "#f39ae2", brightCyan: "#8ff0f0", brightWhite: "#fff7ee"},
+    });
+    if (window.FitAddon) { fit = new FitAddon.FitAddon(); term.loadAddon(fit); }
+    term.open(box);
+    term.onData(d => { if (state.session && !state.session.done) api("/api/type", {id: state.session.id, data: d}); });
+    term.onResize(({rows, cols}) => { if (state.session && !state.session.done) api("/api/resize", {id: state.session.id, rows, cols}); });
+    term.writeln("\x1b[38;2;255;154;46mbrick kiln\x1b[0m — your program runs here. Click in this box to type to it.");
+    new ResizeObserver(() => fitTerm()).observe(box);
+    setTimeout(fitTerm, 50);
+  } else {
+    // offline: a plain box that shows text and sends keys
+    box.innerHTML = `<pre class="fallback-term" tabindex="0"></pre>`;
+    fallback = box.firstChild;
+    fallback.textContent = "brick kiln: the full console couldn't load (no internet?), so this is a simple one. Click here to type.\n";
+    fallback.addEventListener("keydown", e => {
+      if (!state.session || state.session.done) return;
+      let d = e.key.length === 1 ? e.key : {Enter: "\r", Backspace: "\x7f", Escape: "\x1b", ArrowUp: "\x1b[A", ArrowDown: "\x1b[B", ArrowRight: "\x1b[C", ArrowLeft: "\x1b[D", Tab: "\t"}[e.key];
+      if (e.ctrlKey && e.key.length === 1) d = String.fromCharCode(e.key.toUpperCase().charCodeAt(0) - 64);
+      if (d) { e.preventDefault(); api("/api/type", {id: state.session.id, data: d}); }
+    });
+  }
+}
+function fitTerm() { if (fit && $("#consoleView").classList.contains("on")) try { fit.fit(); } catch (e) {} }
+function termWrite(data) {
+  if (term) return term.write(data);
+  const text = new TextDecoder().decode(data).replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "").replace(/\x1b\][^\x07]*\x07/g, "").replace(/\r\n/g, "\n").replace(/\r/g, "");
+  fallback.textContent += text;
+  fallback.scrollTop = fallback.scrollHeight;
+}
+function termNote(text, colour = "255;154;46") {
+  if (term) term.write(`\r\n\x1b[38;2;${colour}m${text.replace(/\n/g, "\r\n")}\x1b[0m\r\n`);
+  else termWrite(new TextEncoder().encode("\n" + text + "\n"));
+}
+async function run(where) {
+  showTab("consoleView");
+  if (state.session && !state.session.done) await stop();
+  setRunState("Firing…", true);
+  if (term) { term.reset(); fitTerm(); }
+  else fallback.textContent = "";
+  const r = await api("/api/run", {text: src.value, path: state.path, where, rows: term ? term.rows : 24, cols: term ? term.cols : 80});
+  (r.notes || []).filter(n => !/^Built /.test(n)).forEach(n => termNote(n, "255;209;102"));
+  if (r.problems && r.problems.length) {
+    termNote("Not built. Fix these first:\n" + r.problems.join("\n"), "255;90;90");
+    setRunState("Cracked in the kiln: see the lines marked on the left.");
+    return;
+  }
+  if (r.window) { termNote("It's running in a console window of its own; it asks there about any lines brick guessed."); setRunState("Running in its own window."); return; }
+  state.guessed = r.guessed || [];
+  state.session = {id: r.id, from: 0, done: false};
+  $("#stopBtn").disabled = false;
+  setRunState("Running · type in the console", true);
+  if (term) term.focus(); else fallback.focus();
+  poll(state.session);
+}
+async function poll(session) {
+  while (!session.done) {
+    let r;
+    try { r = await api(`/api/output?id=${session.id}&from=${session.from}`); }
+    catch (e) { await new Promise(ok => setTimeout(ok, 500)); continue; }
+    if (r.error) { session.done = true; break; }
+    if (r.data) {
+      const bin = atob(r.data), bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      session.from += bytes.length;
+      termWrite(bytes);
+    }
+    if (r.done !== null && r.done !== undefined && !r.data) {
+      session.done = true;
+      termNote(`[finished${r.done ? ", exit code " + r.done : ""}]`, "122;93;80");
+      if (state.session === session) { setRunState(`Finished${r.done ? " (exit code " + r.done + ")" : ""}. Press ▶ Run to go again.`); $("#stopBtn").disabled = true; askAboutGuesses(); }
+    }
+  }
+}
+async function stop() {
+  if (!state.session || state.session.done) return;
+  await api("/api/stop", {id: state.session.id});
+}
+function setRunState(text, live) { const s = $("#runState"); s.textContent = text; s.classList.toggle("live", !!live); }
+// ---------------- was that what you meant? ----------------
+
+function askAboutGuesses() {
+  const g = state.guessed || [], bar = $("#reviewBar");
+  if (!g.length) {                          // nothing guessed: still ask, so anything wrong can be fixed
+    bar.innerHTML = `<span>Did it do what you meant?</span><button id="allYes">Yes</button><button class="hot" id="allNo">No, fix a line</button>`;
+    bar.classList.add("on");
+    $("#allYes").onclick = () => bar.classList.remove("on");
+    $("#allNo").onclick = () => { bar.classList.remove("on"); pickLineToFix(); };
+    return;
+  }
+  bar.innerHTML = `<span>brick had to guess what <b>${g.length === 1 ? "1 line" : g.length + " lines"}</b> meant. Did it do what you meant?</span>
+    <button id="guessYes">Yes</button><button class="hot" id="guessNo">No, let me fix it</button>`;
+  bar.classList.add("on");
+  $("#guessYes").onclick = async () => {
+    await api("/api/review", {text: src.value, path: state.path, answers: g.map(x => ({...x, meant: x.told}))});
+    bar.innerHTML = "<span>Good: brick will read " + (g.length === 1 ? "it" : "them") + " that way from now on.</span>";
+    setTimeout(() => bar.classList.remove("on"), 4000);
+    state.guessed = [];
+  };
+  $("#guessNo").onclick = () => openReview(g);
+}
+function openReview(g) {
+  if (!g.length) { termNote("Nothing to review: brick read every line just as you wrote it."); return; }
+  const items = g.map((x, i) => `<div class="guess" data-i="${i}">
+      <div class="typed"><b>line ${x.number}</b>${esc(x.line)}</div>
+      <div class="lineb" data-line="${esc(x.line)}" style="display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px"></div>
+      <label><input type="radio" name="g${i}" value="${esc(x.told)}" checked> ${esc(x.told)} <span style="color:var(--dim)">(what it did)</span></label>
+      ${x.others.map(o => `<label><input type="radio" name="g${i}" value="${esc(o)}"> ${esc(o)}</label>`).join("")}
+      <label><input type="radio" name="g${i}" value=""> <input type="text" placeholder="or say what you meant, in brick's words"></label>
+      <div class="msg"></div></div>`).join("");
+  dialog(`<h3>Did each line do what you meant?</h3>
+    <p style="color:var(--dim);margin-top:0">Pick what you meant. brick keeps it in texts/corrections.txt and reads the line that way from now on.</p>
+    ${items}<div class="minitray" id="reviewTray"></div>
+    <div class="row-btns"><button id="cancel">Later</button><button class="hot" id="ok">Keep these</button></div>`, d => {
+    d.querySelectorAll(".lineb").forEach(async b => { b.innerHTML = await lineBricks(b.dataset.line); });
+    renderTray($("#reviewTray", d), {compact: true});      // click or drag bricks into 'what you meant'
+    d.querySelectorAll(".guess").forEach(box => {
+      const text = box.querySelector('input[type="text"]'), radio = text.previousElementSibling;
+      text.addEventListener("focus", () => { radio.checked = true; });
+    });
+    $("#cancel", d).onclick = closeDialog;
+    $("#ok", d).onclick = async () => {
+      const answers = g.map((x, i) => {
+        const box = d.querySelector(`.guess[data-i="${i}"]`), picked = box.querySelector("input[type=radio]:checked");
+        return {...x, meant: picked.value || box.querySelector('input[type="text"]').value || x.told};
+      });
+      const r = await api("/api/review", {text: src.value, path: state.path, answers});
+      const bad = Object.keys(r.problems || {});
+      d.querySelectorAll(".guess .msg").forEach(m => { m.textContent = ""; });
+      bad.forEach(n => { const i = g.findIndex(x => String(x.number) === n); if (i >= 0) d.querySelector(`.guess[data-i="${i}"] .msg`).textContent = r.problems[n]; });
+      if (bad.length) return;
+      closeDialog();
+      $("#reviewBar").classList.remove("on");
+      state.guessed = [];
+      termNote(r.closing ? "Kept. This review window can close now." : "Kept: brick will read those lines the way you said from now on.");
+      watchNow();
+    };
+  });
+}
+// ---------------- 'Not what I meant': fix any line ----------------
+
+function pickLineToFix() {
+  const lines = src.value.split("\n").map((l, i) => [i + 1, l]).filter(([, l]) => l.trim() && !l.trim().startsWith("#"));
+  if (lines.length === 1) return openFix(lines[0][0]);
+  dialog(`<h3>Which line didn't do what you meant?</h3>
+    <div class="list">${lines.map(([n, l]) => `<button data-n="${n}"><b style="color:var(--dim)">${n}</b>  ${esc(l.trim())}</button>`).join("")}</div>
+    <div class="row-btns"><button id="cancel">Never mind</button></div>`, d => {
+    d.querySelectorAll("[data-n]").forEach(b => b.onclick = () => openFix(+b.dataset.n));
+    $("#cancel", d).onclick = closeDialog;
+  });
+}
+async function openFix(n) {
+  const r = await api("/api/fix_options", {text: src.value, path: state.path, number: n});
+  if (!r.line) return;
+  dialog(`<h3>What did you mean by line ${n}?</h3>
+    <div class="lineb" style="display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 8px">${await lineBricks(r.line)}</div>
+    <p style="color:var(--dim);margin:0 0 6px">brick ${r.told ? `reads it as <code>${esc(r.told)}</code>` : "reads it just as written"}. Pick what you meant, or say it:</p>
+    <div class="guess">
+      ${r.others.map((o, i) => `<label><input type="radio" name="fx" value="${esc(o)}" ${i ? "" : "checked"}> ${esc(o)}</label>`).join("")}
+      <label><input type="radio" name="fx" value="" ${r.others.length ? "" : "checked"}> <input type="text" id="fixMeant" placeholder="what you meant, in brick's words (click or drag bricks in)"></label>
+      <div class="msg" id="fixMsg"></div>
+    </div>
+    <div class="minitray" id="fixTray"></div>
+    <div class="row-btns"><button id="cancel">Cancel</button><button class="hot" id="ok">Keep this</button></div>`, d => {
+    const box = $("#fixMeant", d);
+    box.addEventListener("focus", () => { box.previousElementSibling.checked = true; });
+    renderTray($("#fixTray", d), {compact: true, target: () => box});
+    $("#cancel", d).onclick = closeDialog;
+    $("#ok", d).onclick = async () => {
+      const picked = d.querySelector('input[name="fx"]:checked'), meant = (picked && picked.value) || box.value;
+      const msg = $("#fixMsg", d);
+      if (!meant.trim()) { msg.textContent = "Pick one, or say what you meant."; return; }
+      msg.style.color = "var(--dim)"; msg.textContent = "Checking…";
+      const res = await api("/api/fix", {text: src.value, path: state.path, number: n, meant});
+      if (!res.ok) { msg.style.color = ""; msg.textContent = res.message; return; }
+      closeDialog();
+      termNote(res.message + " Run it again to see.");
+      watchNow(); showLine();
+    };
+    if (!r.others.length) box.focus();
+  });
+}
+
+// ---------------- decisions: what brick couldn't settle by itself ----------------
+
+async function drawDecisions() {
+  let d;
+  try { d = await api("/api/decisions"); } catch (e) { return; }
+  $("#decideBadge").textContent = d.items.length || "";
+  if (state.tab !== "decideView") return;
+  const box = $("#decide");
+  if (box.querySelector("input:focus")) return;          // don't redraw under someone typing
+  const card = x => `<div class="card" data-id="${x.id}">
+      <div class="line">${esc(x.line)}</div>
+      <div class="lineb" data-line="${esc(x.line)}" style="display:flex;flex-wrap:wrap;gap:4px;margin:6px 0"></div>
+      ${x.said ? `<div class="said">${esc(x.said)}${x.from ? ` · from ${esc(x.from)}` : ""}</div>` : ""}
+      ${x.meant ? `<div class="meant"><b>should mean</b>${esc(x.meant)}</div>` : ""}
+      <div class="acts">
+        ${x["could be"].length
+          ? x["could be"].map(c => `<button data-act="word" data-meaning="${esc(c)}">Teach: ${esc(c)}</button>`).join("")
+          : `${x.meant ? `<button class="hot" data-act="means" data-meaning="${esc(x.meant)}">Yes, it means that</button>` : ""}
+             <input type="text" placeholder="it means… (in brick's words)"><button data-act="means">Keep</button>`}
+        <button class="quiet" data-act="director" title="Leave it for the English Director to fix in brick itself">For the Director</button>
+        <button class="quiet" data-act="dismiss">Dismiss</button>
+      </div><div class="msg"></div></div>`;
+  box.innerHTML = `<p class="intro">brick learns by itself either way. These are the few things it couldn't settle on its own;
+      deciding any of them just gets it there faster. It keeps working on them meanwhile, and ones it settles
+      by itself leave this list.</p>
+    <div class="status">The factory is <b>${d.running ? "learning right now" : "not running"}</b>${d.running ? "" : " (it runs while brick gui is open)"} ·
+      waiting for you: <b>${d.items.length}</b> · left for the Director: <b>${d.director}</b></div>
+    ${d.items.length ? `<div class="minitray" id="deskTray"></div>` + d.items.slice(0, 30).map(card).join("") : `<p class="intro">Nothing waiting. brick is settling everything by itself.</p>`}
+    <div class="activity"><div style="color:var(--text)">What brick is doing</div>${d.activity.map(a => `<div>${esc(a)}</div>`).join("") || "<div>Nothing yet.</div>"}</div>`;
+  box.querySelectorAll(".lineb").forEach(async b => { b.innerHTML = await lineBricks(b.dataset.line); });
+  if ($("#deskTray", box)) renderTray($("#deskTray", box), {compact: true});
+  box.querySelectorAll(".card button[data-act]").forEach(b => b.addEventListener("click", async () => {
+    const c = b.closest(".card"), msg = c.querySelector(".msg"), act = b.dataset.act;
+    const meaning = b.dataset.meaning !== undefined ? b.dataset.meaning : (c.querySelector('input[type="text"]') || {}).value || "";
+    if (act === "means" && !meaning.trim()) { msg.className = "msg bad"; msg.textContent = "Say what it means first, in brick's words."; return; }
+    c.querySelectorAll("button").forEach(x => { x.disabled = true; });
+    msg.className = "msg"; msg.textContent = act === "word" ? "Checking it with every test (about half a minute)…" : "…";
+    const r = await api("/api/decide", {id: c.dataset.id, action: act, meaning});
+    msg.className = "msg " + (r.ok ? "good" : "bad"); msg.textContent = r.message;
+    if (r.ok) setTimeout(drawDecisions, 1500); else c.querySelectorAll("button").forEach(x => { x.disabled = false; });
+  }));
+}
+setInterval(() => { if (state.tab === "decideView" || !document.hidden) drawDecisions(); }, 6000);
+setInterval(() => fetch("/api/alive").catch(() => {}), 20000);   // still open (brick gui --app closes once this stops)
+
+// ---------------- bricks: click or drag brick's words into place ----------------
+
+state.target = null;                       // the box a clicked brick goes into: the editor, or the box last typed in
+document.addEventListener("focusin", e => {
+  if (e.target.matches('textarea, input[type="text"]') && !e.target.closest(".tray-head")) state.target = e.target;
+});
+function insertBrick(text, el) {
+  el = el && document.body.contains(el) ? el : (state.target && document.body.contains(state.target) ? state.target : src);
+  const v = el.value, a = el.selectionStart ?? v.length, b = el.selectionEnd ?? a;
+  const before = v.slice(0, a), after = v.slice(b);
+  const pre = before && !/\s$/.test(before) ? " " : "", post = !after || !/^[\s,.;!?]/.test(after) ? " " : "";
+  el.value = before + pre + text + post + after;
+  el.focus();
+  const blank = text.indexOf("___"), at = before.length + pre.length;
+  if (blank >= 0) el.setSelectionRange(at + blank, at + blank + 3);      // the first blank, ready to type over
+  else el.setSelectionRange(at + text.length + post.length, at + text.length + post.length);
+  el.dispatchEvent(new Event("input", {bubbles: true}));
+}
+function brickHtml(b, kind) {
+  const sw = b.swatch ? `<span class="sw" style="background:${b.swatch}"></span>` : "";
+  return `<span class="brick k-${kind}" draggable="true" data-text="${esc(b.text)}" title="${esc(b.hint || (b.text.includes("___") ? "fill in the ___ blanks" : ""))}">${sw}${esc(b.text)}</span>`;
+}
+function wireBricks(box, target) {
+  box.querySelectorAll(".brick[data-text]").forEach(t => {
+    t.addEventListener("mousedown", e => e.preventDefault());              // keep the typing box's cursor where it is
+    t.addEventListener("click", () => insertBrick(t.dataset.text, typeof target === "function" ? target() : target));
+    t.addEventListener("dragstart", e => { e.dataTransfer.setData("text/plain", " " + t.dataset.text + " "); e.dataTransfer.effectAllowed = "copy"; });
+  });
+}
+async function renderTray(box, {compact = false, target = null} = {}) {
+  if (!state.bricks) state.bricks = (await api("/api/bricks")).groups;
+  const groups = compact ? state.bricks.filter(g => !["Dictionary", "Joining"].includes(g.name)) : state.bricks;
+  let group = box.dataset.group || "Do", query = "";
+  box.innerHTML = `<div class="tray-head"><input type="text" placeholder="find a brick… (crimson, wait, saying)">
+      ${groups.map(g => `<button class="quiet chip" data-g="${esc(g.name)}">${esc(g.name)}</button>`).join("")}</div>
+    <div class="tiles"></div>`;
+  const tiles = box.querySelector(".tiles"), find = box.querySelector(".tray-head input");
+  const draw = () => {
+    box.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", !query && c.dataset.g === group));
+    let shown;
+    if (query) {
+      shown = groups.flatMap(g => g.bricks.filter(b => b.text.toLowerCase().includes(query)).map(b => [b, g.kind])).slice(0, 120);
+    } else {
+      const g = groups.find(x => x.name === group) || groups[0];
+      shown = g.bricks.filter(b => !b.more).map(b => [b, g.kind]);
+      if (g.bricks.some(b => b.more)) shown.push([{text: "", hint: ""}, "more"]);
+    }
+    tiles.innerHTML = shown.map(([b, k]) => k === "more" ? `<div class="hint">…and more: type in the box above to find them.</div>` : brickHtml(b, k)).join("")
+      || `<div class="hint">No brick like that yet.</div>`;
+    wireBricks(tiles, target);
+  };
+  box.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => { group = box.dataset.group = c.dataset.g; query = ""; find.value = ""; draw(); }));
+  find.addEventListener("input", () => { query = find.value.trim().toLowerCase(); draw(); });
+  draw();
+}
+function setTray(on) {
+  $("#tray").classList.toggle("on", on);
+  $("#trayBtn").classList.toggle("hot", on);
+  try { localStorage.setItem("brick-tray", on ? "on" : "off"); } catch (e) {}
+  if (on && !$("#tray").innerHTML) renderTray($("#tray"));
+}
+$("#trayBtn").addEventListener("click", () => setTray(!$("#tray").classList.contains("on")));
+
+// the line your cursor is on, as bricks: how brick reads it
+async function lineBricks(line) {
+  if (!line.trim()) return "";
+  const r = await api("/api/read_line", {line});
+  return r.directions.map(d => d.map(b => brickHtml(b, b.kind)).join("")).join(`<span class="cut" title="brick reads a new direction from here">|</span>`);
+}
+let lineTimer = null;
+function showLine() {
+  clearTimeout(lineTimer);
+  lineTimer = setTimeout(async () => {
+    const n = caretLine(), line = src.value.split("\n")[n - 1] || "";
+    const view = $("#lineView");
+    if (!line.trim() || line.trim().startsWith("#")) { view.innerHTML = `<span>Write a line, and brick shows here how it reads it.</span>`; return; }
+    const html = await lineBricks(line);
+    const note = (state.result && state.result.notes || []).find(x => new RegExp(`line ${n} read as: `).test(x));
+    view.innerHTML = `<span>line ${n}:</span>${html}` + (note ? `<span class="readas">→ ${esc(note.split(" read as: ")[1])}</span>` : "") +
+      `<button class="quiet" id="fixLine" style="margin-left:auto;padding:2px 10px;font-size:12px" title="brick got this line wrong? Say what you meant">Not what I meant</button>`;
+    $("#fixLine").onclick = () => openFix(n);
+    view.querySelectorAll(".brick").forEach(t => t.addEventListener("click", () => {
+      const start = src.value.split("\n").slice(0, n - 1).join("\n").length + (n > 1 ? 1 : 0), at = line.indexOf(t.dataset.text);
+      if (at >= 0) { src.focus(); src.setSelectionRange(start + at, start + at + t.dataset.text.length); }
+    }));
+  }, 250);
+}
+["input", "click", "keyup"].forEach(ev => src.addEventListener(ev, showLine));
+
+$("#runBtn").addEventListener("click", () => run("here"));
+$("#windowBtn").addEventListener("click", () => run("window"));
+$("#stopBtn").addEventListener("click", stop);
+$("#clearBtn").addEventListener("click", () => { if (term) term.clear(); else fallback.textContent = ""; });
+$("#buildBtn").addEventListener("click", async () => {
+  if (!state.path) return saveAs(() => $("#buildBtn").click());
+  if (state.dirty) await save();
+  showTab("consoleView");
+  const r = await api("/api/run", {text: src.value, path: state.path, where: "build"});
+  if (r.problems && r.problems.length) termNote("Not built. Fix these first:\n" + r.problems.join("\n"), "255;90;90");
+  else termNote((r.notes || []).join("\n"));
+});
+
+// ---------------- files ----------------
+
+function dialog(html, setup) {
+  $("#dialog").innerHTML = html;
+  $("#overlay").classList.add("on");
+  setup && setup($("#dialog"));
+}
+function closeDialog() { $("#overlay").classList.remove("on"); }
+$("#overlay").addEventListener("mousedown", e => { if (e.target.id === "overlay") closeDialog(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeDialog();
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); save(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); run("here"); }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "o") { e.preventDefault(); openDialog(); }
+});
+function confirmLose(then) {
+  if (!state.dirty) return then();
+  dialog(`<h3>Throw away your changes?</h3><p class="dim" style="color:var(--dim)">${esc($("#fileName").textContent)} has changes that aren't saved.</p>
+    <div class="row-btns"><button id="cancel">Keep editing</button><button id="saveFirst">Save first</button><button class="hot" id="lose">Throw away</button></div>`, d => {
+    $("#cancel", d).onclick = closeDialog;
+    $("#lose", d).onclick = () => { closeDialog(); then(); };
+    $("#saveFirst", d).onclick = async () => { closeDialog(); if (await save()) then(); };
+  });
+}
+function openDialog() {
+  confirmLose(() => dialog(`<h3>Open a program</h3>
+    <input type="text" id="openPath" placeholder="a path, like game.txt or ~/games/snake.txt">
+    <div class="err" id="openErr"></div>
+    ${state.files.length ? `<div class="label">In ${esc(state.folder)}</div><div class="list">${state.files.map(f => `<button data-path="${esc(f)}">${esc(f)}</button>`).join("")}</div>` : ""}
+    <div class="label">Examples</div><div class="list">${state.examples.map((x, i) => `<button data-ex="${i}">${esc(x.name)}</button>`).join("")}</div>`, d => {
+    const input = $("#openPath", d);
+    input.focus();
+    const open = async path => {
+      const r = await api("/api/open", {path});
+      if (r.error) return $("#openErr", d).textContent = r.error;
+      closeDialog(); setFile(r.path, r.text);
+    };
+    input.addEventListener("keydown", e => { if (e.key === "Enter" && input.value.trim()) open(input.value); });
+    $$("[data-path]", d).forEach(b => b.onclick = () => open(b.dataset.path));
+    $$("[data-ex]", d).forEach(b => b.onclick = () => { const x = state.examples[+b.dataset.ex]; closeDialog(); setFile(x.path, x.text); });
+  }));
+}
+function saveAs(after) {
+  dialog(`<h3>Save as</h3><p style="color:var(--dim);margin-top:0">A name for the .txt file. It goes in ${esc(state.folder)} unless you give a path.</p>
+    <input type="text" id="savePath" placeholder="mygame.txt" value="${esc(state.path && !state.path.includes("/examples/") ? state.path : "")}">
+    <div class="row-btns"><button id="cancel">Cancel</button><button class="hot" id="ok">Save</button></div>`, d => {
+    const input = $("#savePath", d);
+    input.focus(); input.select();
+    const go = async () => {
+      if (!input.value.trim()) return;
+      const r = await api("/api/save", {path: input.value, text: src.value});
+      state.files = r.files || state.files;
+      closeDialog(); state.path = r.path; setFile(r.path); after && after();
+    };
+    $("#ok", d).onclick = go; $("#cancel", d).onclick = closeDialog;
+    input.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  });
+}
+async function save() {
+  if (!state.path || state.path.includes("/examples/")) return new Promise(ok => saveAs(() => ok(true)));   // examples stay as they are
+  const r = await api("/api/save", {path: state.path, text: src.value});
+  state.files = r.files || state.files;
+  setDirty(false);
+  return true;
+}
+$("#saveBtn").addEventListener("click", save);
+function consoleText() {
+  if (!term) return fallback ? fallback.textContent : "";
+  const buffer = term.buffer.active, rows = [];
+  for (let i = 0; i < buffer.length; i++) rows.push(buffer.getLine(i).translateToString(true));
+  return rows.join("\n");
+}
+$("#exportBtn").addEventListener("click", async () => {
+  if (state.path && state.dirty && !state.path.includes("/examples/")) await save();
+  const r = await api("/api/export", {text: src.value, path: state.path, console: consoleText()});
+  showTab("consoleView");
+  termNote(r.path ? `Saved everything about this program in ${r.path}\nGive that file to Claude and ask what the program is about.` : "Couldn't save the .brick file.");
+});
+$("#bitsBtn").addEventListener("click", async () => {
+  if (state.path && state.dirty && !state.path.includes("/examples/")) await save();
+  const r = await api("/api/bits", {text: src.value, path: state.path});
+  showTab("consoleView");
+  termNote(r.paths ? `Saved the program as brick materials:\n${r.paths.join("\n")}\n` +
+    "sand: bare 1s and 0s · clay: 1s and 0s labelled · shale: hex labelled · cement: the actual program file"
+    : (r.error || "Couldn't save the bits."));
+});
+$("#openBtn").addEventListener("click", openDialog);
+$("#newBtn").addEventListener("click", () => confirmLose(() => setFile(null, "")));
+$("#themeBtn").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : !matchMedia("(prefers-color-scheme: light)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("brick-theme", root.dataset.theme); } catch (e) {}
+});
+try { const t = localStorage.getItem("brick-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+window.addEventListener("beforeunload", e => { if (state.dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+// the divider between the halves
+$("#divider").addEventListener("mousedown", e => {
+  e.preventDefault();
+  const move = ev => { const pct = Math.min(75, Math.max(22, 100 * ev.clientX / innerWidth)); $("main").style.gridTemplateColumns = `${pct}% 6px 1fr`; fitTerm(); };
+  const up = () => { removeEventListener("mousemove", move); removeEventListener("mouseup", up); };
+  addEventListener("mousemove", move); addEventListener("mouseup", up);
+});
+
+// ---------------- help ----------------
+
+$$("#helpNav button").forEach(b => b.addEventListener("click", () => { state.help = b.dataset.help; drawHelp(); }));
+async function drawHelp() {
+  $$("#helpNav button").forEach(b => b.classList.toggle("on", b.dataset.help === state.help));
+  const body = $("#helpBody");
+  if ((state.help === "phrases" || state.help === "dictionary") && !state.helpData) {
+    body.innerHTML = `<div class="empty">Warming up…</div>`;
+    state.helpData = await api("/api/help");
+  }
+  body.innerHTML = HELP[state.help]();
+  body.parentElement.parentElement.scrollTop = 0;
+  if (state.help === "dictionary") {
+    const box = $("#dictSearch");
+    box.addEventListener("input", () => $("#dictList").innerHTML = dictionaryHtml(box.value));
+    box.focus();
+  }
+}
+$("#helpBody").addEventListener("click", e => {
+  const ex = e.target.closest("[data-example]");
+  if (ex) {
+    const text = ex.dataset.example.replace(/\s+\(then the lines below it, indented\)$/, "");
+    src.value = src.value.replace(/\n*$/, "") + (src.value.trim() ? "\n" : "") + text + "\n";
+    setDirty(true); repaint(); scheduleWatch();
+    selectLine(src.value.split("\n").length - 1, {moveCaret: true});
+    ex.style.color = "var(--flame)"; setTimeout(() => ex.style.color = "", 600);
+  }
+  const go = e.target.closest("[data-gohelp]");
+  if (go) { state.help = go.dataset.gohelp; drawHelp(); }
+});
+function leg(n, c, c2, title, text, ex) {
+  return `<div class="leg" style="--c:${c};--c2:${c2}"><div class="dot">${n}</div><div class="body"><h4>${title}</h4><p>${text}</p>${ex ? `<div class="ex">${ex}</div>` : ""}</div></div>`;
+}
+function phrasesHtml() {
+  const lines = state.helpData.phrases.split("\n");
+  const intro = lines[0];
+  const blocks = [];
+  let notes = [];
+  for (const line of lines.slice(1)) {
+    if (!line.trim()) continue;
+    if (/^\S/.test(line) && /^[A-Z][a-z]+:|^The dictionary/.test(line)) { notes.push(line); continue; }
+    if (notes.length) { notes.push(line); continue; }
+    if (/^\S/.test(line)) blocks.push({head: line, examples: []});
+    else if (blocks.length) blocks[blocks.length - 1].examples.push(line.trim());
+  }
+  return `<h1>Things you can say</h1><p class="lead dim">${esc(intro)} Click any example to add it to your program.</p><div class="phrases">` +
+    blocks.map(b => {
+      const m = b.head.match(/^(.*?)\s+\(also: (.*)\)$/);
+      return `<div class="phrase"><h4>${esc(m ? m[1] : b.head)}${m ? `<small>also ${esc(m[2])}</small>` : ""}</h4>` +
+        b.examples.map(x => `<button data-example="${esc(x)}">${esc(x)}</button>`).join("") + `</div>`;
+    }).join("") + `</div><div class="notes-block">${esc(notes.join("\n"))}</div>`;
+}
+function parseDictionary() {
+  if (state.dict) return state.dict;
+  const lines = state.helpData.dictionary.split("\n");
+  const groups = [];
+  let intro = [], entry = null;
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    if (/^\S/.test(line)) {
+      if (!groups.length && /[.:]$|^They're|^Words|^brick's/.test(line)) { intro.push(line); continue; }
+      groups.push({name: line.trim(), entries: []}); entry = null;
+    } else if (/^ {4}\S/.test(line) && groups.length && line.indexOf(": ") < 0) {     // a plain list, like the colours
+      const g = groups[groups.length - 1], last = g.entries[g.entries.length - 1];
+      if (last && last.key === null) last.words += " " + line.trim();
+      else g.entries.push(entry = {key: null, words: line.trim()});
+    } else if (/^ {4}\S/.test(line) && groups.length) {
+      const i = line.indexOf(": ");
+      entry = {key: i > 0 ? line.slice(4, i) : line.trim(), words: i > 0 ? line.slice(i + 2).trim() : ""};
+      groups[groups.length - 1].entries.push(entry);
+    } else if (entry) entry.words += " " + line.trim();
+  }
+  return (state.dict = {intro, groups});
+}
+function dictionaryHtml(query) {
+  const {groups} = parseDictionary();
+  const q = (query || "").trim().toLowerCase();
+  const mark = s => q ? esc(s).replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), m => `<mark>${m}</mark>`) : esc(s);
+  let html = "";
+  for (const g of groups) {
+    const plain = g.entries.filter(e => e.key === null).flatMap(e => e.words.split(/,\s*/))
+      .filter(w => w && (!q || w.toLowerCase().includes(q) || g.name.toLowerCase().includes(q)));
+    const es = g.entries.filter(e => e.key !== null && (!q || (e.key + " " + e.words).toLowerCase().includes(q) || g.name.toLowerCase().includes(q)));
+    if (!es.length && !plain.length) continue;
+    html += `<div class="group"><h3>${esc(g.name)}</h3>` + es.map(e => `<div class="entry"><b>${mark(e.key)}</b> <span>← ${mark(e.words)}</span></div>`).join("") +
+      (plain.length ? `<div class="swatches">` + plain.map(w => {
+        const rgb = state.colours[w.toLowerCase()];
+        return `<span class="sw">${rgb ? `<i style="background:rgb(${rgb})"></i>` : ""}${mark(w)}</span>`;
+      }).join("") + `</div>` : "") + `</div>`;
+  }
+  return html || `<p class="dim">Nothing matches “${esc(query)}”. You can add your own words in dictionary.txt.</p>`;
+}
+
+const HELP = {
+  how: () => `
+    <h1>How brick works</h1>
+    <p class="lead dim">You write what you want in everyday English. brick fires it, like clay in a kiln, into a real Linux program:
+    a file of machine code the processor runs directly. No Python, no C library, nothing in between. Here's the journey one line takes.</p>
+    <div class="journey">
+    ${leg(1, "#8f1d21", "#b02a4a", "Read the lines",
+      "brick reads your file line by line. Blank lines and lines starting with <code>#</code> are skipped (they're notes for people). A line ending in <code>:</code> owns the lines indented under it, its <em>block</em>, so a loop or an <code>if</code> can hold several lines.",
+      `<span class="f"># a note: skipped</span>\n<span class="v">repeat</span> 3 times:          <span class="f">← owns the two lines below</span>\n    <span class="v">write</span> hello\n    <span class="v">beep</span>`)}
+    ${leg(2, "#b02a4a", "#d7263d", "Split each line into actions",
+      "A line breaks at commas, full stops, <code>then</code>, <code>and</code> and <code>otherwise</code>, but only where the next word starts something brick knows. So <code>write salt and pepper</code> stays whole, while <code>ask a name and write hi</code> becomes two actions. Actions joined by <code>and</code> form one <em>part</em>; a loop or check covers a whole part.",
+      `<span class="v">ask</span> your name as name <span class="j">then</span> <span class="v">write</span> hi name <span class="j">and</span> <span class="v">beep</span>\n<span class="f">→ [ask your name as name]  then  [write hi name] and [beep]</span>`)}
+    ${leg(3, "#d7263d", "#ff6a1f", "Tidy up",
+      "Polite words at the start are dropped: <code>please</code>, <code>can you</code>, <code>computer,</code>. Then the dictionary turns everyday words into the ones brick builds with: about 760 of them, like <code>scribble</code> → <code>write</code> or <code>turn green</code> → <code>set the colour to green</code>. Words inside what you write stay as you typed them.",
+      `<span class="f">please</span> scribble hi in crimson\n<span class="f">→</span> <span class="v">write</span> hi in crimson`)}
+    ${leg(4, "#ff6a1f", "#ff9a2e", "Understand each action and write machine code",
+      "The first word picks the action: write, ask, set, add, wait, if, repeat… Values like <code>x plus 3</code> or <code>the first letter of name</code> are read into a small tree, and each piece becomes x86-64 instructions, written as bytes by a tiny assembler inside brick (asm.py). Names like <code>score</code> become 8-byte boxes in memory; fixed texts are stored once each.",
+      `<span class="v">write</span> x plus 3\n<span class="f">→</span> <span class="y">movabs rcx, &lt;x&gt;</span>   <span class="f">the address of x's box</span>\n  <span class="y">mov rax, [rcx]</span>     <span class="f">read x</span>\n  <span class="y">add rax, 3</span>\n  <span class="y">call number_to_text</span> <span class="f">then call write_text</span>`)}
+    ${leg(5, "#ff9a2e", "#ffd166", "Add the toolbox",
+      "Some jobs are the same in every program: turning a number into text, reading a line from the keyboard, joining texts, picking a random number, saving a file. brick carries about 40 of these routines, written directly in machine code (runtime.py, screen.py), and adds them after your lines. That's why even <code>write hi</code> makes a file of several thousand bytes.")}
+    ${leg(6, "#ffd166", "#fff3d6", "Link and wrap",
+      "Every jump and address is filled in now that brick knows where everything landed. Then elf.py puts 176 bytes of headers in front: “this is a 64-bit x86-64 Linux program, load me at 0x400000, give me some empty memory at 0x10000000, and start here.” The file is marked runnable, and that's the brick.")}
+    ${leg(7, "#fff3d6", "#fff3d6", "Run",
+      "When you run it, Linux reads the headers, maps the file into memory and jumps to the first instruction. To show text, read keys, wait or exit, the program asks Linux directly with the <code>syscall</code> instruction. To move its own window, it asks the Hyprland desktop through <code>hyprctl</code>.")}
+    </div>
+    <h3>Where the pieces live</h3>
+    <div class="glossary">
+      <b>brick.py</b><span>the <code>brick</code> command: build, run, open a window</span>
+      <b>reader.py</b><span>steps 1–2: words, quotes, numbers, splitting lines</span>
+      <b>compiler.py</b><span>steps 1–4: blocks, parts, loops, checks, names</span>
+      <b>actions.py</b><span>what each action word does</span>
+      <b>expressions.py</b><span>values and checks: <code>x plus 3</code>, <code>name contains "a"</code></span>
+      <b>dictionary.txt</b><span>step 3: the everyday words</span>
+      <b>teach.py</b><span>your own words: <code>to greet someone means …</code>, kept in mywords.txt</span>
+      <b>asm.py</b><span>the tiny x86-64 assembler</span>
+      <b>runtime.py</b><span>step 5: the toolbox</span>
+      <b>elf.py</b><span>step 6: the headers</span>
+    </div>
+    <p class="dim">Want to watch it happen? Open the <b>How it's made</b> tab while you type, or read <a href="#" data-gohelp="reading" style="color:var(--flame)">Reading “How it's made”</a>.</p>`,
+
+  window: () => `
+    <h1>Using this window</h1>
+    <p class="lead dim">Write on the left. The right side shows your program running, how it was made, and this help.</p>
+    <h3>Writing</h3>
+    <p>Type plain English, one or more actions per line. brick checks your program as you type: the little light at the top glows orange when it
+    <em>fires clean</em> and red when a line has <em>cracked</em>. Cracked lines get a red dot by their number and an explanation under the editor; click one to jump to it.</p>
+    <p>Words are coloured to help you read: <span style="color:var(--flame);font-weight:700">action words</span>, <span style="color:#ff5a6e;font-weight:600">joining words</span>,
+    <span style="color:var(--gold)">"quoted text"</span>, and colour names get underlined in their own colour. <kbd>Tab</kbd> indents; after a line ending in <code>:</code>, Enter indents for you.</p>
+    <h3>Running</h3>
+    <div class="kbds">
+      <span><button class="hot" style="pointer-events:none;padding:2px 10px">▶ Run</button></span><span>builds and runs inside the Console tab. Click in the console to type answers. <kbd>Ctrl</kbd>+<kbd>Enter</kbd> does the same.</span>
+      <span><button style="pointer-events:none;padding:2px 10px">Run in window</button></span><span>runs in a console window of its own, needed for programs that move their window around the screen.</span>
+      <span><button style="pointer-events:none;padding:2px 10px">Build</button></span><span>only makes the program file, next to your .txt (game.txt → game), just like <code>brick build game.txt</code>.</span>
+      <span><button style="pointer-events:none;padding:2px 10px">■ Stop</button></span><span>stops a program that's still running (handy after <code>repeat forever</code>).</span>
+    </div>
+    <p class="dim">Programs run in the folder of their .txt file, so files they save (like <code>best.txt</code>) end up next to it. An unsaved program runs in a scratch folder.</p>
+    <h3>Files</h3>
+    <div class="kbds">
+      <kbd>Ctrl</kbd><span><kbd>S</kbd> save · <kbd>O</kbd> open · <kbd>Enter</kbd> run</span>
+    </div>
+    <p>Open lists the .txt files in the folder you started from, plus brick's examples. Saving an example asks for a new name, so the examples stay as they are.</p>
+    <h3>From the terminal</h3>
+    <p><code>brick gui</code> opens this window; <code>brick gui game.txt</code> opens it with game.txt loaded. Close it with <kbd>Ctrl</kbd>+<kbd>C</kbd> in that terminal.</p>`,
+
+  reading: () => `
+    <h1>Reading “How it's made”</h1>
+    <p class="lead dim">Five views of the same build, each one step closer to what the processor sees. They update as you type, and they follow
+    the line your cursor is on: it glows orange in every view.</p>
+    <h3>Overview</h3>
+    <p>Across the top, the five stages with a count for each. Below, every line as brick read it: the <span style="color:var(--flame)">chips</span> are the actions it found,
+    the badges between them say how they were joined (<code>then</code>, <code>and</code>, <code>otherwise</code>), “tidied” shows polite words dropped or dictionary words
+    translated, and the heat bar shows how much machine code the line made, hotter for more. Click a card to jump to that line.</p>
+    <h3>Brick wall</h3>
+    <p>Every line of the program as bricks, the same ones the bar under the editor shows for the line you're on, coloured by what brick reads each word as.
+    The key at the top counts each kind; an orange <code>|</code> is where brick starts a new direction. Click a brick to pick out that word in your text.</p>
+    <h3>Machine code</h3>
+    <p>Each of your lines with the instructions made for it, in the order they sit in the file. Columns: the memory address, the literal bytes (gold),
+    the instruction, and what it touches: a name like <code>score (whole number)</code> or a text like <code>"hello"</code>. Hover an orange instruction name for a plain-English meaning.
+    The toolbox at the bottom opens to show every routine with a note on what it takes and gives back.</p>
+    <div class="glossary" style="margin-top:10px">
+      <b>rax, rcx, rdx…</b><span>registers: the processor's 16 tiny, fast boxes. brick passes most values in <code>rax</code> and <code>rcx</code>.</span>
+      <b>[rcx]</b><span>square brackets mean “the memory at that address”, not the address itself</span>
+      <b>the stack</b><span>a pile of saved values: <code>push</code> puts one on top, <code>pop</code> takes the top one back</span>
+      <b>call / ret</b><span>go run a routine and come back when it says <code>ret</code></span>
+      <b>syscall</b><span>ask Linux to do something; the number in <code>rax</code> says what: 1 write, 0 read, 35 sleep, 60 exit</span>
+    </div>
+    <h3>Program file</h3>
+    <p>The whole file as one bar, cut into headers, startup, your lines, the end, the toolbox and fixed texts. Then the two areas of memory,
+    the 176 header bytes decoded field by field, and tables of your names (with their addresses) and every fixed text.</p>
+    <h3>Hex and Bits</h3>
+    <p>Every byte of the file, in order. See <a href="#" data-gohelp="bytes" style="color:var(--flame)">Bytes, hex and bits</a>.</p>`,
+
+  bytes: () => `
+    <h1>Bytes, hex and bits</h1>
+    <p class="lead dim">A program file is just a long row of bytes. The Hex and Bits views show every one of them, coloured by what made it.</p>
+    <h3>A bit, a byte</h3>
+    <p>A <b>bit</b> is a single 1 or 0, on or off. In the Bits view the ones glow hot and the zeros sit cold. A <b>byte</b> is eight bits in a row,
+    which makes 256 possible patterns, read as the numbers 0 to 255:</p>
+    <div class="byte-demo"><span><i>0</i><b>1</b><i>00</i><b>1</b><i>000</i></span> = 64 + 8 = <b style="color:var(--text);text-shadow:none">72</b> = 0x48 = the letter <b style="color:var(--text);text-shadow:none">H</b></div>
+    <p>Each place is worth double the one to its right: 128, 64, 32, 16, 8, 4, 2, 1. Add up the places that hold a 1.</p>
+    <h3>Hex</h3>
+    <p>Eight bits is a lot to read, so people usually write a byte as two <b>hexadecimal</b> digits, 0–9 then a–f (for 10–15). Each digit stands for exactly four bits:
+    <code>0100 1000</code> → <code>4 8</code> → <code>0x48</code>. The Hex view shows 16 bytes per row, the Bits view 8. On the left is where the row starts in the file
+    (in hex too); on the right are the same bytes as letters, where they are letters (a dot where they aren't).</p>
+    <h3>What to look for</h3>
+    <ul>
+      <li>The very first four bytes are always <code>7f 45 4c 46</code>: a marker, then the letters <b>E L F</b>. That's how Linux knows it's a program.</li>
+      <li>Scroll to the end, the gold area, and your texts are readable on the right: each one stored after an 8-byte length.</li>
+      <li>In your lines you'll often see <code>48 b8</code> or <code>48 b9</code>: the start of “put this address in rax/rcx”, followed by 8 bytes of address, smallest byte first.</li>
+      <li><code>e8</code> starts a <code>call</code> into the toolbox; <code>0f 05</code> is <code>syscall</code>.</li>
+    </ul>
+    <h3>Colours</h3>
+    <p><b>Colour by where it came from</b> uses the kiln colours: deep red headers, startup, orange for your lines (two shades, so neighbouring lines stand apart), amber toolbox,
+    gold texts. <b>Colour by heat</b> paints each byte by its value like a thermal camera: 0 is black, then crimson, orange, yellow, up to white-hot 255.
+    Long runs of black are zeros, often the top half of an address.</p>
+    <p>Hover any byte to see its position, its address once loaded, its value in decimal, hex and bits, and the line that made it. Click it to jump to that line.</p>`,
+
+  phrases: phrasesHtml,
+  dictionary: () => {
+    const {intro, groups} = parseDictionary();
+    return `<h1>The dictionary</h1><p class="lead dim">${esc(intro.join(" "))}</p>
+      <input class="search" id="dictSearch" placeholder="Search the dictionary… try “shout” or “crimson”">
+      <div id="dictList">${dictionaryHtml("")}</div>`;
+  },
+};
+
+// ---------------- start ----------------
+
+(async function start() {
+  setupTerm();
+  const s = await api("/api/start");
+  state.starters = new Set(s.starters);
+  state.colours = s.colours;
+  state.examples = s.examples;
+  state.files = s.files;
+  state.folder = s.folder;
+  const asked = new URLSearchParams(location.search);
+  if (asked.get("file") && asked.get("file") !== s.file) {
+    const r = await api("/api/open", {path: asked.get("file")});
+    if (r.path) { s.file = r.path; s.text = r.text; }
+  }
+  if (asked.get("review") && s.file) {
+    setFile(s.file, s.text);
+    const r = await api("/api/guessed", {text: s.text, path: s.file});
+    if ((r.guessed || []).length) openReview(r.guessed); else pickLineToFix();    // nothing guessed: which line?
+    history.replaceState(null, "", "/");
+  } else if (s.file) setFile(s.file, s.text);
+  else {
+    const hello = s.examples.find(x => x.name === "hello");
+    setFile(null, hello ? "# Try changing anything here; the right side keeps up as you type.\n" + hello.text : "");
+  }
+  src.focus();
+  let tray = "off";
+  try { tray = localStorage.getItem("brick-tray") || "off"; } catch (e) {}
+  setTray(tray === "on");
+  showLine();
+})();
+</script>
+</body>
+</html>

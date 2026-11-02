@@ -1,0 +1,67 @@
+# brick's textual universe: what words are about, and what those ideas are about in turn.
+#
+# Words to an idea:          idea: word, word, a phrase, ...
+# An idea to a wider idea:   idea is a wider idea
+#
+# brick only asks the universe about a line it can't read by itself. The universe works out what each
+# word is about from the words around it (pink is a colour, a colour is a look, a look belongs to the
+# thing being shown), then says the line again in brick's own words.
+# Colours, and the dictionary's words for writing, waiting and so on, join their ideas by themselves:
+# crimson is a colour, and scribble means write, so scribble is about showing.
+
+# What a line can be about
+show: write, say, show, print, display, output, type, tell, echo, pen, pop up
+placing: put, place, stick, post, slap, plop, move
+make: make, turn, set, change, paint
+clear: clear, wipe, erase, cls, empty, clean
+wait: wait, pause, sleep, hold on, hang on, hold
+
+# Things
+text: text, words, word, message, msg, note, label, writing, letters, txt, sign, caption
+window: window
+background: background, bg, backdrop, backround, bkg
+screen: screen, console, terminal, scr
+
+# Where things go
+place: left, right, top, bottom, middle, centre, center, top-left, top-right, bottom-left, bottom-right, upper, lower, corner, side, edge, half
+toward: at, on, to, in, near, towards, toward, by, onto, into
+
+# How things look
+look word: colour, color, colours, colors, coloured, colored, shade, tint
+style: bold, italic, italics, underlined, underline
+by means of: in, with, using
+becoming: to, into
+
+# The words to show
+saying: saying, says, that says, which says, it says, and it says, reading, reads, that reads, which reads, the words, the word, with the words, with the text, make it say, have it say, let it say, and make it say, make it read, so it says, to say
+
+# Time and counting
+time unit: second, seconds, sec, secs, s, minute, minutes, min, mins, millisecond, milliseconds, ms, hour, hours, hr, hrs
+later: after, in
+times: times, time
+
+# How big the window is
+size: bigger, smaller, wider, taller, narrower, shorter, full screen, fullscreen
+
+# Words that don't change what a line means
+filler: can you, could you, would you, will you, can u, could u, please, pls, plz, kindly, go ahead, for me, i want, i need, i want you to, real quick
+# Chatter: only left out at the start or end of a direction ('um write hi', 'write hi lol'); in the middle it's words
+chatter: um, uh, erm, so, so yeah, yeah, yep, ok, ok so, okay, now, hey, yo, lol, thx, thanks, rn, asap, also, just, quickly, quick, anyway, ya
+it: it, that, this
+glue: the, a, an, of, and
+
+# Wider ideas
+show is an action
+placing is a show
+make is an action
+clear is an action
+wait is an action
+text is a thing
+window is a thing
+background is a thing
+screen is a surface
+window is a surface
+place is a where
+colour is a look
+look word is a look
+style is a look
