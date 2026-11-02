@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-label="brick: plain English in, a real Linux program out">
+  <title>brick: plain English in, a real Linux program out</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a0c08"/>
+      <stop offset="1" stop-color="#0c0605"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="1.05" r="0.75">
+      <stop offset="0" stop-color="#ff6a1a" stop-opacity="0.55"/>
+      <stop offset="0.45" stop-color="#c4281c" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#c4281c" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="brick" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff8a3d"/>
+      <stop offset="1" stop-color="#c8341f"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffd27a"/>
+      <stop offset="0.5" stop-color="#ff8a3d"/>
+      <stop offset="1" stop-color="#e2402a"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="1"/>
+    </linearGradient>
+    <mask id="wallmask"><rect x="560" y="0" width="720" height="400" fill="url(#fade)"/></mask>
+    <style>
+      .b { fill: url(#brick); opacity: .16; animation: ember 6s ease-in-out infinite; }
+      .b.hot { opacity: .5; }
+      .b:nth-child(3n)   { animation-delay: -1.5s; }
+      .b:nth-child(4n+1) { animation-delay: -3s; }
+      .b:nth-child(5n+2) { animation-delay: -4.5s; }
+      @keyframes ember { 0%,100% { opacity: .14; } 50% { opacity: .42; } }
+      .mono { font-family: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace; }
+      .sans { font-family: "Space Grotesk", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif; }
+      .caret { animation: blink 1.1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      @media (prefers-reduced-motion: reduce) { .b, .caret { animation: none; } }
+    </style>
+  </defs>
+
+  <rect width="1280" height="400" rx="18" fill="url(#bg)"/>
+  <rect width="1280" height="400" rx="18" fill="url(#glow)"/>
+
+  <!-- the brick wall, fading in from the left -->
+  <g mask="url(#wallmask)">
+    <g>
+      <rect class="b" x="560" y="30"  width="110" height="44" rx="5"/><rect class="b" x="678" y="30"  width="110" height="44" rx="5"/><rect class="b hot" x="796" y="30"  width="110" height="44" rx="5"/><rect class="b" x="914" y="30"  width="110" height="44" rx="5"/><rect class="b" x="1032" y="30"  width="110" height="44" rx="5"/><rect class="b" x="1150" y="30"  width="110" height="44" rx="5"/>
+      <rect class="b" x="619" y="82"  width="110" height="44" rx="5"/><rect class="b" x="737" y="82"  width="110" height="44" rx="5"/><rect class="b" x="855" y="82"  width="110" height="44" rx="5"/><rect class="b hot" x="973" y="82"  width="110" height="44" rx="5"/><rect class="b" x="1091" y="82"  width="110" height="44" rx="5"/><rect class="b" x="1209" y="82"  width="110" height="44" rx="5"/>
+      <rect class="b" x="560" y="134" width="110" height="44" rx="5"/><rect class="b" x="678" y="134" width="110" height="44" rx="5"/><rect class="b" x="796" y="134" width="110" height="44" rx="5"/><rect class="b" x="914" y="134" width="110" height="44" rx="5"/><rect class="b hot" x="1032" y="134" width="110" height="44" rx="5"/><rect class="b" x="1150" y="134" width="110" height="44" rx="5"/>
+      <rect class="b" x="619" y="186" width="110" height="44" rx="5"/><rect class="b hot" x="737" y="186" width="110" height="44" rx="5"/><rect class="b" x="855" y="186" width="110" height="44" rx="5"/><rect class="b" x="973" y="186" width="110" height="44" rx="5"/><rect class="b" x="1091" y="186" width="110" height="44" rx="5"/><rect class="b" x="1209" y="186" width="110" height="44" rx="5"/>
+      <rect class="b" x="560" y="238" width="110" height="44" rx="5"/><rect class="b" x="678" y="238" width="110" height="44" rx="5"/><rect class="b" x="796" y="238" width="110" height="44" rx="5"/><rect class="b hot" x="914" y="238" width="110" height="44" rx="5"/><rect class="b" x="1032" y="238" width="110" height="44" rx="5"/><rect class="b" x="1150" y="238" width="110" height="44" rx="5"/>
+      <rect class="b" x="619" y="290" width="110" height="44" rx="5"/><rect class="b" x="737" y="290" width="110" height="44" rx="5"/><rect class="b" x="855" y="290" width="110" height="44" rx="5"/><rect class="b" x="973" y="290" width="110" height="44" rx="5"/><rect class="b hot" x="1091" y="290" width="110" height="44" rx="5"/><rect class="b" x="1209" y="290" width="110" height="44" rx="5"/>
+      <rect class="b" x="560" y="342" width="110" height="44" rx="5"/><rect class="b hot" x="678" y="342" width="110" height="44" rx="5"/><rect class="b" x="796" y="342" width="110" height="44" rx="5"/><rect class="b" x="914" y="342" width="110" height="44" rx="5"/><rect class="b" x="1032" y="342" width="110" height="44" rx="5"/><rect class="b" x="1150" y="342" width="110" height="44" rx="5"/>
+    </g>
+  </g>
+
+  <!-- logo mark: three stacked bricks -->
+  <g transform="translate(72 52)">
+    <rect x="0"  y="0"  width="34" height="14" rx="3" fill="#ffb15c"/>
+    <rect x="38" y="0"  width="34" height="14" rx="3" fill="#ff8a3d"/>
+    <rect x="17" y="18" width="34" height="14" rx="3" fill="#e2402a"/>
+  </g>
+  <text x="160" y="76" class="sans" font-size="20" letter-spacing="6" fill="#d9a07a">B R I C K · K I L N</text>
+
+  <text x="68" y="200" class="sans" font-size="112" font-weight="700" fill="url(#title)" letter-spacing="-3">brick</text>
+  <text x="72" y="246" class="sans" font-size="27" fill="#f6dccb">Plain English in. A real Linux program out.</text>
+
+  <!-- the idea, in one line -->
+  <g class="mono" font-size="17">
+    <rect x="68" y="282" width="470" height="40" rx="8" fill="#ffffff" fill-opacity="0.06" stroke="#ff8a3d" stroke-opacity="0.35"/>
+    <text x="86" y="308" fill="#ff8a3d">write</text>
+    <text x="146" y="308" fill="#f6dccb">hello there</text>
+    <text x="270" y="308" fill="#ff5a4a">in</text>
+    <text x="298" y="308" fill="#4fd06a">green</text>
+    <rect class="caret" x="356" y="294" width="9" height="19" fill="#ff8a3d"/>
+
+    <text x="76" y="356" fill="#b98a72">→ 7 KB x86-64 ELF · no C compiler · no libc · runs on its own</text>
+  </g>
+</svg>
